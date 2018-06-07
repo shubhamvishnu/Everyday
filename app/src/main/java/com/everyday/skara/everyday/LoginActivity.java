@@ -255,6 +255,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         Toast.makeText(this, userKey + email + name + url, Toast.LENGTH_SHORT).show();
         toMainActivity();
     }
+
     void toMainActivity() {
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

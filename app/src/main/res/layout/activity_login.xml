@@ -15,4 +15,5 @@
         android:text="Login with Google"
         android:textAllCaps="false"
         android:textColor="@color/white" />
+
 </LinearLayout>
