@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "622153174323",
+    "firebase_url": "https://everyday-99423.firebaseio.com",
+    "project_id": "everyday-99423",
+    "storage_bucket": "everyday-99423.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:622153174323:android:a86e05371c285a85",
+        "android_client_info": {
+          "package_name": "com.wipro.first.everyday"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "622153174323-crv5qmkta8rlj9kkvh8g4in82rdfbrk7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wipro.first.everyday",
+            "certificate_hash": "c9b4b3f080ed4fad37c9db8d1c129e3fa20c38e2"
+          }
+        },
+        {
+          "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB04qfqMfuYagNTjPLXaz2d_YceUho-C_g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
