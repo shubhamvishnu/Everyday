@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday.pojo;
 
-public class UserProfilePOJO {
+import java.io.Serializable;
+
+public class UserProfilePOJO implements Serializable{
     String name;
     String email;
     String profile_url;

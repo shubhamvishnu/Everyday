@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday.pojo;
 
-public class BoardPOJO {
+import java.io.Serializable;
+
+public class BoardPOJO implements Serializable{
     String title;
     String date;
     String boardKey;
