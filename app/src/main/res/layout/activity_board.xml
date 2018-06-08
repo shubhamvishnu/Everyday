@@ -16,6 +16,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/new_link_button"
         android:text="New Link"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/new_todo_button"
+        android:text="New Todo"/>
 
 
 </LinearLayout>

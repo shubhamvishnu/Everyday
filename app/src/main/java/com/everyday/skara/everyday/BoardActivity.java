@@ -18,9 +18,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-    Button mNewNoteButton, mNewLinkButton;
+    Button mNewNoteButton, mNewLinkButton, mNewTodoButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,9 +42,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         mNewNoteButton = findViewById(R.id.new_note_button);
         mNewLinkButton = findViewById(R.id.new_link_button);
+        mNewTodoButton = findViewById(R.id.new_todo_button);
+
 
         mNewNoteButton.setOnClickListener(this);
         mNewLinkButton.setOnClickListener(this);
+        mNewTodoButton.setOnClickListener(this);
 
     }
     void toLoginActivity(){
@@ -61,6 +65,9 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             case R.id.new_link_button:
                 toNewLinkActivity();
                 break;
+            case R.id.new_todo_button:
+                toNewTodoActivity();
+                break;
 
         }
     }
@@ -73,6 +80,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     }
     void toNewLinkActivity(){
         Intent intent = new Intent(BoardActivity.this, LinkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+    void toNewTodoActivity(){
+        Intent intent = new Intent(BoardActivity.this, TodoActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
