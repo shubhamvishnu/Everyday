@@ -17,6 +17,7 @@ import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     UserProfilePOJO userProfilePOJO;
+    UserInfoPOJO userInfoPOJO;
     Button mNewButton;
 
 
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int user_account_type = sharedPreferences.getInt("user_account_type", 0);
 
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
+        userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
 
         mNewButton.setOnClickListener(this);
 
@@ -111,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        mNewBoardDialog.setCanceledOnTouchOutside(true);
+        mNewBoardDialog.setCanceledOnTouchOutside(false);
         mNewBoardDialog.show();
     }
 
@@ -131,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             boardReference.setValue(boardPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userProfilePOJO.getName(), boardPOJO.getDate(), userProfilePOJO);
+                    ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
                     boardReference.child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
@@ -163,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(MainActivity.this, BoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userProfilePOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 }

@@ -5,14 +5,14 @@ import java.io.Serializable;
 public class ActivityPOJO implements Serializable{
     String action;
     String time;
-    UserProfilePOJO userProfilePOJO;
+    UserInfoPOJO userInfoPOJO;
 
     public ActivityPOJO(){}
 
-    public ActivityPOJO(String action, String time, UserProfilePOJO userProfilePOJO) {
+    public ActivityPOJO(String action, String time, UserInfoPOJO userInfoPOJO) {
         this.action = action;
         this.time = time;
-        this.userProfilePOJO = userProfilePOJO;
+        this.userInfoPOJO = userInfoPOJO;
     }
 
     public String getAction() {
@@ -31,11 +31,11 @@ public class ActivityPOJO implements Serializable{
         this.time = time;
     }
 
-    public UserProfilePOJO getUserProfilePOJO() {
-        return userProfilePOJO;
+    public UserInfoPOJO getUserInfoPOJO() {
+        return userInfoPOJO;
     }
 
-    public void setUserProfilePOJO(UserProfilePOJO userProfilePOJO) {
-        this.userProfilePOJO = userProfilePOJO;
+    public void setUserInfoPOJO(UserInfoPOJO userInfoPOJO) {
+        this.userInfoPOJO = userInfoPOJO;
     }
 }

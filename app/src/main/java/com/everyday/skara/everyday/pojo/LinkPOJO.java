@@ -2,20 +2,21 @@ package com.everyday.skara.everyday.pojo;
 
 import java.io.Serializable;
 
-public class NotePOJO implements Serializable{
-    String noteKey;
+public class LinkPOJO implements Serializable{
+    String link;
     String title;
-    String content;
     String date;
+    String linkKey;
     UserInfoPOJO userInfoPOJO;
 
-    public NotePOJO(){}
 
-    public NotePOJO(String noteKey, String title, String content, String date, UserInfoPOJO userInfoPOJO) {
-        this.noteKey = noteKey;
+    public LinkPOJO(){}
+
+    public LinkPOJO(String link, String title, String date, String linkKey, UserInfoPOJO userInfoPOJO) {
+        this.link = link;
         this.title = title;
-        this.content = content;
         this.date = date;
+        this.linkKey = linkKey;
         this.userInfoPOJO = userInfoPOJO;
     }
 
@@ -27,12 +28,12 @@ public class NotePOJO implements Serializable{
         this.userInfoPOJO = userInfoPOJO;
     }
 
-    public String getNoteKey() {
-        return noteKey;
+    public String getLink() {
+        return link;
     }
 
-    public void setNoteKey(String noteKey) {
-        this.noteKey = noteKey;
+    public void setLink(String link) {
+        this.link = link;
     }
 
     public String getTitle() {
@@ -43,19 +44,19 @@ public class NotePOJO implements Serializable{
         this.title = title;
     }
 
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
     public String getDate() {
         return date;
     }
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getLinkKey() {
+        return linkKey;
+    }
+
+    public void setLinkKey(String linkKey) {
+        this.linkKey = linkKey;
     }
 }

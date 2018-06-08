@@ -1,10 +1,15 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,7 +19,7 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
-import com.everyday.skara.everyday.pojo.NotePOJO;
+import com.everyday.skara.everyday.pojo.LinkPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -25,21 +30,22 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tapadoo.alerter.Alerter;
 
-public class NewNoteActivity extends AppCompatActivity implements View.OnClickListener {
+public class LinkActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
-
-    EditText mTitle, mContent;
-    TextView mDate;
-    Button mDone;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
+
+    EditText mLink, mTitle;
+    TextView mDate;
+    Button mDone;
+    WebView mLinkWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_note);
+        setContentView(R.layout.activity_link);
         if (user != null) {
             init();
         } else {
@@ -54,20 +60,55 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
         boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
-        mTitle = findViewById(R.id.note_title);
-        mContent = findViewById(R.id.note_content);
-        mDate = findViewById(R.id.note_date);
-        mDone = findViewById(R.id.note_done);
 
+        mTitle = findViewById(R.id.link_title);
+        mLink = findViewById(R.id.link);
+        mDate = findViewById(R.id.link_date);
+        mLinkWebView = findViewById(R.id.link_preview_webview);
+        mLinkWebView.setVisibility(View.INVISIBLE);
         mDate.setText(DateTimeStamp.getDate());
+        mDone = findViewById(R.id.link_done);
 
+        mLink.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String url = s.toString();
+                if (url.isEmpty()) {
+                    mLinkWebView.setVisibility(View.INVISIBLE);
+                } else {
+                    if (!url.startsWith("http://") || !url.startsWith("https://")) {
+                        url = "http://" + url;
+                    }
+                    mLinkWebView.loadUrl(String.valueOf(Uri.parse(url)));
+                    mLinkWebView.setVisibility(View.VISIBLE);
+                    mLinkWebView.setWebViewClient(new WebViewClient()
+                    {
+                        @Override
+                        public boolean shouldOverrideUrlLoading(WebView view, String url)
+                        {
+                            return false;
+                        }
+                    });
+                }
+            }
+        });
         mDone.setOnClickListener(this);
 
 
     }
 
     void toLoginActivity() {
-        Intent intent = new Intent(NewNoteActivity.this, LoginActivity.class);
+        Intent intent = new Intent(LinkActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
@@ -75,41 +116,46 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.note_done:
-                saveNote();
+            case R.id.link_done:
+                saveLink();
                 break;
         }
     }
 
-    void saveNote() {
+    void saveLink() {
         if (Connectivity.checkInternetConnection(this)) {
             mDone.setEnabled(false);
-            databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/notes/");
-            DatabaseReference notesReference = databaseReference.push();
-
             String title = mTitle.getText().toString().trim();
-            String content = mContent.getText().toString();
-
-            if ((title.isEmpty() || content.isEmpty())) {
-                NotePOJO notePOJO = new NotePOJO(notesReference.getKey(), title, content, DateTimeStamp.getDate(), userInfoPOJO);
-                notesReference.setValue(notePOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+            String link = mLink.getText().toString();
+            if (title.isEmpty() || link.isEmpty()) {
+                databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/");
+                final DatabaseReference linkDatabaseReference = databaseReference.push();
+                LinkPOJO linkPOJO = new LinkPOJO(link, title, DateTimeStamp.getDate(), linkDatabaseReference.getKey(), userInfoPOJO);
+                linkDatabaseReference.setValue(linkPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        ActivityPOJO activityPOJO = new ActivityPOJO("New note saved on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                        ActivityPOJO activityPOJO = new ActivityPOJO("link saved on "+boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
                         firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                toBoardsActivity();
+                               toBoardsActivity();
                             }
                         });
                     }
                 });
-            } else {
-                // TODO: show field empty alert
+            }else{
+                // TODO: fields empty alert
             }
         } else {
             showInternetAlerter();
         }
+    }
+    void toBoardsActivity(){
+        Intent intent = new Intent(LinkActivity.this, BoardActivity.class);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile",userInfoPOJO);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     void showInternetAlerter() {
@@ -123,13 +169,5 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
                 })
                 .setBackgroundColorRes(R.color.colorAccent)
                 .show();
-    }
-
-    void toBoardsActivity() {
-        Intent intent = new Intent(NewNoteActivity.this, BoardActivity.class);
-        intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userInfoPOJO);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
     }
 }
