@@ -39,16 +39,11 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
-
-
         mNewNoteButton = findViewById(R.id.new_note_button);
         mNewLinkButton = findViewById(R.id.new_link_button);
 
         mNewNoteButton.setOnClickListener(this);
         mNewLinkButton.setOnClickListener(this);
-
-
-
 
     }
     void toLoginActivity(){

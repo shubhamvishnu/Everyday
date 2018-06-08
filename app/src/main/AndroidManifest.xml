@@ -19,7 +19,8 @@
         <activity android:name=".LoginActivity" />
         <activity android:name=".BoardActivity" />
         <activity android:name=".NewNoteActivity" />
-        <activity android:name=".LinkActivity"></activity>
+        <activity android:name=".LinkActivity" />
+        <activity android:name=".TodoActivity"></activity>
     </application>
 
 </manifest>
