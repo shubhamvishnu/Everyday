@@ -5,16 +5,26 @@ public class TodoPOJO {
     String itemKey;
     boolean state;
     String date;
+String todoKey;
     UserInfoPOJO userInfoPOJO;
 
     public TodoPOJO(){}
 
-    public TodoPOJO(String item, String itemKey, boolean state, String date, UserInfoPOJO userInfoPOJO) {
+    public TodoPOJO(String item, String itemKey, boolean state, String date, String todoKey, UserInfoPOJO userInfoPOJO) {
         this.item = item;
         this.itemKey = itemKey;
         this.state = state;
         this.date = date;
+        this.todoKey = todoKey;
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public String getTodoKey() {
+        return todoKey;
+    }
+
+    public void setTodoKey(String todoKey) {
+        this.todoKey = todoKey;
     }
 
     public String getItem() {

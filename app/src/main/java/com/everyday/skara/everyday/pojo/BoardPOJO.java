@@ -6,11 +6,11 @@ public class BoardPOJO implements Serializable{
     String title;
     String date;
     String boardKey;
-    UserProfilePOJO createdByProfilePOJO;
+    UserInfoPOJO createdByProfilePOJO;
 
     public BoardPOJO(){}
 
-    public BoardPOJO(String title, String date, String boardKey, UserProfilePOJO createdByProfilePOJO) {
+    public BoardPOJO(String title, String date, String boardKey, UserInfoPOJO createdByProfilePOJO) {
         this.title = title;
         this.date = date;
         this.boardKey = boardKey;
@@ -41,11 +41,11 @@ public class BoardPOJO implements Serializable{
         this.boardKey = boardKey;
     }
 
-    public UserProfilePOJO getCreatedByProfilePOJO() {
+    public UserInfoPOJO getCreatedByProfilePOJO() {
         return createdByProfilePOJO;
     }
 
-    public void setCreatedByProfilePOJO(UserProfilePOJO createdByProfilePOJO) {
+    public void setCreatedByProfilePOJO(UserInfoPOJO createdByProfilePOJO) {
         this.createdByProfilePOJO = createdByProfilePOJO;
     }
 }

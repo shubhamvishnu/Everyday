@@ -2,11 +2,16 @@ package com.everyday.skara.everyday;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,18 +28,27 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tapadoo.alerter.Alerter;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
+    DatabaseReference boardsReference;
+    ChildEventListener childEventListener;
     UserProfilePOJO userProfilePOJO;
     UserInfoPOJO userInfoPOJO;
-    Button mNewButton;
 
+    // View elements
+    Button mNewButton;
+    RecyclerView mBoardsRecyclerView;
 
     // Dialog
     BottomSheetDialog mNewBoardDialog;
@@ -43,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText mTitle;
     TextView mDate;
     Button mDone;
+
+    // RecyclerView
+    BoardsAdapter boardsAdapter;
+    ArrayList<BoardPOJO> boardPOJOArrayList;
 
 
     @Override
@@ -59,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         mNewButton = findViewById(R.id.new_board_button);
+        mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
 
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
@@ -74,7 +93,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mNewButton.setOnClickListener(this);
 
+        initRecyclerView();
 
+
+    }
+
+    void initBoards() {
+        boardPOJOArrayList = new ArrayList<>();
+
+        boardsReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key());
+        boardsReference.keepSynced(true);
+
+
+        childEventListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                UserInfoPOJO userInfoPOJO = new UserInfoPOJO(dataSnapshot.child("createdByProfilePOJO").child("name").getValue().toString(),
+                        dataSnapshot.child("createdByProfilePOJO").child("email").getValue().toString(),
+                        dataSnapshot.child("createdByProfilePOJO").child("profile_url").getValue().toString(),
+                        dataSnapshot.child("createdByProfilePOJO").child("user_key").getValue().toString());
+
+
+                BoardPOJO boardPOJO = new BoardPOJO(dataSnapshot.child("title").getValue().toString(),
+                        dataSnapshot.child("date").getValue().toString(),
+                        dataSnapshot.child("boardKey").getValue().toString(),
+                        userInfoPOJO
+                );
+
+                boardPOJOArrayList.add(boardPOJO);
+                boardsAdapter.notifyItemInserted(boardPOJOArrayList.size()-1);
+
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        boardsReference.addChildEventListener(childEventListener);
+
+
+    }
+
+    void initRecyclerView() {
+        boardPOJOArrayList = new ArrayList<>();
+
+        mBoardsRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mBoardsRecyclerView.setLayoutManager(linearLayoutManager);
+        boardsAdapter = new BoardsAdapter();
+        mBoardsRecyclerView.setAdapter(boardsAdapter);
+
+        initBoards();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (childEventListener != null) {
+            boardsReference.removeEventListener(childEventListener);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (childEventListener != null) {
+            boardsReference.removeEventListener(childEventListener);
+        }
     }
 
     void toLoginActivity() {
@@ -128,27 +230,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             // initializing BoardPOJO class
-            final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userProfilePOJO);
+            final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
 
             // TODO: add a progress bar
             boardReference.setValue(boardPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                    boardReference.child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                    // updating the user group information
+                    databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
+                    databaseReference.setValue(boardPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            mNewBoardDialog.dismiss();
-                            toBoardActivity(boardPOJO);
+
+
+                            // initializing ActivityPOJO class
+                            ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+
+                            // pushing ActivityPOJO
+                            boardReference.child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    mNewBoardDialog.dismiss();
+                                    toBoardActivity(boardPOJO);
+                                }
+                            });
                         }
                     });
 
+
                 }
             });
-        }else{
+        } else {
             showInternetAlerter();
         }
     }
+
     void showInternetAlerter() {
         Alerter.create(this)
                 .setText("Oops! no internet connection...")
@@ -168,5 +286,57 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
+    }
+
+    public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
+
+        private LayoutInflater inflator;
+
+        public BoardsAdapter() {
+            try {
+                this.inflator = LayoutInflater.from(MainActivity.this);
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+
+        @NonNull
+        @Override
+        public BoardsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_boards_row_layout, parent, false);
+            BoardsViewHolder viewHolder = new BoardsViewHolder(view);
+            return viewHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull BoardsViewHolder holder, int position) {
+            BoardPOJO boardPOJO = boardPOJOArrayList.get(position);
+            holder.boardTitle.setText(boardPOJO.getTitle());
+        }
+
+        @Override
+        public int getItemCount() {
+            return boardPOJOArrayList.size();
+        }
+
+        public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+            public Button boardTitle;
+
+            public BoardsViewHolder(View itemView) {
+                super(itemView);
+                boardTitle = itemView.findViewById(R.id.boards_title_button);
+                boardTitle.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.boards_title_button:
+                        toBoardActivity(boardPOJOArrayList.get(getPosition()));
+                        break;
+                }
+            }
+        }
     }
 }

@@ -63,6 +63,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "622153174323-mc0g144tpkcs5jvo6mg4mgiti927e6nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.everyday.skara.everyday",
+            "certificate_hash": "c9b4b3f080ed4fad37c9db8d1c129e3fa20c38e2"
+          }
+        },
+        {
           "client_id": "622153174323-749i678e8tpv9adk2ngiev4n8k314s2p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
