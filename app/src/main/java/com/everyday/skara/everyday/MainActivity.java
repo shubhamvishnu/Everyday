@@ -109,18 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                UserInfoPOJO userInfoPOJO = new UserInfoPOJO(dataSnapshot.child("createdByProfilePOJO").child("name").getValue().toString(),
-                        dataSnapshot.child("createdByProfilePOJO").child("email").getValue().toString(),
-                        dataSnapshot.child("createdByProfilePOJO").child("profile_url").getValue().toString(),
-                        dataSnapshot.child("createdByProfilePOJO").child("user_key").getValue().toString());
-
-
-                BoardPOJO boardPOJO = new BoardPOJO(dataSnapshot.child("title").getValue().toString(),
-                        dataSnapshot.child("date").getValue().toString(),
-                        dataSnapshot.child("boardKey").getValue().toString(),
-                        userInfoPOJO
-                );
-
+                BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
                 boardsAdapter.notifyItemInserted(boardPOJOArrayList.size()-1);
 

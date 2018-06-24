@@ -19,6 +19,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     Button mNewNoteButton, mNewLinkButton, mNewTodoButton;
+    Button mViewTodo;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
 
@@ -44,10 +45,14 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         mNewLinkButton = findViewById(R.id.new_link_button);
         mNewTodoButton = findViewById(R.id.new_todo_button);
 
+        mViewTodo = findViewById(R.id.view_todo);
+
 
         mNewNoteButton.setOnClickListener(this);
         mNewLinkButton.setOnClickListener(this);
         mNewTodoButton.setOnClickListener(this);
+
+        mViewTodo.setOnClickListener(this);
 
     }
     void toLoginActivity(){
@@ -68,9 +73,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             case R.id.new_todo_button:
                 toNewTodoActivity();
                 break;
+            case R.id.view_todo:
+                toViewTodoActivity();
+                break;
 
         }
     }
+
     void toNewNoteActivity(){
         Intent intent = new Intent(BoardActivity.this, NewNoteActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -87,6 +96,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     }
     void toNewTodoActivity(){
         Intent intent = new Intent(BoardActivity.this, TodoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+    void toViewTodoActivity(){
+        Intent intent = new Intent(BoardActivity.this, TodoViewActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);

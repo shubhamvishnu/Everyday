@@ -20,6 +20,7 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
 import com.everyday.skara.everyday.pojo.TodoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,13 +32,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TodoActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference, todoDatabaseReference;
+    DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     EditText mItemEditText, mTodoTitle;
@@ -66,6 +65,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
         todoDatabaseReference = databaseReference.push();
+        todoInfoReference = todoDatabaseReference.child("info");
 
         todoPOJOArrayList = new ArrayList<>();
 
@@ -97,7 +97,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.todo_done:
-                    addTodo();
+                addTodo();
                 break;
         }
     }
@@ -107,17 +107,17 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         String title = mTodoTitle.getText().toString();
         if (Connectivity.checkInternetConnection(this)) {
             if (!item.isEmpty()) {
-                DatabaseReference todoReference = todoDatabaseReference.push();
+                DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
 
-                //String item, String itemKey, boolean state, int itemLevel, String parentKey, String date, UserInfoPOJO userInfoPOJO
-                final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, todoDatabaseReference.getKey(), DateTimeStamp.getDate(), userInfoPOJO);
-                Map<String, Object> todoTitleMap = new HashMap<>();
                 if (title.isEmpty()) {
-                    todoTitleMap.put("title", " ");
-                } else {
-                    todoTitleMap.put("title", title);
+                    title = "";
                 }
-                todoDatabaseReference.updateChildren(todoTitleMap);
+                //String title, String date, String todoKey, String lastModified
+                TodoInfoPOJO todoInfoPOJO = new TodoInfoPOJO(title, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), DateTimeStamp.getDate());
+
+                todoInfoReference.setValue(todoInfoPOJO);
+                final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
+
                 todoReference.setValue(todoPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -161,10 +161,10 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        public final int VIEW_MAIN = 1;
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference;
         private LayoutInflater inflator;
-        public final int VIEW_MAIN = 1;
 
 
         public TodoListAdapter() {
@@ -233,8 +233,13 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                         todoPOJOArrayList.remove(position);
                         todoListAdapter.notifyItemRemoved(position);
 
-                        if(todoPOJOArrayList.size() == 0){
-                            todoDatabaseReference.child("title").removeValue();
+                        if (todoPOJOArrayList.size() == 0) {
+                            todoDatabaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                }
+                            });
                         }
                     } catch (IndexOutOfBoundsException e) {
 

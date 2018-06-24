@@ -22,6 +22,12 @@
         android:id="@+id/new_todo_button"
         android:text="New Todo"/>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="View Todo"
+        android:id="@+id/view_todo"/>
+
 
 
 </LinearLayout>
