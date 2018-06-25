@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TodoActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -194,6 +196,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             TodoPOJO todoPOJO = todoPOJOArrayList.get(position);
+            ((TodoViewHolder) holder).mCheckBox.setChecked(todoPOJO.isState());
             ((TodoViewHolder) holder).mItem.setText(todoPOJO.getItem());
         }
 
@@ -214,7 +217,14 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
             mItem = itemView.findViewById(R.id.todo_item);
             mDelete = itemView.findViewById(R.id.delete_item);
             mDelete.setOnClickListener(this);
+            mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    updateState(getPosition(), isChecked);
+                }
+            });
         }
+
 
         @Override
         public void onClick(View v) {
@@ -223,6 +233,18 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                     deleteItem(getPosition());
                     break;
             }
+        }
+
+        void updateState(final int position, final boolean isChecked) {
+            DatabaseReference todoItemReference = databaseReference.child(todoDatabaseReference.getKey()).child("todo_items").child(todoPOJOArrayList.get(position).getItemKey());
+            HashMap<String, Object> stateMap = new HashMap<>();
+            stateMap.put("state", isChecked);
+            todoItemReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    todoPOJOArrayList.get(position).setState(isChecked);
+                }
+            });
         }
 
         void deleteItem(final int position) {

@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Locale;
 
 public class TodoViewActivity extends AppCompatActivity {
@@ -188,17 +191,11 @@ public class TodoViewActivity extends AppCompatActivity {
 
     public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder> {
         private LayoutInflater inflator;
-        Todo todo;
-        TodoInfoPOJO todoInfoPOJO;
-        ArrayList<TodoPOJO> todoPOJOArrayList;
         int todoPosition;
         public TodoItemAdapter(int todoPosition) {
             try {
                 this.inflator = LayoutInflater.from(TodoViewActivity.this);
                 this.todoPosition = todoPosition;
-                this.todo = todoArrayList.get(todoPosition);
-                this.todoInfoPOJO = todo.getTodoInfoPOJO();
-                this.todoPOJOArrayList = todo.getTodoPOJOArrayList();
             } catch (NullPointerException e) {
 
             }
@@ -213,7 +210,8 @@ public class TodoViewActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull TodoItemViewHolder holder, int position) {
-            holder.mItem.setText(todoPOJOArrayList.get(position).getItem());
+            holder.mCheckbox.setChecked(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).isState());
+            holder.mItem.setText(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItem());
         }
 
         @Override
@@ -225,20 +223,40 @@ public class TodoViewActivity extends AppCompatActivity {
         public class TodoItemViewHolder extends RecyclerView.ViewHolder {
             public EditText mItem;
             public ImageButton mDelete;
+            public CheckBox mCheckbox;
 
             public TodoItemViewHolder(View itemView) {
                 super(itemView);
                 mItem = itemView.findViewById(R.id.todo_item_view);
                 mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
-
+                mCheckbox = itemView.findViewById(R.id.todo_checkbox_view);
                 mDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         deleteItem(todoPosition, getPosition());
                     }
                 });
+
+                mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        setState(todoPosition, getPosition(), isChecked);
+                    }
+                });
             }
         }
+
+    }
+    void setState(final int todoPosition, final int position, final boolean isChecked){
+        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey()+"/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()+"/");
+        HashMap<String, Object> stateMap = new HashMap<>();
+        stateMap.put("state", isChecked);
+        todoReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
+            }
+        });
 
     }
     void deleteItem(final int todoPosition, final int position) {
