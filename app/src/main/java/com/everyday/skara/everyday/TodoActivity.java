@@ -226,7 +226,8 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         void deleteItem(final int position) {
-            todoDatabaseReference.child(todoPOJOArrayList.get(position).getItemKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            DatabaseReference todoItemReference = databaseReference.child(todoDatabaseReference.getKey()).child("todo_items").child(todoPOJOArrayList.get(position).getItemKey());
+            todoItemReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     try {

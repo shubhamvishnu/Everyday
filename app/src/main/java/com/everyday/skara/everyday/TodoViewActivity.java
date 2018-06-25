@@ -4,20 +4,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.Connectivity;
+import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.Todo;
+import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
 import com.everyday.skara.everyday.pojo.TodoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.tapadoo.alerter.Alerter;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -38,7 +49,7 @@ import java.util.Locale;
 public class TodoViewActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
+    DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     ChildEventListener childEventListener;
@@ -49,6 +60,11 @@ public class TodoViewActivity extends AppCompatActivity {
 
     // Adapter
     TodoAdapter todoAdapter;
+
+    // TodoView dialog
+    BottomSheetDialog mTodoItemsDialog;
+    RecyclerView mTodoItemsRecyclerView;
+    TodoItemAdapter todoItemAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,12 +83,14 @@ public class TodoViewActivity extends AppCompatActivity {
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
         firebaseDatabase = FirebaseDatabase.getInstance();
         todoArrayList = new ArrayList<>();
+        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
 
         mTodoRecyclerView = findViewById(R.id.todo_view_recycler);
 
         initTodoRecyclerView();
     }
-    void initTodoRecyclerView(){
+
+    void initTodoRecyclerView() {
         mTodoRecyclerView.invalidate();
         mTodoRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -82,7 +100,8 @@ public class TodoViewActivity extends AppCompatActivity {
 
         initTodos();
     }
-    void initTodos(){
+
+    void initTodos() {
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
         childEventListener = new ChildEventListener() {
             @Override
@@ -101,7 +120,7 @@ public class TodoViewActivity extends AppCompatActivity {
                         todoAdapter.notifyItemInserted(todoPOJOArrayList.size() - 1);
                     }
                 } catch (DatabaseException d) {
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -129,9 +148,11 @@ public class TodoViewActivity extends AppCompatActivity {
         databaseReference.addChildEventListener(childEventListener);
 
     }
-    void sortDateAscending(){
+
+    void sortDateAscending() {
         Collections.sort(todoArrayList, new Comparator<Todo>() {
-            DateFormat f =new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
             @Override
             public int compare(Todo o1, Todo o2) {
                 try {
@@ -165,6 +186,99 @@ public class TodoViewActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder> {
+        private LayoutInflater inflator;
+        Todo todo;
+        TodoInfoPOJO todoInfoPOJO;
+        ArrayList<TodoPOJO> todoPOJOArrayList;
+        int todoPosition;
+        public TodoItemAdapter(int todoPosition) {
+            try {
+                this.inflator = LayoutInflater.from(TodoViewActivity.this);
+                this.todoPosition = todoPosition;
+                this.todo = todoArrayList.get(todoPosition);
+                this.todoInfoPOJO = todo.getTodoInfoPOJO();
+                this.todoPOJOArrayList = todo.getTodoPOJOArrayList();
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+        @NonNull
+        @Override
+        public TodoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
+            return new TodoItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull TodoItemViewHolder holder, int position) {
+            holder.mItem.setText(todoPOJOArrayList.get(position).getItem());
+        }
+
+        @Override
+        public int getItemCount() {
+            return  todoArrayList.get(todoPosition).getTodoPOJOArrayList().size();
+        }
+
+
+        public class TodoItemViewHolder extends RecyclerView.ViewHolder {
+            public EditText mItem;
+            public ImageButton mDelete;
+
+            public TodoItemViewHolder(View itemView) {
+                super(itemView);
+                mItem = itemView.findViewById(R.id.todo_item_view);
+                mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
+
+                mDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteItem(todoPosition, getPosition());
+                    }
+                });
+            }
+        }
+
+    }
+    void deleteItem(final int todoPosition, final int position) {
+        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
+        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
+        todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                try {
+                    todoArrayList.get(todoPosition).getTodoPOJOArrayList().remove(position);
+                    todoItemAdapter.notifyDataSetChanged();
+
+                    if (todoArrayList.get(todoPosition).getTodoPOJOArrayList().size() == 0) {
+                        todoReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                    todoAdapter.notifyItemRemoved(todoPosition);
+                                    mTodoItemsDialog.dismiss();
+                            }
+                        });
+                    }
+                } catch (IndexOutOfBoundsException e) {
+
+                }
+            }
+        });
+    }
+
+    void showInternetAlerter() {
+        Alerter.create(this)
+                .setText("Oops! no internet connection...")
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Connectivity.openInternetSettings(getApplicationContext());
+                    }
+                })
+                .setBackgroundColorRes(R.color.colorAccent)
+                .show();
+    }
     public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder> {
         private LayoutInflater inflator;
 
@@ -185,15 +299,82 @@ public class TodoViewActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull TodoViewHolder holder, int position) {
-          try {
-              Todo todo = todoArrayList.get(position);
-              TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
+            try {
+                Todo todo = todoArrayList.get(position);
+                TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
 
-              holder.mTitle.setText(todoInfoPOJO.getTitle());
-              holder.mDate.setText(todoInfoPOJO.getDate());
-          }catch (Exception e){
+                holder.mTitle.setText(todoInfoPOJO.getTitle());
+                holder.mDate.setText(todoInfoPOJO.getDate());
 
-          }
+            } catch (Exception e) {
+
+            }
+        }
+
+
+        void showItems(final int position) {
+            todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(position).getTodoKey());
+            todoInfoReference = todoDatabaseReference.child("info");
+
+            Button mCloseButton, mAddButton;
+            final EditText mItemEditText;
+            mTodoItemsDialog = new BottomSheetDialog(TodoViewActivity.this);
+            mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
+
+            mItemEditText = mTodoItemsDialog.findViewById(R.id.dialog_todo_new_item_edittext);
+            mAddButton = mTodoItemsDialog.findViewById(R.id.dialog_todo_add_new_item_button);
+            mCloseButton = mTodoItemsDialog.findViewById(R.id.close_todo_item_dialog);
+
+            mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
+            mTodoItemsRecyclerView.invalidate();
+            mTodoItemsRecyclerView.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TodoViewActivity.this);
+            mTodoItemsRecyclerView.setLayoutManager(linearLayoutManager);
+            todoItemAdapter = new TodoItemAdapter(position);
+            mTodoItemsRecyclerView.setAdapter(todoItemAdapter);
+
+            mCloseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mTodoItemsDialog.dismiss();
+                }
+            });
+            mAddButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String item = mItemEditText.getText().toString();
+                    if (Connectivity.checkInternetConnection(TodoViewActivity.this)) {
+                        if (!item.isEmpty()) {
+                            DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
+
+                            //String title, String date, String todoKey, String lastModified
+                            todoArrayList.get(position).getTodoInfoPOJO().setLastModified(DateTimeStamp.getDate());
+                            todoInfoReference.setValue(todoArrayList.get(position).getTodoInfoPOJO());
+                            final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
+
+                            todoReference.setValue(todoPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                                    firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
+                                            todoItemAdapter.notifyDataSetChanged();
+                                            Toast.makeText(TodoViewActivity.this, "Item added", Toast.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    } else {
+                        showInternetAlerter();
+                    }
+                }
+            });
+            mTodoItemsDialog.setCanceledOnTouchOutside(true);
+            mTodoItemsDialog.show();
+
         }
 
         @Override
@@ -201,14 +382,23 @@ public class TodoViewActivity extends AppCompatActivity {
             return todoArrayList.size();
         }
 
-        public class TodoViewHolder extends RecyclerView.ViewHolder{
+        public class TodoViewHolder extends RecyclerView.ViewHolder {
             public TextView mTitle, mDate;
+            public Button mMore;
+
             public TodoViewHolder(View itemView) {
                 super(itemView);
 
                 mTitle = itemView.findViewById(R.id.todo_title_view);
                 mDate = itemView.findViewById(R.id.todo_date_view);
 
+                mMore = itemView.findViewById(R.id.todo_more);
+                mMore.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItems(getPosition());
+                    }
+                });
 
 
             }
