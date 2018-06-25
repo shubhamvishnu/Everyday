@@ -127,7 +127,7 @@ public class LinkActivity extends AppCompatActivity implements View.OnClickListe
             mDone.setEnabled(false);
             String title = mTitle.getText().toString().trim();
             String link = mLink.getText().toString();
-            if (title.isEmpty() || link.isEmpty()) {
+            if (!link.isEmpty()) {
                 databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/");
                 final DatabaseReference linkDatabaseReference = databaseReference.push();
                 LinkPOJO linkPOJO = new LinkPOJO(link, title, DateTimeStamp.getDate(), linkDatabaseReference.getKey(), userInfoPOJO);

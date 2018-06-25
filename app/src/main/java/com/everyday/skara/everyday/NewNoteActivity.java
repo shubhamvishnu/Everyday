@@ -90,7 +90,7 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
             String title = mTitle.getText().toString().trim();
             String content = mContent.getText().toString();
 
-            if ((title.isEmpty() || content.isEmpty())) {
+            if (!content.isEmpty()) {
                 NotePOJO notePOJO = new NotePOJO(notesReference.getKey(), title, content, DateTimeStamp.getDate(), userInfoPOJO);
                 notesReference.setValue(notePOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override

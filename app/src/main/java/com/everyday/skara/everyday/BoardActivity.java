@@ -141,6 +141,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 transaction.addToBackStack(null);
 
                 transaction.commit();
+                mNewOptionsDialog.dismiss();
 
             }
         });
@@ -161,6 +162,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
                 transaction.commit();
 
+                mNewOptionsDialog.dismiss();
+
             }
         });
         mLinks.setOnClickListener(new View.OnClickListener() {
@@ -179,10 +182,12 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 transaction.addToBackStack(null);
 
                 transaction.commit();
+
+                mNewOptionsDialog.dismiss();
             }
         });
 
-        mNewOptionsDialog.setCanceledOnTouchOutside(false);
+        mNewOptionsDialog.setCanceledOnTouchOutside(true);
         mNewOptionsDialog.show();
     }
 
