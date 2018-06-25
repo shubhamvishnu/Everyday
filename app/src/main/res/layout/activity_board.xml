@@ -9,6 +9,11 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/new_options_button"
+        android:text="options"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/new_note_button"
         android:text="New Note"/>
     <Button
@@ -27,6 +32,12 @@
         android:layout_height="wrap_content"
         android:text="View Todo"
         android:id="@+id/view_todo"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/fragment_container"/>
 
 
 

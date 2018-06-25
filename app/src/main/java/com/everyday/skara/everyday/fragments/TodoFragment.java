@@ -1,11 +1,11 @@
-package com.everyday.skara.everyday;
+package com.everyday.skara.everyday.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +19,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -49,7 +51,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class TodoViewActivity extends AppCompatActivity {
+public class TodoFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
@@ -68,27 +70,32 @@ public class TodoViewActivity extends AppCompatActivity {
     BottomSheetDialog mTodoItemsDialog;
     RecyclerView mTodoItemsRecyclerView;
     TodoItemAdapter todoItemAdapter;
+    View view;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_todo_layout);
-        if (user != null) {
-            init();
-        } else {
-            toLoginActivity();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_todo_layout, container, false);
+        if (getActivity() != null) {
+            if (user != null) {
+                init();
+            } else {
+                toLoginActivity();
+            }
         }
+        return view;
     }
 
     void init() {
-        Intent intent = getIntent();
-        boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
-        userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
+
+        //Intent intent = getActivity().getIntent();
+        boardPOJO = (BoardPOJO) getArguments().getSerializable("board_pojo");
+        userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
         firebaseDatabase = FirebaseDatabase.getInstance();
         todoArrayList = new ArrayList<>();
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
 
-        mTodoRecyclerView = findViewById(R.id.todo_view_recycler);
+        mTodoRecyclerView = view.findViewById(R.id.todo_view_recycler);
 
         initTodoRecyclerView();
     }
@@ -96,7 +103,7 @@ public class TodoViewActivity extends AppCompatActivity {
     void initTodoRecyclerView() {
         mTodoRecyclerView.invalidate();
         mTodoRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mTodoRecyclerView.setLayoutManager(linearLayoutManager);
         todoAdapter = new TodoAdapter();
         mTodoRecyclerView.setAdapter(todoAdapter);
@@ -168,7 +175,7 @@ public class TodoViewActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
         if (childEventListener != null) {
             databaseReference.removeEventListener(childEventListener);
@@ -176,7 +183,7 @@ public class TodoViewActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (childEventListener != null) {
             databaseReference.removeEventListener(childEventListener);
@@ -184,7 +191,7 @@ public class TodoViewActivity extends AppCompatActivity {
     }
 
     void toLoginActivity() {
-        Intent intent = new Intent(TodoViewActivity.this, LoginActivity.class);
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
@@ -192,9 +199,10 @@ public class TodoViewActivity extends AppCompatActivity {
     public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder> {
         private LayoutInflater inflator;
         int todoPosition;
+
         public TodoItemAdapter(int todoPosition) {
             try {
-                this.inflator = LayoutInflater.from(TodoViewActivity.this);
+                this.inflator = LayoutInflater.from(getActivity());
                 this.todoPosition = todoPosition;
             } catch (NullPointerException e) {
 
@@ -203,9 +211,9 @@ public class TodoViewActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public TodoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public TodoItemAdapter.TodoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
-            return new TodoItemViewHolder(view);
+            return new TodoItemAdapter.TodoItemViewHolder(view);
         }
 
         @Override
@@ -216,7 +224,7 @@ public class TodoViewActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return  todoArrayList.get(todoPosition).getTodoPOJOArrayList().size();
+            return todoArrayList.get(todoPosition).getTodoPOJOArrayList().size();
         }
 
 
@@ -247,8 +255,9 @@ public class TodoViewActivity extends AppCompatActivity {
         }
 
     }
-    void setState(final int todoPosition, final int position, final boolean isChecked){
-        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey()+"/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()+"/");
+
+    void setState(final int todoPosition, final int position, final boolean isChecked) {
+        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey() + "/");
         HashMap<String, Object> stateMap = new HashMap<>();
         stateMap.put("state", isChecked);
         todoReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -259,6 +268,7 @@ public class TodoViewActivity extends AppCompatActivity {
         });
 
     }
+
     void deleteItem(final int todoPosition, final int position) {
         final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
@@ -273,8 +283,8 @@ public class TodoViewActivity extends AppCompatActivity {
                         todoReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-                                    todoAdapter.notifyItemRemoved(todoPosition);
-                                    mTodoItemsDialog.dismiss();
+                                todoAdapter.notifyItemRemoved(todoPosition);
+                                mTodoItemsDialog.dismiss();
                             }
                         });
                     }
@@ -286,23 +296,24 @@ public class TodoViewActivity extends AppCompatActivity {
     }
 
     void showInternetAlerter() {
-        Alerter.create(this)
+        Alerter.create(getActivity())
                 .setText("Oops! no internet connection...")
                 .setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Connectivity.openInternetSettings(getApplicationContext());
+                        Connectivity.openInternetSettings(getActivity());
                     }
                 })
                 .setBackgroundColorRes(R.color.colorAccent)
                 .show();
     }
+
     public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder> {
         private LayoutInflater inflator;
 
         public TodoAdapter() {
             try {
-                this.inflator = LayoutInflater.from(TodoViewActivity.this);
+                this.inflator = LayoutInflater.from(getActivity());
             } catch (NullPointerException e) {
 
             }
@@ -310,13 +321,13 @@ public class TodoViewActivity extends AppCompatActivity {
 
         @NonNull
         @Override
-        public TodoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public TodoAdapter.TodoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = inflator.inflate(R.layout.recyclerview_todo_row_layout, parent, false);
-            return new TodoViewHolder(view);
+            return new TodoAdapter.TodoViewHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull TodoViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull TodoAdapter.TodoViewHolder holder, int position) {
             try {
                 Todo todo = todoArrayList.get(position);
                 TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
@@ -336,7 +347,7 @@ public class TodoViewActivity extends AppCompatActivity {
 
             Button mCloseButton, mAddButton;
             final EditText mItemEditText;
-            mTodoItemsDialog = new BottomSheetDialog(TodoViewActivity.this);
+            mTodoItemsDialog = new BottomSheetDialog(getActivity());
             mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
 
             mItemEditText = mTodoItemsDialog.findViewById(R.id.dialog_todo_new_item_edittext);
@@ -346,7 +357,7 @@ public class TodoViewActivity extends AppCompatActivity {
             mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
             mTodoItemsRecyclerView.invalidate();
             mTodoItemsRecyclerView.setHasFixedSize(true);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(TodoViewActivity.this);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             mTodoItemsRecyclerView.setLayoutManager(linearLayoutManager);
             todoItemAdapter = new TodoItemAdapter(position);
             mTodoItemsRecyclerView.setAdapter(todoItemAdapter);
@@ -361,7 +372,7 @@ public class TodoViewActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     String item = mItemEditText.getText().toString();
-                    if (Connectivity.checkInternetConnection(TodoViewActivity.this)) {
+                    if (Connectivity.checkInternetConnection(getActivity())) {
                         if (!item.isEmpty()) {
                             DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
 
@@ -379,7 +390,7 @@ public class TodoViewActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
                                             todoItemAdapter.notifyDataSetChanged();
-                                            Toast.makeText(TodoViewActivity.this, "Item added", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
                                         }
                                     });
                                 }
