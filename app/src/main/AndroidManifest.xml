@@ -31,7 +31,6 @@
         <activity android:name=".NewNoteActivity" />
         <activity android:name=".LinkActivity" />
         <activity android:name=".TodoActivity" />
-        <activity android:name=".TodoViewActivity"></activity>
     </application>
 
 </manifest>

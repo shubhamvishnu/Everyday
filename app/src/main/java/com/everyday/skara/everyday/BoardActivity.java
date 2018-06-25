@@ -1,10 +1,10 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -21,15 +21,12 @@ import com.google.firebase.database.FirebaseDatabase;
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    Button mNewNoteButton, mNewLinkButton, mNewTodoButton;
-    Button mNewOptionsButton;
-    Button mViewTodo;
+    Button mNewOptionsButton, mNewButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
 
     // Dialog
-    BottomSheetDialog mNewOptionsDialog;
+    BottomSheetDialog mNewOptionsDialog, mNewDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +48,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         mNewOptionsButton = findViewById(R.id.new_options_button);
+        mNewButton = findViewById(R.id.new_button);
 
-        mNewNoteButton = findViewById(R.id.new_note_button);
-        mNewLinkButton = findViewById(R.id.new_link_button);
-        mNewTodoButton = findViewById(R.id.new_todo_button);
-
-        mViewTodo = findViewById(R.id.view_todo);
-
-
-        mNewNoteButton.setOnClickListener(this);
-        mNewLinkButton.setOnClickListener(this);
-        mNewTodoButton.setOnClickListener(this);
-
-        mViewTodo.setOnClickListener(this);
         mNewOptionsButton.setOnClickListener(this);
+        mNewButton.setOnClickListener(this);
         initFragment();
 
     }
@@ -97,23 +84,51 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.new_note_button:
-                toNewNoteActivity();
-                break;
-            case R.id.new_link_button:
-                toNewLinkActivity();
-                break;
-            case R.id.new_todo_button:
-                toNewTodoActivity();
-                break;
-            case R.id.view_todo:
-                toViewTodoActivity();
-                break;
             case R.id.new_options_button:
                 showOptionsDialog();
                 break;
+            case R.id.new_button:
+                showNewOptionDialog();
+                break;
 
         }
+    }
+
+    void showNewOptionDialog() {
+        Button mTodo, mNotes, mLinks;
+        mNewDialog = new BottomSheetDialog(this);
+        mNewDialog.setContentView(R.layout.dialog_new_layout);
+
+        mTodo = mNewDialog.findViewById(R.id.dialog_new_todo_image);
+        mNotes = mNewDialog.findViewById(R.id.dialog_new_notes_image);
+        mLinks = mNewDialog.findViewById(R.id.dialog_new_links_image);
+
+        mTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNewDialog.dismiss();
+                toNewTodoActivity();
+
+            }
+        });
+        mNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNewDialog.dismiss();
+                toNewNoteActivity();
+
+            }
+        });
+        mLinks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNewDialog.dismiss();
+                toNewLinkActivity();
+            }
+        });
+
+        mNewDialog.setCanceledOnTouchOutside(true);
+        mNewDialog.show();
     }
 
     void showOptionsDialog() {
@@ -214,13 +229,4 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
-
-    void toViewTodoActivity() {
-        Intent intent = new Intent(BoardActivity.this, TodoViewActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userInfoPOJO);
-        startActivity(intent);
-    }
-
 }
