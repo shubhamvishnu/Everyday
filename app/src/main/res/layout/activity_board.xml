@@ -6,44 +6,31 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".BoardActivity">
-    <Button
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/new_options_button"
-        android:text="options"/>
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/new_note_button"-->
-        <!--android:text="New Note"/>-->
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/new_link_button"-->
-        <!--android:text="New Link"/>-->
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/new_todo_button"-->
-        <!--android:text="New Todo"/>-->
+        android:orientation="horizontal">
 
-    <!--<Button-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="View Todo"-->
-        <!--android:id="@+id/view_todo"/>-->
+        <Button
+            android:id="@+id/new_options_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="options" />
+
+        <Button
+            android:id="@+id/new_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New" />
+    </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/fragment_container"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="New"
-        android:id="@+id/new_button"/>
-
+        android:layout_weight="1" />
 
 
 </LinearLayout>
