@@ -3,6 +3,7 @@ package com.everyday.skara.everyday.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.LinkPOJO;
 import com.everyday.skara.everyday.pojo.NotePOJO;
@@ -39,7 +41,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class LinksFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -54,8 +62,8 @@ public class LinksFragment extends Fragment {
     LinksAdapter mLinksAdapter;
     ArrayList<LinkPOJO> linkPOJOArrayList;
     View view;
-
-    BottomSheetDialog mEditLinksDialog;
+    ImageButton mFilterButton;
+    BottomSheetDialog mEditLinksDialog, mFilterDialog;
 
     @Nullable
     @Override
@@ -81,8 +89,73 @@ public class LinksFragment extends Fragment {
         linksDatabaseReference.keepSynced(true);
         linkPOJOArrayList = new ArrayList<>();
         mLinksRecyclerView = view.findViewById(R.id.links_view_recycler);
+
+        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog();
+            }
+        });
         initLinksRecyclerView();
     }
+    void showFilterDialog() {
+        Button mAsc, mDesc;
+        mFilterDialog = new BottomSheetDialog(getActivity());
+        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
+
+        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
+        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
+
+        mAsc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateAscending();
+                mLinksAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+        mDesc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateDescending();
+                mLinksAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+
+        mFilterDialog.setCanceledOnTouchOutside(true);
+        mFilterDialog.show();
+    }
+    void sortDateAscending() {
+        Collections.sort(linkPOJOArrayList, new Comparator<LinkPOJO>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            @Override
+            public int compare(LinkPOJO o1, LinkPOJO o2) {
+                try {
+                    return f.parse(o1.getDate()).compareTo(f.parse(o2.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+    }
+    void sortDateDescending() {
+        Collections.sort(linkPOJOArrayList, new Comparator<LinkPOJO>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            @Override
+            public int compare(LinkPOJO o1, LinkPOJO o2) {
+                try {
+                    return f.parse(o2.getDate()).compareTo(f.parse(o1.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+    }
+
     void initLinksRecyclerView(){
         mLinksRecyclerView.invalidate();
         mLinksRecyclerView.setHasFixedSize(true);
@@ -271,6 +344,17 @@ public class LinksFragment extends Fragment {
                 link = itemView.findViewById(R.id.links_view_link);
                 edit = itemView.findViewById(R.id.edit_link_button);
                 delete = itemView.findViewById(R.id.delete_links_button);
+
+                link.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String url = linkPOJOArrayList.get(getPosition()).getLink();
+                        if (!url.startsWith("http://") || !url.startsWith("https://")) {
+                            url = "http://" + url;
+                        }
+                        openWebBrowser(url);
+                    }
+                });
                 edit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -287,6 +371,11 @@ public class LinksFragment extends Fragment {
             }
         }
 
+    }
+    void openWebBrowser(String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().startActivity(browserIntent);
     }
 
 }

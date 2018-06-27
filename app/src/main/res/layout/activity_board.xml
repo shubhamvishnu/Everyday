@@ -40,6 +40,15 @@
                 app:floating_title="Options"
                 app:floating_title_color="@android:color/white" />
 
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/filter_option_button"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:adjustViewBounds="true"
+                android:background="@android:color/transparent"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_filter_icon" />
 
 
         </LinearLayout>

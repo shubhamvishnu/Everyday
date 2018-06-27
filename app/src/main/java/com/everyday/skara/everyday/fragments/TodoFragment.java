@@ -3,6 +3,7 @@ package com.everyday.skara.everyday.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -53,6 +54,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class TodoFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
@@ -73,7 +76,8 @@ public class TodoFragment extends Fragment {
     RecyclerView mTodoItemsRecyclerView;
     TodoItemAdapter todoItemAdapter;
     View view;
-    BottomSheetDialog mEditTodoDialog;
+    ImageButton mFilterButton;
+    BottomSheetDialog mEditTodoDialog, mFilterDialog;
 
     @Nullable
     @Override
@@ -90,17 +94,55 @@ public class TodoFragment extends Fragment {
     }
 
     void init() {
+        todoArrayList = new ArrayList<>();
+        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+
 
         //Intent intent = getActivity().getIntent();
         boardPOJO = (BoardPOJO) getArguments().getSerializable("board_pojo");
         userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
         firebaseDatabase = FirebaseDatabase.getInstance();
-        todoArrayList = new ArrayList<>();
+
+
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
         todoDatabaseReference.keepSynced(true);
         mTodoRecyclerView = view.findViewById(R.id.todo_view_recycler);
-
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog();
+            }
+        });
         initTodoRecyclerView();
+    }
+
+    void showFilterDialog() {
+        Button mAsc, mDesc;
+        mFilterDialog = new BottomSheetDialog(getActivity());
+        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
+
+        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
+        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
+
+        mAsc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateAscending();
+                todoAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+        mDesc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateDescending();
+                todoAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+
+        mFilterDialog.setCanceledOnTouchOutside(true);
+        mFilterDialog.show();
     }
 
     void initTodoRecyclerView() {
@@ -130,7 +172,7 @@ public class TodoFragment extends Fragment {
                         }
                         Todo todo = new Todo(todoInfoPOJO.getTodoKey(), todoInfoPOJO.getDate(), todoInfoPOJO, todoPOJOArrayList);
                         todoArrayList.add(todo);
-                        sortDateAscending();
+                        sortDateDescending();
                         todoAdapter.notifyItemInserted(todoPOJOArrayList.size() - 1);
                     }
                 } catch (DatabaseException d) {
@@ -171,6 +213,21 @@ public class TodoFragment extends Fragment {
             public int compare(Todo o1, Todo o2) {
                 try {
                     return f.parse(o1.getDate()).compareTo(f.parse(o2.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+    }
+
+    void sortDateDescending() {
+        Collections.sort(todoArrayList, new Comparator<Todo>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            @Override
+            public int compare(Todo o1, Todo o2) {
+                try {
+                    return f.parse(o2.getDate()).compareTo(f.parse(o1.getDate()));
                 } catch (ParseException e) {
                     throw new IllegalArgumentException(e);
                 }
@@ -364,21 +421,21 @@ public class TodoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     String item = mItemEditText.getText().toString();
-                        if (!item.isEmpty()) {
-                            DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
-                            todoReference.keepSynced(true);
-                            //String title, String date, String todoKey, String lastModified
-                            todoArrayList.get(position).getTodoInfoPOJO().setLastModified(DateTimeStamp.getDate());
-                            todoInfoReference.setValue(todoArrayList.get(position).getTodoInfoPOJO());
-                            final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
+                    if (!item.isEmpty()) {
+                        DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
+                        todoReference.keepSynced(true);
+                        //String title, String date, String todoKey, String lastModified
+                        todoArrayList.get(position).getTodoInfoPOJO().setLastModified(DateTimeStamp.getDate());
+                        todoInfoReference.setValue(todoArrayList.get(position).getTodoInfoPOJO());
+                        final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
 
-                            todoReference.setValue(todoPOJO);
-                            ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
-                            todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
-                            todoItemAdapter.notifyDataSetChanged();
-                            Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
-                        }
+                        todoReference.setValue(todoPOJO);
+                        ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                        todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
+                        todoItemAdapter.notifyDataSetChanged();
+                        Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
+                    }
                 }
             });
             mTodoItemsDialog.setCanceledOnTouchOutside(true);
@@ -386,7 +443,7 @@ public class TodoFragment extends Fragment {
 
         }
 
-        void showEditTodoDialog(final int position){
+        void showEditTodoDialog(final int position) {
             final EditText mTitle;
             Button mClose, mDone;
 
@@ -412,7 +469,7 @@ public class TodoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     todoInfoPOJO.setTitle(mTitle.getText().toString());
-                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()+ "/todos/" + todoInfoPOJO.getTodoKey() + "/info/" );
+                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoInfoPOJO.getTodoKey() + "/info/");
                     databaseReference.setValue(todoInfoPOJO);
                     todoArrayList.get(position).setTodoInfoPOJO(todoInfoPOJO);
                     notifyItemChanged(position);
@@ -442,6 +499,12 @@ public class TodoFragment extends Fragment {
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
 
                 mMore = itemView.findViewById(R.id.todo_more);
+                mTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItems(getPosition());
+                    }
+                });
                 mMore.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -467,13 +530,15 @@ public class TodoFragment extends Fragment {
             }
         }
     }
-    void deleteTodo(int position){
+
+    void deleteTodo(int position) {
         Todo todo = todoArrayList.get(position);
-        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()+ "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
+        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
         todoArrayList.remove(position);
         todoAdapter.notifyItemRemoved(position);
     }
-    void showDeleteTodoAlert(final int position){
+
+    void showDeleteTodoAlert(final int position) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getActivity());

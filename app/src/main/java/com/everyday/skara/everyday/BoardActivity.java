@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import com.everyday.skara.everyday.classes.NewOptionTypes;
 import com.everyday.skara.everyday.fragments.LinksFragment;
@@ -27,6 +28,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     FirebaseDatabase firebaseDatabase;
     FloatingActionButton mNewButton;
     FloatingTextButton mNewOptionsButton;
+    ImageButton mFilterButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     int optionType;
@@ -55,14 +57,19 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         mNewOptionsButton = findViewById(R.id.new_options_button);
+        mFilterButton = findViewById(R.id.filter_option_button);
+
         mNewOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOptionsDialog();
             }
         });
+
         mNewButton = findViewById(R.id.new_button);
         mNewButton.setOnClickListener(this);
+
+        mFilterButton.setOnClickListener(this);
         initFragment();
 
     }
@@ -92,10 +99,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         startActivity(intent);
     }
 
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
             case R.id.new_button:
                 switch (optionType) {
                     case NewOptionTypes.TYPE_TODO:
@@ -107,49 +114,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                     case NewOptionTypes.TYPE_NOTE:
                         toNewNoteActivity();
                         break;
-
                 }
                 break;
 
         }
-    }
-
-
-    void showNewOptionDialog() {
-        Button mTodo, mNotes, mLinks;
-        mNewDialog = new BottomSheetDialog(this);
-        mNewDialog.setContentView(R.layout.dialog_new_layout);
-
-        mTodo = mNewDialog.findViewById(R.id.dialog_new_todo_image);
-        mNotes = mNewDialog.findViewById(R.id.dialog_new_notes_image);
-        mLinks = mNewDialog.findViewById(R.id.dialog_new_links_image);
-
-        mTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                toNewTodoActivity();
-
-            }
-        });
-        mNotes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNewDialog.dismiss();
-                toNewNoteActivity();
-
-            }
-        });
-        mLinks.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mNewDialog.dismiss();
-                toNewLinkActivity();
-            }
-        });
-
-        mNewDialog.setCanceledOnTouchOutside(true);
-        mNewDialog.show();
     }
 
     void showOptionsDialog() {
@@ -261,7 +229,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     public void onBackPressed() {
         toBoardsActivity();
     }
-    void toBoardsActivity(){
+
+    void toBoardsActivity() {
         Intent intent = new Intent(BoardActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);

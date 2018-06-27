@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.NotePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -32,8 +33,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class NotesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -47,8 +54,8 @@ public class NotesFragment extends Fragment {
 
     RecyclerView mNotesRecyclerView;
     NotesAdapter mNotesAdapter;
-
-    BottomSheetDialog mEditNotesDialog;
+    ImageButton mFilterButton;
+    BottomSheetDialog mEditNotesDialog, mFilterDialog;
 
     View view;
 
@@ -76,8 +83,71 @@ public class NotesFragment extends Fragment {
         notesDatabaseReference.keepSynced(true);
         mNotesRecyclerView = view.findViewById(R.id.notes_view_recycler);
 
+        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFilterDialog();
+            }
+        });
         notePOJOArrayList = new ArrayList<>();
         initNotesRecyclerView();
+    }
+    void showFilterDialog() {
+        Button mAsc, mDesc;
+        mFilterDialog = new BottomSheetDialog(getActivity());
+        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
+
+        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
+        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
+
+        mAsc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateAscending();
+                mNotesAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+        mDesc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sortDateDescending();
+                mNotesAdapter.notifyDataSetChanged();
+                mFilterDialog.dismiss();
+            }
+        });
+
+        mFilterDialog.setCanceledOnTouchOutside(true);
+        mFilterDialog.show();
+    }
+    void sortDateAscending() {
+        Collections.sort(notePOJOArrayList, new Comparator<NotePOJO>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            @Override
+            public int compare(NotePOJO o1, NotePOJO o2) {
+                try {
+                    return f.parse(o1.getDate()).compareTo(f.parse(o2.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+    }
+    void sortDateDescending() {
+        Collections.sort(notePOJOArrayList, new Comparator<NotePOJO>() {
+            DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            @Override
+            public int compare(NotePOJO o1, NotePOJO o2) {
+                try {
+                    return f.parse(o2.getDate()).compareTo(f.parse(o1.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
     }
 
     void initNotesRecyclerView() {

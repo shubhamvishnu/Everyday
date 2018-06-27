@@ -28,8 +28,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_more_vert_24dp" />
-                            <entry key="sourceFile" value="C:\Users\sh395048" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_filter_icon" />
+                            <entry key="sourceFile" value="C:\Users\sh395048\Desktop\pyramid-chart.svg" />
                           </map>
                         </option>
                       </PersistentState>
