@@ -1,5 +1,7 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -188,6 +190,38 @@ public class LinksFragment extends Fragment {
         mEditLinksDialog.setCanceledOnTouchOutside(false);
         mEditLinksDialog.show();
     }
+    void deleteLink(final int position){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+
+        // set title
+        alertDialogBuilder.setTitle("Delete");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Are you sure you want to delete?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/" + linkPOJOArrayList.get(position).getLinkKey() + "/").removeValue();
+                        linkPOJOArrayList.remove(position);
+                        mLinksAdapter.notifyItemRemoved(position);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
 
     public class LinksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
@@ -223,7 +257,7 @@ public class LinksFragment extends Fragment {
 
         public class LinksViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, link;
-            public Button edit;
+            public Button edit, delete;
 
             public LinksViewHolder(View itemView) {
                 super(itemView);
@@ -232,10 +266,17 @@ public class LinksFragment extends Fragment {
                 title = itemView.findViewById(R.id.links_view_title);
                 link = itemView.findViewById(R.id.links_view_link);
                 edit = itemView.findViewById(R.id.edit_link_button);
+                delete = itemView.findViewById(R.id.delete_links_button);
                 edit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showEditLinkDialog(getPosition());
+                    }
+                });
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteLink(getPosition());
                     }
                 });
 

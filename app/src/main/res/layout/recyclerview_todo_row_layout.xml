@@ -15,4 +15,14 @@
         android:layout_height="wrap_content"
         android:text="MORE"
         android:id="@+id/todo_more"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="edit"
+        android:id="@+id/edit_todo_button"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        android:id="@+id/todo_delete_button"/>
 </LinearLayout>

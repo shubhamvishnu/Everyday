@@ -25,4 +25,9 @@
         android:layout_height="wrap_content"
         android:text="edit"
         android:id="@+id/edit_notes_button"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="delete"
+        android:id="@+id/delete_notes_button"/>
 </LinearLayout>

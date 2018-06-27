@@ -1,5 +1,7 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -71,6 +73,7 @@ public class TodoFragment extends Fragment {
     RecyclerView mTodoItemsRecyclerView;
     TodoItemAdapter todoItemAdapter;
     View view;
+    BottomSheetDialog mEditTodoDialog;
 
     @Nullable
     @Override
@@ -383,6 +386,44 @@ public class TodoFragment extends Fragment {
 
         }
 
+        void showEditTodoDialog(final int position){
+            final EditText mTitle;
+            Button mClose, mDone;
+
+            Todo todo = todoArrayList.get(position);
+            final TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
+
+            mEditTodoDialog = new BottomSheetDialog(getActivity());
+            mEditTodoDialog.setContentView(R.layout.dialog_edit_todo_layout);
+
+            mTitle = mEditTodoDialog.findViewById(R.id.title_edit_todo_dialog);
+            mClose = mEditTodoDialog.findViewById(R.id.close_todo_edit_dialog);
+            mDone = mEditTodoDialog.findViewById(R.id.done_edit_todo_dialog);
+
+            mTitle.setText(todoInfoPOJO.getTitle());
+
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditTodoDialog.dismiss();
+                }
+            });
+            mDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    todoInfoPOJO.setTitle(mTitle.getText().toString());
+                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()+ "/todos/" + todoInfoPOJO.getTodoKey() + "/info/" );
+                    databaseReference.setValue(todoInfoPOJO);
+                    todoArrayList.get(position).setTodoInfoPOJO(todoInfoPOJO);
+                    notifyItemChanged(position);
+                    mEditTodoDialog.dismiss();
+                }
+            });
+
+            mEditTodoDialog.setCanceledOnTouchOutside(false);
+            mEditTodoDialog.show();
+        }
+
         @Override
         public int getItemCount() {
             return todoArrayList.size();
@@ -390,13 +431,15 @@ public class TodoFragment extends Fragment {
 
         public class TodoViewHolder extends RecyclerView.ViewHolder {
             public TextView mTitle, mDate;
-            public Button mMore;
+            public Button mMore, mEdit, mDelete;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
 
                 mTitle = itemView.findViewById(R.id.todo_title_view);
                 mDate = itemView.findViewById(R.id.todo_date_view);
+                mEdit = itemView.findViewById(R.id.edit_todo_button);
+                mDelete = itemView.findViewById(R.id.todo_delete_button);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mMore.setOnClickListener(new View.OnClickListener() {
@@ -406,9 +449,59 @@ public class TodoFragment extends Fragment {
                     }
                 });
 
+                mEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEditTodoDialog(getPosition());
+                    }
+                });
+
+                mDelete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showDeleteTodoAlert(getPosition());
+                    }
+                });
+
 
             }
         }
+    }
+    void deleteTodo(int position){
+        Todo todo = todoArrayList.get(position);
+        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()+ "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
+        todoArrayList.remove(position);
+        todoAdapter.notifyItemRemoved(position);
+    }
+    void showDeleteTodoAlert(final int position){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+
+        // set title
+        alertDialogBuilder.setTitle("Delete");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Are you sure you want to delete?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        deleteTodo(position);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
     }
 
 }

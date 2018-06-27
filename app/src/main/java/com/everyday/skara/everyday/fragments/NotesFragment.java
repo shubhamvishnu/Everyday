@@ -1,5 +1,7 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -190,6 +192,38 @@ public class NotesFragment extends Fragment {
         mEditNotesDialog.show();
     }
 
+    void deleteNote(final int position){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getActivity());
+
+        // set title
+        alertDialogBuilder.setTitle("Delete");
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Are you sure you want to delete?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/notes/" + notePOJOArrayList.get(position).getNoteKey() + "/").removeValue();
+                        notePOJOArrayList.remove(position);
+                        mNotesAdapter.notifyItemRemoved(position);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+    }
     public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
 
@@ -227,6 +261,7 @@ public class NotesFragment extends Fragment {
         public class NotesViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, content;
             public Button edit;
+            public Button delete;
 
             public NotesViewHolder(View itemView) {
                 super(itemView);
@@ -240,6 +275,14 @@ public class NotesFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         showEditNotesDialog(getPosition());
+                    }
+                });
+
+                delete = itemView.findViewById(R.id.delete_notes_button);
+                delete.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteNote(getPosition());
                     }
                 });
 
