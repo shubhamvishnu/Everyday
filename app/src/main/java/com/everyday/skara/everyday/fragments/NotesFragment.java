@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -27,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class NotesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -40,6 +44,8 @@ public class NotesFragment extends Fragment {
 
     RecyclerView mNotesRecyclerView;
     NotesAdapter mNotesAdapter;
+
+    BottomSheetDialog mEditNotesDialog;
 
     View view;
 
@@ -70,7 +76,8 @@ public class NotesFragment extends Fragment {
         notePOJOArrayList = new ArrayList<>();
         initNotesRecyclerView();
     }
-    void initNotesRecyclerView(){
+
+    void initNotesRecyclerView() {
         mNotesRecyclerView.invalidate();
         mNotesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -81,13 +88,14 @@ public class NotesFragment extends Fragment {
         initNotes();
 
     }
-    void initNotes(){
+
+    void initNotes() {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 NotePOJO notePOJO = dataSnapshot.getValue(NotePOJO.class);
                 notePOJOArrayList.add(notePOJO);
-                mNotesAdapter.notifyItemInserted(notePOJOArrayList.size()-1);
+                mNotesAdapter.notifyItemInserted(notePOJOArrayList.size() - 1);
             }
 
             @Override
@@ -112,6 +120,7 @@ public class NotesFragment extends Fragment {
         };
         notesDatabaseReference.addChildEventListener(childEventListener);
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -127,11 +136,60 @@ public class NotesFragment extends Fragment {
             notesDatabaseReference.removeEventListener(childEventListener);
         }
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    void showEditNotesDialog(final int position) {
+        Button mClose, mDone;
+        TextView mDate;
+        mEditNotesDialog = new BottomSheetDialog(getActivity());
+        mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout);
+
+        final EditText mTitle = mEditNotesDialog.findViewById(R.id.title_edit_notes);
+        final EditText mContent = mEditNotesDialog.findViewById(R.id.content_edit_notes);
+
+        mDate = mEditNotesDialog.findViewById(R.id.date_edit_notes);
+        mClose = mEditNotesDialog.findViewById(R.id.close_edit_notes);
+        mDone = mEditNotesDialog.findViewById(R.id.done_edit_notes);
+
+
+        final NotePOJO notePOJO = notePOJOArrayList.get(position);
+
+        mTitle.setText(notePOJO.getTitle());
+        mContent.setText(notePOJO.getContent());
+        mDate.setText(notePOJO.getDate());
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditNotesDialog.dismiss();
+            }
+        });
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String title = mTitle.getText().toString();
+                final String content = mContent.getText().toString();
+                notePOJO.setTitle(title);
+                notePOJO.setContent(content);
+                DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/notes/" + notePOJO.getNoteKey() + "/");
+                databaseReference.keepSynced(true);
+                databaseReference.setValue(notePOJO);
+                notePOJOArrayList.set(position, notePOJO);
+                mNotesAdapter.notifyItemChanged(position);
+                mEditNotesDialog.dismiss();
+            }
+        });
+
+
+        mEditNotesDialog.setCanceledOnTouchOutside(false);
+        mEditNotesDialog.show();
+    }
+
     public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
 
@@ -152,7 +210,7 @@ public class NotesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-                NotePOJO notePOJO = notePOJOArrayList.get(position);
+            NotePOJO notePOJO = notePOJOArrayList.get(position);
             ((NotesViewHolder) holder).date.setText(notePOJO.getDate());
             ((NotesViewHolder) holder).title.setText(notePOJO.getTitle());
             ((NotesViewHolder) holder).content.setText(notePOJO.getContent());
@@ -168,6 +226,7 @@ public class NotesFragment extends Fragment {
 
         public class NotesViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, content;
+            public Button edit;
 
             public NotesViewHolder(View itemView) {
                 super(itemView);
@@ -175,6 +234,14 @@ public class NotesFragment extends Fragment {
                 date = itemView.findViewById(R.id.notes_view_date);
                 title = itemView.findViewById(R.id.notes_view_title);
                 content = itemView.findViewById(R.id.notes_view_content);
+
+                edit = itemView.findViewById(R.id.edit_notes_button);
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEditNotesDialog(getPosition());
+                    }
+                });
 
             }
         }

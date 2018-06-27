@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -48,6 +50,8 @@ public class LinksFragment extends Fragment {
     LinksAdapter mLinksAdapter;
     ArrayList<LinkPOJO> linkPOJOArrayList;
     View view;
+
+    BottomSheetDialog mEditLinksDialog;
 
     @Nullable
     @Override
@@ -138,6 +142,52 @@ public class LinksFragment extends Fragment {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+    void showEditLinkDialog(final int position) {
+        Button mClose, mDone;
+        TextView mDate;
+        mEditLinksDialog = new BottomSheetDialog(getActivity());
+        mEditLinksDialog.setContentView(R.layout.dialog_edit_links_layout);
+
+        final EditText mTitle = mEditLinksDialog.findViewById(R.id.title_edit_link);
+        final EditText mContent = mEditLinksDialog.findViewById(R.id.link_edit_link);
+
+        mDate = mEditLinksDialog.findViewById(R.id.date_edit_link);
+        mClose = mEditLinksDialog.findViewById(R.id.close_edit_link);
+        mDone = mEditLinksDialog.findViewById(R.id.done_edit_link);
+
+
+        final LinkPOJO linkPOJO = linkPOJOArrayList.get(position);
+
+        mTitle.setText(linkPOJO.getTitle());
+        mContent.setText(linkPOJO.getLink());
+        mDate.setText(linkPOJO.getDate());
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditLinksDialog.dismiss();
+            }
+        });
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String title = mTitle.getText().toString();
+                final String content = mContent.getText().toString();
+                linkPOJO.setTitle(title);
+                linkPOJO.setLink(content);
+                DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/" + linkPOJO.getLinkKey() + "/");
+                databaseReference.keepSynced(true);
+                databaseReference.setValue(linkPOJO);
+                linkPOJOArrayList.set(position, linkPOJO);
+                mLinksAdapter.notifyItemChanged(position);
+                mEditLinksDialog.dismiss();
+            }
+        });
+
+
+        mEditLinksDialog.setCanceledOnTouchOutside(false);
+        mEditLinksDialog.show();
+    }
 
     public class LinksAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
@@ -173,6 +223,7 @@ public class LinksFragment extends Fragment {
 
         public class LinksViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, link;
+            public Button edit;
 
             public LinksViewHolder(View itemView) {
                 super(itemView);
@@ -180,6 +231,13 @@ public class LinksFragment extends Fragment {
                 date = itemView.findViewById(R.id.links_view_date);
                 title = itemView.findViewById(R.id.links_view_title);
                 link = itemView.findViewById(R.id.links_view_link);
+                edit = itemView.findViewById(R.id.edit_link_button);
+                edit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showEditLinkDialog(getPosition());
+                    }
+                });
 
             }
         }

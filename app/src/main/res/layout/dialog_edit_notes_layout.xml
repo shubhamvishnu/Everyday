@@ -1,30 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/links_view_date"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="date" />
-
-    <TextView
-        android:id="@+id/links_view_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="title" />
-
-    <TextView
-        android:id="@+id/links_view_link"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="link" />
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="edit"
-        android:id="@+id/edit_link_button"/>
+        android:text="close"
+        android:id="@+id/close_edit_notes"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/date_edit_notes"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="title"
+        android:id="@+id/title_edit_notes" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:hint="content"
+        android:layout_height="wrap_content"
+        android:id="@+id/content_edit_notes"/>
+
+    <Button
+        android:text="done"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/done_edit_notes"/>
 </LinearLayout>
