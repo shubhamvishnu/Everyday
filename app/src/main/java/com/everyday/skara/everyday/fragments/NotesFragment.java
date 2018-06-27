@@ -64,7 +64,7 @@ public class NotesFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         notesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/notes/");
-
+        notesDatabaseReference.keepSynced(true);
         mNotesRecyclerView = view.findViewById(R.id.notes_view_recycler);
 
         notePOJOArrayList = new ArrayList<>();

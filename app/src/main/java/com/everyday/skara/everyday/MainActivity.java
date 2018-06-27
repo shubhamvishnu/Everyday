@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
-                boardsAdapter.notifyItemInserted(boardPOJOArrayList.size()-1);
+                boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
 
             }
 
@@ -210,50 +210,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void createBoard(final String title) {
-        if (Connectivity.checkInternetConnection(this)) {
-            mTitle.setEnabled(false);
-            mDone.setEnabled(false);
-            databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS);
-            final DatabaseReference boardReference = databaseReference.push();
-            final String boardKey = boardReference.getKey();
+        mTitle.setEnabled(false);
+        mDone.setEnabled(false);
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS);
+        databaseReference.keepSynced(true);
+        final DatabaseReference boardReference = databaseReference.push();
+        boardReference.keepSynced(true);
+        final String boardKey = boardReference.getKey();
 
 
-            // initializing BoardPOJO class
-            final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
+        // initializing BoardPOJO class
+        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
 
-            // TODO: add a progress bar
-            boardReference.setValue(boardPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
+        // TODO: add a progress bar
+        boardReference.setValue(boardPOJO);
+        // updating the user group information
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
+        databaseReference.keepSynced(true);
+        databaseReference.setValue(boardPOJO);
+        // initializing ActivityPOJO class
+        ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
 
-                    // updating the user group information
-                    databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
-                    databaseReference.setValue(boardPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-
-
-                            // initializing ActivityPOJO class
-                            ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-
-                            // pushing ActivityPOJO
-                            boardReference.child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    mNewBoardDialog.dismiss();
-                                    toBoardActivity(boardPOJO);
-                                }
-                            });
-                        }
-                    });
-
-
-                }
-            });
-        } else {
-            showInternetAlerter();
-        }
+        // pushing ActivityPOJO
+        boardReference.child("activity").push().setValue(activityPOJO);
+        mNewBoardDialog.dismiss();
+        toBoardActivity(boardPOJO);
     }
 
     void showInternetAlerter() {

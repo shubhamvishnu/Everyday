@@ -94,7 +94,7 @@ public class TodoFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
         todoArrayList = new ArrayList<>();
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
-
+        todoDatabaseReference.keepSynced(true);
         mTodoRecyclerView = view.findViewById(R.id.todo_view_recycler);
 
         initTodoRecyclerView();
@@ -113,6 +113,7 @@ public class TodoFragment extends Fragment {
 
     void initTodos() {
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
+        databaseReference.keepSynced(true);
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -260,39 +261,27 @@ public class TodoFragment extends Fragment {
         final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey() + "/");
         HashMap<String, Object> stateMap = new HashMap<>();
         stateMap.put("state", isChecked);
-        todoReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
-            }
-        });
+        todoReference.updateChildren(stateMap);
+        todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
 
     }
 
     void deleteItem(final int todoPosition, final int position) {
         final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
-        todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                try {
-                    todoArrayList.get(todoPosition).getTodoPOJOArrayList().remove(position);
-                    todoItemAdapter.notifyDataSetChanged();
+        todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue();
+        try {
+            todoArrayList.get(todoPosition).getTodoPOJOArrayList().remove(position);
+            todoItemAdapter.notifyDataSetChanged();
 
-                    if (todoArrayList.get(todoPosition).getTodoPOJOArrayList().size() == 0) {
-                        todoReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                todoAdapter.notifyItemRemoved(todoPosition);
-                                mTodoItemsDialog.dismiss();
-                            }
-                        });
-                    }
-                } catch (IndexOutOfBoundsException e) {
-
-                }
+            if (todoArrayList.get(todoPosition).getTodoPOJOArrayList().size() == 0) {
+                todoReference.removeValue();
+                todoAdapter.notifyItemRemoved(todoPosition);
+                mTodoItemsDialog.dismiss();
             }
-        });
+        } catch (IndexOutOfBoundsException e) {
+
+        }
     }
 
     void showInternetAlerter() {
@@ -372,33 +361,21 @@ public class TodoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     String item = mItemEditText.getText().toString();
-                    if (Connectivity.checkInternetConnection(getActivity())) {
                         if (!item.isEmpty()) {
                             DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
-
+                            todoReference.keepSynced(true);
                             //String title, String date, String todoKey, String lastModified
                             todoArrayList.get(position).getTodoInfoPOJO().setLastModified(DateTimeStamp.getDate());
                             todoInfoReference.setValue(todoArrayList.get(position).getTodoInfoPOJO());
                             final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
 
-                            todoReference.setValue(todoPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                                    firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
-                                            todoItemAdapter.notifyDataSetChanged();
-                                            Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                }
-                            });
+                            todoReference.setValue(todoPOJO);
+                            ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                            todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
+                            todoItemAdapter.notifyDataSetChanged();
+                            Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        showInternetAlerter();
-                    }
                 }
             });
             mTodoItemsDialog.setCanceledOnTouchOutside(true);

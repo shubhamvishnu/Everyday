@@ -123,32 +123,22 @@ public class LinkActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void saveLink() {
-        if (Connectivity.checkInternetConnection(this)) {
             mDone.setEnabled(false);
             String title = mTitle.getText().toString().trim();
             String link = mLink.getText().toString();
             if (!link.isEmpty()) {
                 databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/");
+                databaseReference.keepSynced(true);
                 final DatabaseReference linkDatabaseReference = databaseReference.push();
+                linkDatabaseReference.keepSynced(true);
                 LinkPOJO linkPOJO = new LinkPOJO(link, title, DateTimeStamp.getDate(), linkDatabaseReference.getKey(), userInfoPOJO);
-                linkDatabaseReference.setValue(linkPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ActivityPOJO activityPOJO = new ActivityPOJO("link saved on "+boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                               toBoardsActivity();
-                            }
-                        });
-                    }
-                });
+                linkDatabaseReference.setValue(linkPOJO);
+                ActivityPOJO activityPOJO = new ActivityPOJO("link saved on "+boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                toBoardsActivity();
             }else{
                 // TODO: fields empty alert
             }
-        } else {
-            showInternetAlerter();
-        }
     }
     void toBoardsActivity(){
         Intent intent = new Intent(LinkActivity.this, BoardActivity.class);

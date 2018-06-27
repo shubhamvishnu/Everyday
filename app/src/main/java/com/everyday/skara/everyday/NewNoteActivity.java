@@ -82,34 +82,24 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     void saveNote() {
-        if (Connectivity.checkInternetConnection(this)) {
             mDone.setEnabled(false);
             databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/notes/");
+            databaseReference.keepSynced(true);
             DatabaseReference notesReference = databaseReference.push();
+            notesReference.keepSynced(true);
 
             String title = mTitle.getText().toString().trim();
             String content = mContent.getText().toString();
 
             if (!content.isEmpty()) {
                 NotePOJO notePOJO = new NotePOJO(notesReference.getKey(), title, content, DateTimeStamp.getDate(), userInfoPOJO);
-                notesReference.setValue(notePOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ActivityPOJO activityPOJO = new ActivityPOJO("New note saved on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                toBoardsActivity();
-                            }
-                        });
-                    }
-                });
+                notesReference.setValue(notePOJO);
+                ActivityPOJO activityPOJO = new ActivityPOJO("New note saved on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                toBoardsActivity();
             } else {
                 // TODO: show field empty alert
             }
-        } else {
-            showInternetAlerter();
-        }
     }
 
     void showInternetAlerter() {

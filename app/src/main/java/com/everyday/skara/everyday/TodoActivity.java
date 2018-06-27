@@ -65,8 +65,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
+        databaseReference.keepSynced(true);
         todoDatabaseReference = databaseReference.push();
+        todoDatabaseReference.keepSynced(true);
         todoInfoReference = todoDatabaseReference.child("info");
+        todoInfoReference.keepSynced(true);
 
         todoPOJOArrayList = new ArrayList<>();
 
@@ -106,10 +109,9 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     void addTodo() {
         String item = mItemEditText.getText().toString();
         String title = mTodoTitle.getText().toString();
-        if (Connectivity.checkInternetConnection(this)) {
             if (!item.isEmpty()) {
                 DatabaseReference todoReference = todoDatabaseReference.child("todo_items").push();
-
+                todoReference.keepSynced(true);
                 if (title.isEmpty()) {
                     title = "";
                 }
@@ -118,26 +120,13 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
                 todoInfoReference.setValue(todoInfoPOJO);
                 final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
-
-                todoReference.setValue(todoPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                todoPOJOArrayList.add(todoPOJO);
-                                todoListAdapter.notifyItemInserted(todoPOJOArrayList.size());
-                                Toast.makeText(TodoActivity.this, "Item added", Toast.LENGTH_SHORT).show();
-
-                            }
-                        });
-                    }
-                });
+                todoReference.setValue(todoPOJO);
+                ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                todoPOJOArrayList.add(todoPOJO);
+                todoListAdapter.notifyItemInserted(todoPOJOArrayList.size());
+                Toast.makeText(TodoActivity.this, "Item added", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            showInternetAlerter();
-        }
     }
 
     void showInternetAlerter() {
@@ -236,6 +225,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
         void updateState(final int position, final boolean isChecked) {
             DatabaseReference todoItemReference = databaseReference.child(todoDatabaseReference.getKey()).child("todo_items").child(todoPOJOArrayList.get(position).getItemKey());
+            todoItemReference.keepSynced(true);
             HashMap<String, Object> stateMap = new HashMap<>();
             stateMap.put("state", isChecked);
             todoItemReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -248,6 +238,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
         void deleteItem(final int position) {
             DatabaseReference todoItemReference = databaseReference.child(todoDatabaseReference.getKey()).child("todo_items").child(todoPOJOArrayList.get(position).getItemKey());
+            todoItemReference.keepSynced(true);
             todoItemReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

@@ -70,6 +70,7 @@ public class LinksFragment extends Fragment {
         firebaseDatabase = FirebaseDatabase.getInstance();
 
         linksDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/links/");
+        linksDatabaseReference.keepSynced(true);
         linkPOJOArrayList = new ArrayList<>();
         mLinksRecyclerView = view.findViewById(R.id.links_view_recycler);
         initLinksRecyclerView();
