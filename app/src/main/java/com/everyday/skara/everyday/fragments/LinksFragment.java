@@ -10,6 +10,8 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -246,7 +248,9 @@ public class LinksFragment extends Fragment {
             LinkPOJO linkPOJO = linkPOJOArrayList.get(position);
             ((LinksViewHolder) holder).date.setText(linkPOJO.getDate());
             ((LinksViewHolder) holder).title.setText(linkPOJO.getTitle());
-            ((LinksViewHolder) holder).link.setText(linkPOJO.getLink());
+            SpannableString content = new SpannableString(linkPOJO.getLink());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            ((LinksViewHolder) holder).link.setText(content);
         }
 
         @Override
@@ -257,7 +261,7 @@ public class LinksFragment extends Fragment {
 
         public class LinksViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, link;
-            public Button edit, delete;
+            public ImageButton edit, delete;
 
             public LinksViewHolder(View itemView) {
                 super(itemView);

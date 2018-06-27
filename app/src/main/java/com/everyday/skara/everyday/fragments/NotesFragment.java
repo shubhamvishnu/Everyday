@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -260,8 +261,8 @@ public class NotesFragment extends Fragment {
 
         public class NotesViewHolder extends RecyclerView.ViewHolder {
             public TextView date, title, content;
-            public Button edit;
-            public Button delete;
+            public ImageButton edit;
+            public ImageButton delete;
 
             public NotesViewHolder(View itemView) {
                 super(itemView);
