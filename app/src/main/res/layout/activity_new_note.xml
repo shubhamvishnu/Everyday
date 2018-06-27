@@ -6,18 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".NewNoteActivity">
-
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"
+    android:layout_margin="8dp"
+    android:orientation="vertical">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/note_title"
+        android:textSize="22dp"
+        android:textColor="@android:color/black"
         android:hint="title" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/note_date"
-        android:text="date" />
+
 
     <EditText
         android:id="@+id/note_content"
@@ -25,14 +28,25 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:ems="10"
+        android:textSize="18dp"
         android:gravity="left"
         android:hint="Write here..."
         android:inputType="textMultiLine" />
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/note_date"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="6dp"
+        android:text="date" />
+</LinearLayout>
     <Button
         android:id="@+id/note_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="done" />
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:background="@color/red"
+        android:text="Done" />
 
 </LinearLayout>

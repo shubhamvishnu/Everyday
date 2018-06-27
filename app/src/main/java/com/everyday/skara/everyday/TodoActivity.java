@@ -42,7 +42,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     EditText mItemEditText, mTodoTitle;
-    Button mTodoDone;
+    ImageButton mTodoDone;
     ArrayList<TodoPOJO> todoPOJOArrayList;
     RecyclerView mTodoRecyclerView;
     TodoListAdapter todoListAdapter;

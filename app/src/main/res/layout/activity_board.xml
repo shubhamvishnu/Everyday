@@ -35,7 +35,7 @@
                 android:id="@+id/new_options_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:floating_background_color="#f40808"
+                app:floating_background_color="@color/colorAccent"
                 app:floating_right_icon="@drawable/ic_arrow_drop_down_24dp"
                 app:floating_title="Options"
                 app:floating_title_color="@android:color/white" />

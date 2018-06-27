@@ -13,17 +13,20 @@
         <CheckBox
             android:id="@+id/todo_checkbox"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+         />
 
         <EditText
             android:id="@+id/todo_item"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:textSize="18dp"
             android:layout_height="wrap_content"
             android:text="Todo item" />
         <android.support.v7.widget.AppCompatImageButton
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="32dp"
+            android:layout_gravity="center"
+            android:layout_height="32dp"
             android:background="@android:color/transparent"
             android:id="@+id/delete_item"
             app:srcCompat="@drawable/ic_delete_24dp"/>
