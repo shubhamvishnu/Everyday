@@ -3,6 +3,7 @@ package com.everyday.skara.everyday;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,10 +20,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    Button mNewOptionsButton, mNewButton;
+    FloatingActionButton mNewButton;
+    FloatingTextButton mNewOptionsButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     int optionType;
@@ -51,9 +55,13 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         mNewOptionsButton = findViewById(R.id.new_options_button);
+        mNewOptionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showOptionsDialog();
+            }
+        });
         mNewButton = findViewById(R.id.new_button);
-
-        mNewOptionsButton.setOnClickListener(this);
         mNewButton.setOnClickListener(this);
         initFragment();
 
@@ -87,9 +95,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.new_options_button:
-                showOptionsDialog();
-                break;
+
             case R.id.new_button:
                 switch (optionType) {
                     case NewOptionTypes.TYPE_TODO:
@@ -159,6 +165,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_TODO;
+                mNewOptionsButton.setTitle("TODO");
                 TodoFragment todoFragment = new TodoFragment();
 
                 Bundle bundle = new Bundle();
@@ -180,6 +187,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_NOTE;
+                mNewOptionsButton.setTitle("NOTES");
                 NotesFragment notesFragment = new NotesFragment();
 
                 Bundle bundle = new Bundle();
@@ -202,6 +210,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_LINK;
+                mNewOptionsButton.setTitle("LINKS");
                 LinksFragment linksFragment = new LinksFragment();
 
                 Bundle bundle = new Bundle();

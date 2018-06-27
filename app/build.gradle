@@ -48,6 +48,9 @@ dependencies {
     // Alerter
     implementation 'com.tapadoo.android:alerter:2.0.3'
 
+    // Floating Text Button
+    implementation 'com.github.dimorinny:floating-text-button:0.0.4'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
