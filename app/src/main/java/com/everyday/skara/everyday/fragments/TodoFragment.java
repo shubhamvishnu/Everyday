@@ -431,7 +431,7 @@ public class TodoFragment extends Fragment {
 
         public class TodoViewHolder extends RecyclerView.ViewHolder {
             public TextView mTitle, mDate;
-            public Button mMore, mEdit, mDelete;
+            public ImageButton mMore, mEdit, mDelete;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);

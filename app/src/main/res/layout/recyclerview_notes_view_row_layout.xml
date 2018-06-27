@@ -55,7 +55,6 @@
         android:id="@+id/notes_view_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="6dp"
         android:textSize="12dp"
