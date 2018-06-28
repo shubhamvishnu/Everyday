@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:textAllCaps="false"
-        android:background="@color/red"
+        android:background="@color/colorAccent"
         android:text="Done" />
 
 </LinearLayout>

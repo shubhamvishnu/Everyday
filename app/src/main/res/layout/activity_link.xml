@@ -50,7 +50,7 @@
         android:id="@+id/link_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/red"
+        android:background="@color/colorAccent"
         android:text="Done"
         android:textAllCaps="false"
         android:textColor="@android:color/white" />
