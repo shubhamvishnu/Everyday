@@ -236,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         toBoardActivity(boardPOJO);
     }
 
+
     void showInternetAlerter() {
         Alerter.create(this)
                 .setText("Oops! no internet connection...")
