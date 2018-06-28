@@ -100,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void initBoards() {
         boardPOJOArrayList = new ArrayList<>();
-
         boardsReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key());
         boardsReference.keepSynced(true);
 
@@ -257,6 +256,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+    void toAddMembers(){
+
+    }
 
     public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
 
@@ -291,12 +293,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public Button boardTitle;
+            public Button boardTitle, addMembers;
 
             public BoardsViewHolder(View itemView) {
                 super(itemView);
                 boardTitle = itemView.findViewById(R.id.boards_title_button);
+                addMembers = itemView.findViewById(R.id.boards_add_member_button);
+
                 boardTitle.setOnClickListener(this);
+                addMembers.setOnClickListener(this);
             }
 
             @Override
@@ -304,6 +309,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (view.getId()) {
                     case R.id.boards_title_button:
                         toBoardActivity(boardPOJOArrayList.get(getPosition()));
+                        break;
+                    case R.id.boards_add_member_button:
+                        toAddMembers();
                         break;
                 }
             }
