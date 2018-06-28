@@ -14,6 +14,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.Connectivity;
@@ -196,7 +197,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
     class TodoViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public CheckBox mCheckBox;
-        public EditText mItem;
+        public TextView mItem;
         public ImageButton mDelete;
 
         public TodoViewHolder(View itemView) {
