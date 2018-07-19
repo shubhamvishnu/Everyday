@@ -257,8 +257,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
-    void toAddMembers(){
-
+    void toAddMembers(BoardPOJO boardPOJO){
+        Intent intent = new Intent(MainActivity.this, AddBoardMembersActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
@@ -312,7 +316,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         toBoardActivity(boardPOJOArrayList.get(getPosition()));
                         break;
                     case R.id.boards_add_member_button:
-                        toAddMembers();
+                        toAddMembers(boardPOJOArrayList.get(getPosition()));
                         break;
                 }
             }

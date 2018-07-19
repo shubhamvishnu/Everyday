@@ -1,68 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
 
-        <TextView
-            android:id="@+id/todo_title_view"
-            android:layout_width="0dp"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/posts_card_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:minHeight="50dp"
+        card_view:cardBackgroundColor="#ffffff"
+        card_view:cardCornerRadius="1dp"
+        card_view:cardElevation="4dp"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="title"
-            android:textColor="@android:color/black"
-            android:textSize="22dp"
-            android:textStyle="bold" />
+            android:padding="8dp"
+            android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/edit_todo_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_edit_24dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+              >
 
-        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/todo_delete_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_delete_24dp" />
-        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/todo_more"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:adjustViewBounds="true"
-            android:background="@android:color/transparent"
-            android:padding="6dp"
-            android:scaleType="fitCenter"
-            app:srcCompat="@drawable/ic_more_vert_24dp" />
+                <TextView
+                    android:id="@+id/todo_title_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="title"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/edit_todo_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_edit_24dp" />
+
+                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/todo_delete_button"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_delete_24dp" />
+
+                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/todo_more"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="6dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_more_vert_24dp" />
 
 
-    </LinearLayout>
+            </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/todo_date_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="6dp"
-        android:textSize="12dp"
-        android:padding="6dp"
-        android:text="date" />
+            <TextView
+                android:id="@+id/todo_date_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:layout_marginTop="4dp"
+                android:padding="6dp"
+                android:text="date"
+                android:textSize="12dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#999797" />
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:background="#999797" />-->
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
 </LinearLayout>

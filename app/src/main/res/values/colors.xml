@@ -10,4 +10,7 @@
     <color name="yellow">#ffb303</color>
     <color name="blue">#006DF0</color>
     <color name="green_blue">#02cf9c</color>
+    <color name="grey">#79525252</color>
+    <color name="green">#01af49</color>
+    <color name="transparent">#00000000</color>
 </resources>
