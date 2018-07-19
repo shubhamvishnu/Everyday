@@ -40,13 +40,14 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     EditText mMemberSearchEditText;
     RecyclerView mMemberSearchRecyclerView;
-    Button mSearchDoneButton, mDoneButton;
+    Button mSearchDoneButton, mDoneButton, mBoardMembersButton;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference childDatabaseReference;
     ChildEventListener memberChildEventListener;
     SearchAdapter searchAdapter;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
+    ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
     ArrayList<UserInfoPOJO> userInfoPOJOArrayList;
 
     @Override
@@ -80,6 +81,7 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         mSearchDoneButton = findViewById(R.id.search_done_button);
         mDoneButton = findViewById(R.id.done_adding_members_button);
 
+
         mSearchDoneButton.setOnClickListener(this);
         mDoneButton.setOnClickListener(this);
         initRecyclerView();
@@ -93,6 +95,31 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         mMemberSearchRecyclerView.setLayoutManager(linearLayoutManager);
         searchAdapter = new SearchAdapter();
         mMemberSearchRecyclerView.setAdapter(searchAdapter);
+    }
+
+    void checkExistingBoardMembers(final String input) {
+        boardMembersPOJOArrayList = new ArrayList<>();
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference databaseReference1 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+        databaseReference1.keepSynced(true);
+        databaseReference1.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        boardMembersPOJOArrayList.add(dataSnapshot.getValue(BoardMembersPOJO.class));
+                    }
+                } else {
+                    fetchFromFirebase(input);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -158,10 +185,17 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     void addMembersToBoard(int position) {
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference1 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+
         UserInfoPOJO userInfoPOJO = userInfoPOJOArrayList.get(position);
         DatabaseReference memberDatabaseReference = databaseReference1.push();
         BoardMembersPOJO boardMembersPOJO = new BoardMembersPOJO(memberDatabaseReference.getKey(), DateTimeStamp.getDate(), userInfoPOJO, BoardMembersType.TYPE_MEMBER);
         memberDatabaseReference.setValue(boardMembersPOJO);
+
+
+        // other board info
+        DatabaseReference databaseReference2 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_OTHER_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey());
+        databaseReference2.setValue(boardPOJO);
+
         userInfoPOJOArrayList.remove(position);
         searchAdapter.notifyItemRemoved(position);
     }
@@ -170,15 +204,22 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         userInfoPOJOArrayList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
         childDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS);
+        childDatabaseReference.keepSynced(true);
         memberChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
+
                     UserInfoPOJO userInfoPOJO1 = dataSnapshot.getValue(UserInfoPOJO.class);
+                    Toast.makeText(AddBoardMembersActivity.this, "" + userInfoPOJO1.getName(), Toast.LENGTH_SHORT).show();
                     if (!userInfoPOJO1.getUser_key().equals(userInfoPOJO.getUser_key())) {
-                        if (userInfoPOJO1.getName().contains(input) || userInfoPOJO1.getEmail().contains(input)) {
-                            userInfoPOJOArrayList.add(userInfoPOJO1);
-                            searchAdapter.notifyItemInserted(userInfoPOJOArrayList.size());
+
+                        if (!checkForExistenceFromList(userInfoPOJO1)) {
+                            if (userInfoPOJO1.getName().contains(input) || userInfoPOJO1.getEmail().contains(input)) {
+                                userInfoPOJOArrayList.add(userInfoPOJO1);
+                                searchAdapter.notifyDataSetChanged();
+                            }
+
                         }
                     }
                 } catch (NullPointerException e) {
@@ -205,6 +246,18 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
 
             }
         };
+        childDatabaseReference.addChildEventListener(memberChildEventListener);
+    }
+
+    boolean checkForExistenceFromList(UserInfoPOJO userInfoPOJO) {
+        if ((boardMembersPOJOArrayList.size() > 0)) {
+            for (int i = 0; i < boardMembersPOJOArrayList.size(); i++) {
+                if (boardMembersPOJOArrayList.get(i).getUserInfoPOJO().getUser_key().equals(userInfoPOJO)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -231,18 +284,17 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         switch (v.getId()) {
             case R.id.search_done_button:
                 String input = mMemberSearchEditText.getText().toString();
-                if (!input.isEmpty()) {
-                    removeChildEventListener();
-                    fetchFromFirebase(input);
-                }
+                removeChildEventListener();
+                checkExistingBoardMembers(input);
                 break;
             case R.id.done_adding_members_button:
                 removeChildEventListener();
                 toBoardsActivity();
+                break;
         }
     }
 
-    void toBoardsActivity(){
+    void toBoardsActivity() {
         Intent intent = new Intent(AddBoardMembersActivity.this, BoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);

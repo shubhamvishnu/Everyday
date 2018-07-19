@@ -31,7 +31,8 @@
         <activity android:name=".NewNoteActivity" />
         <activity android:name=".LinkActivity" />
         <activity android:name=".TodoActivity" />
-        <activity android:name=".AddBoardMembersActivity"></activity>
+        <activity android:name=".AddBoardMembersActivity" />
+        <activity android:name=".BoardMembersActivity"></activity>
     </application>
 
 </manifest>

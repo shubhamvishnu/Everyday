@@ -31,6 +31,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     ImageButton mFilterButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
+    Button mBoardMembersButton;
     int optionType;
 
     // Dialog
@@ -59,12 +60,15 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         mNewOptionsButton = findViewById(R.id.new_options_button);
         mFilterButton = findViewById(R.id.filter_option_button);
 
+        mBoardMembersButton = findViewById(R.id.board_members_button);
+
         mNewOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showOptionsDialog();
             }
         });
+        mBoardMembersButton.setOnClickListener(this);
 
         mNewButton = findViewById(R.id.new_button);
         mNewButton.setOnClickListener(this);
@@ -116,8 +120,19 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         break;
                 }
                 break;
+            case R.id.board_members_button:
+                toBoardMembersActivity();
+                break;
 
         }
+    }
+
+    void toBoardMembersActivity() {
+        Intent intent = new Intent(BoardActivity.this, BoardMembersActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     void showOptionsDialog() {

@@ -49,6 +49,11 @@
                 android:padding="6dp"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/ic_filter_icon" />
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/board_members_button"
+                android:text="members"/>
 
 
         </LinearLayout>
