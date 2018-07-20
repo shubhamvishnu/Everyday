@@ -12,6 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="New Board"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Other boards"
+        android:id="@+id/other_boards_button"/>
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"

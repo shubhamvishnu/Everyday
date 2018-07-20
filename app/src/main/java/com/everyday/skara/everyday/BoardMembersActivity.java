@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
@@ -140,7 +141,6 @@ public class BoardMembersActivity extends AppCompatActivity {
             boardMembersPOJOArrayList.remove(position);
             membersAdapter.notifyItemRemoved(position);
 
-            // TODO: implement delete
         }
 
         public class BoardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -162,7 +162,11 @@ public class BoardMembersActivity extends AppCompatActivity {
             public void onClick(View view) {
                 switch (view.getId()) {
                     case R.id.delete_member_to_group_button:
-                        deleteMember(getPosition());
+                        if (userInfoPOJO.getUser_key().equals(boardPOJO.getCreatedByProfilePOJO().getUser_key())) {
+                            deleteMember(getPosition());
+                        }else{
+                            Toast.makeText(BoardMembersActivity.this, "Not the admin. You cannot delete a member.", Toast.LENGTH_SHORT).show();
+                        }
                         break;
 
                 }

@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // View elements
     Button mNewButton;
+    Button mOtherBoardsButton;
     RecyclerView mBoardsRecyclerView;
 
     // Dialog
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         mNewButton = findViewById(R.id.new_board_button);
+        mOtherBoardsButton = findViewById(R.id.other_boards_button);
         mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
 
         // initializing UserProfilePOJO
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
 
         mNewButton.setOnClickListener(this);
+        mOtherBoardsButton.setOnClickListener(this);
 
         initRecyclerView();
 
@@ -179,6 +182,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.new_board_button:
                 showNewBoardDialog();
                 break;
+            case R.id.other_boards_button:
+                toOtherBoardsActivity();
+                break;
         }
     }
 
@@ -264,6 +270,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+    void toOtherBoardsActivity() {
+        Intent intent = new Intent(MainActivity.this, OtherBoardsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
 
@@ -318,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     case R.id.boards_add_member_button:
                         toAddMembers(boardPOJOArrayList.get(getPosition()));
                         break;
+
                 }
             }
         }
