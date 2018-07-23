@@ -256,6 +256,10 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         public void onBindViewHolder(@NonNull BoardsAdapter.BoardsViewHolder holder, int position) {
             BoardPOJO boardPOJO = boardPOJOArrayList.get(position);
             holder.boardTitle.setText(boardPOJO.getTitle());
+            holder.mName.setText(boardPOJO.getCreatedByProfilePOJO().getName());
+            holder.mEmail.setText(boardPOJO.getCreatedByProfilePOJO().getEmail());
+            Glide.with(OtherBoardsActivity.this).load(boardPOJO.getCreatedByProfilePOJO().getProfile_url()).into(holder.mProfileImage);
+
             initBoardMembersRecyclerview(holder, position);
         }
 
@@ -276,10 +280,17 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public Button boardTitle;
             public RecyclerView mMemberRecyclerview;
+            public CircleImageView mProfileImage;
+            public TextView mEmail, mName;
 
             public BoardsViewHolder(View itemView) {
                 super(itemView);
                 boardTitle = itemView.findViewById(R.id.boards_other_title_button);
+
+                mProfileImage = itemView.findViewById(R.id.admin_profile_image);
+                mEmail = itemView.findViewById(R.id.admin_email);
+                mName = itemView.findViewById(R.id.admin_name);
+
                 mMemberRecyclerview = itemView.findViewById(R.id.other_boards_view_members_recyclerview);
                 boardTitle.setOnClickListener(this);
             }
