@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // View elements
     Button mNewButton;
     Button mOtherBoardsButton;
+    Button mUserAccountButton;
+
     RecyclerView mBoardsRecyclerView;
 
     // Dialog
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNewButton = findViewById(R.id.new_board_button);
         mOtherBoardsButton = findViewById(R.id.other_boards_button);
         mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
+        mUserAccountButton = findViewById(R.id.user_account_button);
 
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mNewButton.setOnClickListener(this);
         mOtherBoardsButton.setOnClickListener(this);
+        mUserAccountButton.setOnClickListener(this);
 
         initRecyclerView();
 
@@ -185,7 +189,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.other_boards_button:
                 toOtherBoardsActivity();
                 break;
+            case R.id.user_account_button:
+                toUserAccountActivity();
         }
+    }
+    void toUserAccountActivity(){
+        Intent intent = new Intent(MainActivity.this, UserAccountActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     void showNewBoardDialog() {

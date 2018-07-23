@@ -33,7 +33,8 @@
         <activity android:name=".TodoActivity" />
         <activity android:name=".AddBoardMembersActivity" />
         <activity android:name=".BoardMembersActivity" />
-        <activity android:name=".OtherBoardsActivity"></activity>
+        <activity android:name=".OtherBoardsActivity" />
+        <activity android:name=".UserAccountActivity"></activity>
     </application>
 
 </manifest>

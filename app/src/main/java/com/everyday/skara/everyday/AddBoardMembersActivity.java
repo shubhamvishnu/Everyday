@@ -74,13 +74,11 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         userInfoPOJOArrayList = new ArrayList<>();
-
-
+        
         mMemberSearchEditText = findViewById(R.id.add_members_edittext);
         mMemberSearchRecyclerView = findViewById(R.id.add_members_recyclerview);
         mSearchDoneButton = findViewById(R.id.search_done_button);
         mDoneButton = findViewById(R.id.done_adding_members_button);
-
 
         mSearchDoneButton.setOnClickListener(this);
         mDoneButton.setOnClickListener(this);
@@ -190,7 +188,6 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         DatabaseReference memberDatabaseReference = databaseReference1.push();
         BoardMembersPOJO boardMembersPOJO = new BoardMembersPOJO(memberDatabaseReference.getKey(), DateTimeStamp.getDate(), userInfoPOJO, BoardMembersType.TYPE_MEMBER);
         memberDatabaseReference.setValue(boardMembersPOJO);
-
 
         // other board info
         DatabaseReference databaseReference2 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_OTHER_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey());

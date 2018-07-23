@@ -7,10 +7,5 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:id="@+id/boards_title_button"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="+"
-        android:id="@+id/boards_add_member_button"/>
 
 </LinearLayout>
