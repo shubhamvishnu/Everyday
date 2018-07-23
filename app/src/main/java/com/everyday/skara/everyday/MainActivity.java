@@ -2,6 +2,7 @@ package com.everyday.skara.everyday;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
@@ -35,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tapadoo.alerter.Alerter;
 
 import java.lang.reflect.Member;
@@ -105,9 +108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mUserAccountButton.setOnClickListener(this);
 
         initRecyclerView();
-
     }
-
 
     void initBoards() {
         boardViewHolderClassArrayList = new ArrayList<>();
@@ -121,9 +122,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
                 // int position, MainActivity.BoardsAdapter boardsAdapter, BoardMembersActivity.MembersAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList
-                BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, null, new ArrayList<BoardMembersPOJO>());
+                BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
                 boardViewHolderClassArrayList.add(boardViewHolderClass);
                 boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
+                fetchBoardMembers(boardPOJO, (boardPOJOArrayList.size() - 1));
             }
 
             @Override
@@ -148,6 +150,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         };
         boardsReference.addChildEventListener(childEventListener);
 
+
+    }
+
+    void fetchBoardMembers(final BoardPOJO boardPOJO, final int position) {
+        final ArrayList<BoardMembersPOJO> membersPOJOS = new ArrayList<>();
+        final DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        BoardMembersPOJO membersPOJO = snapshot.getValue(BoardMembersPOJO.class);
+                        membersPOJOS.add(membersPOJO);
+                    }
+                    BoardViewHolderClass boardViewHolderClass = boardViewHolderClassArrayList.get(position);
+                    boardViewHolderClass.setBoardMembersPOJOArrayList(membersPOJOS);
+                    boardViewHolderClassArrayList.set(position, boardViewHolderClass);
+                    boardViewHolderClass.getMembersAdapter().notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -326,7 +354,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             holder.mMemberRecyclerview.setHasFixedSize(true);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.mMemberRecyclerview.getContext());
             holder.mMemberRecyclerview.setLayoutManager(linearLayoutManager);
-            MembersViewAdapter membersAdapter = new MembersViewAdapter(position);
+            MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
             holder.mMemberRecyclerview.setAdapter(membersAdapter);
         }
 
@@ -336,7 +364,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public Button boardTitle, addMembers;
+            public Button boardTitle;
+            public ImageButton addMembers;
+
             public RecyclerView mMemberRecyclerview;
 
             public BoardsViewHolder(View itemView) {
@@ -366,7 +396,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
+    public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
 
         private LayoutInflater inflator;
         int position;

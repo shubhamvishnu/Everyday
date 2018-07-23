@@ -1,22 +1,21 @@
 package com.everyday.skara.everyday.classes;
 
-import com.everyday.skara.everyday.BoardMembersActivity;
-import com.everyday.skara.everyday.MainActivity;
+import com.everyday.skara.everyday.OtherBoardsActivity;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 
 import java.util.ArrayList;
 
-public class BoardViewHolderClass {
+public class OtherBoardViewHolderClass {
     public int position;
-    public MainActivity.BoardsAdapter boardsAdapter;
-    public MainActivity.MembersViewAdapter membersAdapter;
+    public OtherBoardsActivity.BoardsAdapter boardsAdapter;
+    public OtherBoardsActivity.MembersViewAdapter membersAdapter;
     public ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
 
-    public BoardViewHolderClass() {
+    public OtherBoardViewHolderClass() {
         boardMembersPOJOArrayList = new ArrayList<>();
     }
 
-    public BoardViewHolderClass(int position, MainActivity.BoardsAdapter boardsAdapter, MainActivity.MembersViewAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList) {
+    public OtherBoardViewHolderClass(int position, OtherBoardsActivity.BoardsAdapter boardsAdapter, OtherBoardsActivity.MembersViewAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList) {
         this.position = position;
         this.boardsAdapter = boardsAdapter;
         this.membersAdapter = membersAdapter;
@@ -31,19 +30,19 @@ public class BoardViewHolderClass {
         this.position = position;
     }
 
-    public MainActivity.BoardsAdapter getBoardsAdapter() {
+    public OtherBoardsActivity.BoardsAdapter getBoardsAdapter() {
         return boardsAdapter;
     }
 
-    public void setBoardsAdapter(MainActivity.BoardsAdapter boardsAdapter) {
+    public void setBoardsAdapter(OtherBoardsActivity.BoardsAdapter boardsAdapter) {
         this.boardsAdapter = boardsAdapter;
     }
 
-    public MainActivity.MembersViewAdapter getMembersAdapter() {
+    public OtherBoardsActivity.MembersViewAdapter getMembersAdapter() {
         return membersAdapter;
     }
 
-    public void setMembersAdapter(MainActivity.MembersViewAdapter membersAdapter) {
+    public void setMembersAdapter(OtherBoardsActivity.MembersViewAdapter membersAdapter) {
         this.membersAdapter = membersAdapter;
     }
 

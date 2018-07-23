@@ -2,11 +2,11 @@ package com.everyday.skara.everyday;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,10 +17,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.Connectivity;
-import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.OtherBoardViewHolderClass;
 import com.everyday.skara.everyday.classes.SPNames;
-import com.everyday.skara.everyday.pojo.ActivityPOJO;
+import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
@@ -31,6 +31,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
@@ -58,7 +59,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
     // RecyclerView
     BoardsAdapter boardsAdapter;
     ArrayList<BoardPOJO> boardPOJOArrayList;
-
+    ArrayList<OtherBoardViewHolderClass> boardViewHolderClassArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +94,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
     }
 
     void initBoards() {
+        boardViewHolderClassArrayList = new ArrayList<>();
         boardPOJOArrayList = new ArrayList<>();
         boardsReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_OTHER_BOARDS_INFO + userInfoPOJO.getUser_key());
         boardsReference.keepSynced(true);
@@ -104,6 +106,11 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
 
                 BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
+                // int position, MainActivity.BoardsAdapter boardsAdapter, BoardMembersActivity.MembersAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList
+                OtherBoardViewHolderClass boardViewHolderClass = new OtherBoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new OtherBoardsActivity.MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
+                boardViewHolderClassArrayList.add(boardViewHolderClass);
+                boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
+                fetchBoardMembers(boardPOJO, (boardPOJOArrayList.size() - 1));
                 boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
 
             }
@@ -132,7 +139,31 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
 
 
     }
+    void fetchBoardMembers(final BoardPOJO boardPOJO, final int position) {
+        final ArrayList<BoardMembersPOJO> membersPOJOS = new ArrayList<>();
+        final DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members");
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        BoardMembersPOJO membersPOJO = snapshot.getValue(BoardMembersPOJO.class);
+                        membersPOJOS.add(membersPOJO);
+                    }
+                    OtherBoardViewHolderClass boardViewHolderClass = boardViewHolderClassArrayList.get(position);
+                    boardViewHolderClass.setBoardMembersPOJOArrayList(membersPOJOS);
+                    boardViewHolderClassArrayList.set(position, boardViewHolderClass);
+                    boardViewHolderClass.getMembersAdapter().notifyDataSetChanged();
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
     void initRecyclerView() {
         boardPOJOArrayList = new ArrayList<>();
 
@@ -220,7 +251,16 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         public void onBindViewHolder(@NonNull BoardsAdapter.BoardsViewHolder holder, int position) {
             BoardPOJO boardPOJO = boardPOJOArrayList.get(position);
             holder.boardTitle.setText(boardPOJO.getTitle());
+            initBoardMembersRecyclerview(holder, position);
         }
+        void initBoardMembersRecyclerview(BoardsAdapter.BoardsViewHolder holder, int position) {
+            holder.mMemberRecyclerview.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.mMemberRecyclerview.getContext());
+            holder.mMemberRecyclerview.setLayoutManager(linearLayoutManager);
+           OtherBoardsActivity.MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
+            holder.mMemberRecyclerview.setAdapter(membersAdapter);
+        }
+
 
         @Override
         public int getItemCount() {
@@ -229,10 +269,11 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
 
         public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public Button boardTitle;
-
+            public RecyclerView mMemberRecyclerview;
             public BoardsViewHolder(View itemView) {
                 super(itemView);
-                boardTitle = itemView.findViewById(R.id.boards_title_button);
+                boardTitle = itemView.findViewById(R.id.boards_other_title_button);
+                mMemberRecyclerview = itemView.findViewById(R.id.other_boards_view_members_recyclerview);
                 boardTitle.setOnClickListener(this);
             }
 
@@ -244,6 +285,48 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
                         break;
 
                 }
+            }
+        }
+    }
+    public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
+
+        private LayoutInflater inflator;
+        int position;
+
+        public MembersViewAdapter(int position) {
+            try {
+                this.inflator = LayoutInflater.from(OtherBoardsActivity.this);
+                this.position = position;
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+        @NonNull
+        @Override
+        public MembersViewAdapter.MembersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_boards_view_members_row_layout, parent, false);
+            MembersViewAdapter.MembersViewHolder viewHolder = new MembersViewAdapter.MembersViewHolder(view);
+            return viewHolder;
+        }
+
+
+        @Override
+        public void onBindViewHolder(@NonNull MembersViewAdapter.MembersViewHolder holder, int position) {
+            holder.mName.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getName());
+        }
+
+        @Override
+        public int getItemCount() {
+            return boardViewHolderClassArrayList.get(position).getBoardMembersPOJOArrayList().size();
+        }
+
+        class MembersViewHolder extends RecyclerView.ViewHolder {
+            public TextView mName;
+
+            public MembersViewHolder(View itemView) {
+                super(itemView);
+                mName = itemView.findViewById(R.id.name_board_members_view_textview);
             }
         }
     }

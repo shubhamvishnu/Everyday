@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.LoginTypes;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -97,7 +98,7 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
 
     void setViewComponents(boolean action) {
         if (action) {
-           // Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile);
+           Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile);
             mName.setText(userProfilePOJO.getName());
             mEmail.setText(userProfilePOJO.getEmail());
             mLogout.setEnabled(true);

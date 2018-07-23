@@ -51,8 +51,13 @@ dependencies {
     // Floating Text Button
     implementation 'com.github.dimorinny:floating-text-button:0.0.4'
 
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
 }
 apply plugin: 'com.google.gms.google-services'
