@@ -211,7 +211,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         @NonNull
         @Override
         public BoardsAdapter.BoardsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_boards_row_layout, parent, false);
+            View view = inflator.inflate(R.layout.recyclerview_other_boards_row_layout, parent, false);
             BoardsAdapter.BoardsViewHolder viewHolder = new BoardsAdapter.BoardsViewHolder(view);
             return viewHolder;
         }
@@ -233,14 +233,13 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
             public BoardsViewHolder(View itemView) {
                 super(itemView);
                 boardTitle = itemView.findViewById(R.id.boards_title_button);
-
                 boardTitle.setOnClickListener(this);
             }
 
             @Override
             public void onClick(View view) {
                 switch (view.getId()) {
-                    case R.id.boards_title_button:
+                    case R.id.boards_other_title_button:
                         toBoardActivity(boardPOJOArrayList.get(getPosition()));
                         break;
 
