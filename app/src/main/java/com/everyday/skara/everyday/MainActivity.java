@@ -160,8 +160,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         };
         boardsReference.addChildEventListener(childEventListener);
-
-
     }
 
     void fetchBoardMembers(final BoardPOJO boardPOJO, final int position) {
