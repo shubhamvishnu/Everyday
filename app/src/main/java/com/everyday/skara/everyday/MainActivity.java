@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
@@ -42,6 +43,8 @@ import com.tapadoo.alerter.Alerter;
 
 import java.lang.reflect.Member;
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -374,7 +377,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 boardTitle = itemView.findViewById(R.id.boards_title_button);
                 addMembers = itemView.findViewById(R.id.boards_add_member_button);
                 mMemberRecyclerview = itemView.findViewById(R.id.boards_view_members_recyclerview);
-                //   initRecyclerview();
 
                 boardTitle.setOnClickListener(this);
                 addMembers.setOnClickListener(this);
@@ -421,6 +423,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onBindViewHolder(@NonNull MembersViewHolder holder, int position) {
             holder.mName.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getName());
+            holder.mEmail.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getEmail());
+            Glide.with(MainActivity.this).load(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getProfile_url()).into(holder.mProfile);
         }
 
         @Override
@@ -429,11 +433,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
         class MembersViewHolder extends RecyclerView.ViewHolder {
-            public TextView mName;
+            public TextView mName, mEmail;
+            public CircleImageView mProfile;
 
             public MembersViewHolder(View itemView) {
                 super(itemView);
                 mName = itemView.findViewById(R.id.name_board_members_view_textview);
+                mEmail = itemView.findViewById(R.id.email_board_members_view_textview);
+                mProfile = itemView.findViewById(R.id.profile_image_board_members_view);
             }
         }
     }

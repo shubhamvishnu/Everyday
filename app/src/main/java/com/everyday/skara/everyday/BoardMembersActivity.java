@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -123,6 +124,8 @@ public class BoardMembersActivity extends AppCompatActivity {
 
             ((BoardViewHolder) holder).mName.setText(userInfoPOJO.getName());
             ((BoardViewHolder) holder).mEmail.setText(userInfoPOJO.getName());
+            Glide.with(BoardMembersActivity.this).load(userInfoPOJO.getProfile_url()).into(((BoardViewHolder) holder).mCircleImageView);
+
             //todo: implement glide
         }
 

@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.OtherBoardViewHolderClass;
@@ -35,6 +36,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class OtherBoardsActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -139,6 +142,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
 
 
     }
+
     void fetchBoardMembers(final BoardPOJO boardPOJO, final int position) {
         final ArrayList<BoardMembersPOJO> membersPOJOS = new ArrayList<>();
         final DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members");
@@ -164,6 +168,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         });
 
     }
+
     void initRecyclerView() {
         boardPOJOArrayList = new ArrayList<>();
 
@@ -253,11 +258,12 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
             holder.boardTitle.setText(boardPOJO.getTitle());
             initBoardMembersRecyclerview(holder, position);
         }
+
         void initBoardMembersRecyclerview(BoardsAdapter.BoardsViewHolder holder, int position) {
             holder.mMemberRecyclerview.setHasFixedSize(true);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.mMemberRecyclerview.getContext());
             holder.mMemberRecyclerview.setLayoutManager(linearLayoutManager);
-           OtherBoardsActivity.MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
+            OtherBoardsActivity.MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
             holder.mMemberRecyclerview.setAdapter(membersAdapter);
         }
 
@@ -270,6 +276,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
             public Button boardTitle;
             public RecyclerView mMemberRecyclerview;
+
             public BoardsViewHolder(View itemView) {
                 super(itemView);
                 boardTitle = itemView.findViewById(R.id.boards_other_title_button);
@@ -288,6 +295,7 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
             }
         }
     }
+
     public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
 
         private LayoutInflater inflator;
@@ -314,6 +322,8 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         @Override
         public void onBindViewHolder(@NonNull MembersViewAdapter.MembersViewHolder holder, int position) {
             holder.mName.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getName());
+            holder.mEmail.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getEmail());
+            Glide.with(OtherBoardsActivity.this).load(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getProfile_url()).into(holder.mProfile);
         }
 
         @Override
@@ -322,11 +332,14 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         }
 
         class MembersViewHolder extends RecyclerView.ViewHolder {
-            public TextView mName;
+            public TextView mName, mEmail;
+            public CircleImageView mProfile;
 
             public MembersViewHolder(View itemView) {
                 super(itemView);
                 mName = itemView.findViewById(R.id.name_board_members_view_textview);
+                mEmail = itemView.findViewById(R.id.email_board_members_view_textview);
+                mProfile = itemView.findViewById(R.id.profile_image_board_members_view);
             }
         }
     }
