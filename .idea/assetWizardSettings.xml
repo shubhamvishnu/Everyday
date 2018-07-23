@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Android%20Studio/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_arrow_drop_down_circle_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/Android%20Studio/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/social/ic_person_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_arrow_drop_down_circle_24dp" />
+                            <entry key="outputName" value="ic_person_24dp" />
                             <entry key="sourceFile" value="C:\Users\sh395048\Desktop\pyramid-chart.svg" />
                           </map>
                         </option>

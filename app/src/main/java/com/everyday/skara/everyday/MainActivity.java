@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.fragments.TodoFragment;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -56,9 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     UserInfoPOJO userInfoPOJO;
 
     // View elements
-    Button mNewButton;
+    FloatingActionButton mNewButton;
     Button mOtherBoardsButton;
-    Button mUserAccountButton;
+    ImageButton mUserAccountButton;
 
     RecyclerView mBoardsRecyclerView;
 
@@ -106,12 +108,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
         userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
 
-        mNewButton.setOnClickListener(this);
+        mNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showNewBoardDialog();
+            }
+        });
         mOtherBoardsButton.setOnClickListener(this);
         mUserAccountButton.setOnClickListener(this);
 
         initRecyclerView();
     }
+
 
     void initBoards() {
         boardViewHolderClassArrayList = new ArrayList<>();
@@ -219,9 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.new_board_button:
-                showNewBoardDialog();
-                break;
+
             case R.id.other_boards_button:
                 toOtherBoardsActivity();
                 break;
