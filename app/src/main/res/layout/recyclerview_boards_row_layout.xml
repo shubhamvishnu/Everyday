@@ -2,38 +2,52 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="8dp"
     android:background="@drawable/boards_background"
     android:orientation="vertical"
     android:padding="8dp">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:text="Board Title" />
     <Button
         android:id="@+id/boards_title_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:textSize="22dp"
+        android:textAllCaps="false"
         android:background="@android:color/transparent"
-        android:gravity="left" />
+        android:gravity="center" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="Board Members"
             android:id="@+id/member_title_textview"
-            android:layout_height="wrap_content" />
-    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/boards_add_member_button"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
-        android:layout_gravity="right"
-        android:background="@android:color/transparent"
-        android:text="+"
-        app:srcCompat="@drawable/ic_person_add_24dp" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="left"
+            android:text="Board Members" />
+
+
+        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/boards_add_member_button"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_gravity="right"
+            android:background="@android:color/transparent"
+            android:text="+"
+            app:srcCompat="@drawable/ic_person_add_24dp" />
     </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/boards_view_members_recyclerview"
         android:layout_width="match_parent"

@@ -9,7 +9,10 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -79,6 +82,10 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         firebaseDatabase = FirebaseDatabase.getInstance();
         mBoardsRecyclerView = findViewById(R.id.recyclerview_other_boards);
 
+        Toolbar myToolbar = findViewById(R.id.other_boards_toolbar);
+        myToolbar.setTitle("Other Boards");
+        setSupportActionBar(myToolbar);
+
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
         String name = sharedPreferences.getString("name", null);
@@ -95,7 +102,27 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
 
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_other_board_activity, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_my_boards:
+              toMainActivity();
+                return true;
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
     void initBoards() {
         boardViewHolderClassArrayList = new ArrayList<>();
         boardPOJOArrayList = new ArrayList<>();
@@ -203,6 +230,16 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
         startActivity(intent);
     }
 
+    @Override
+    public void onBackPressed() {
+        toMainActivity();
+    }
+
+    void toMainActivity(){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {

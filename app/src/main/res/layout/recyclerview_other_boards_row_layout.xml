@@ -5,11 +5,18 @@
     android:background="@drawable/boards_background"
     android:orientation="vertical"
     android:padding="8dp">
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="left"
+        android:text="Board Title" />
     <Button
         android:id="@+id/boards_other_title_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textSize="22dp"
+        android:textAllCaps="false"
         android:background="@android:color/transparent" />
     <TextView
         android:layout_width="wrap_content"

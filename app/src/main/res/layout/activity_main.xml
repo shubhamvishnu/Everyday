@@ -4,61 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/blue"
+    android:background="#e6e6e6"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/boards_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/blue"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/boards_toolbar"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="right"
-            android:orientation="horizontal">
+        <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="56dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@color/blue"-->
+        <!--android:gravity="right"-->
+        <!--android:orientation="horizontal">-->
 
-            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/user_account_button"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="right"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/ic_person_24dp" />
+        <!--<android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"-->
+        <!--android:id="@+id/user_account_button"-->
+        <!--android:layout_width="36dp"-->
+        <!--android:layout_height="36dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:padding="4dp"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--app:srcCompat="@drawable/ic_person_24dp" />-->
 
-        </LinearLayout>
+        <!--<android.support.v7.widget.AppCompatImageButton-->
+        <!--android:id="@+id/new_board_button"-->
+        <!--android:layout_width="36dp"-->
+        <!--android:layout_height="42dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:adjustViewBounds="true"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:padding="4dp"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--app:srcCompat="@drawable/ic_add_24dp" />-->
+
+        <!--<Button-->
+        <!--android:id="@+id/other_boards_button"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:background="@android:color/transparent"-->
+        <!--android:gravity="center"-->
+        <!--android:padding="4dp"-->
+        <!--android:text="Other Boards"-->
+        <!--android:textColor="@android:color/white"-->
+        <!--android:textSize="14dp" />-->
+
+        <!--</LinearLayout>-->
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_boards"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/bottom_linear_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:padding="2dp"
-        android:gravity="right"
-        android:orientation="vertical">
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/new_board_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:fabSize="mini"
-            android:layout_marginBottom="4dp"
-            app:srcCompat="@drawable/ic_add_24dp" />
-
-        <ru.dimorinny.floatingtextbutton.FloatingTextButton
-            android:id="@+id/other_boards_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            app:floating_background_color="@color/colorAccent"
-            app:floating_right_icon="@drawable/ic_play_arrow_24dp"
-            app:floating_title="Other Boards"
-            app:floating_title_color="@android:color/white" />
-    </LinearLayout>
 </RelativeLayout>

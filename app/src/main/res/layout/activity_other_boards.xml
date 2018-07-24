@@ -4,12 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#e6e6e6"
     android:orientation="vertical"
-    android:background="@color/blue"
     tools:context=".OtherBoardsActivity">
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/other_boards_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerview_other_boards"/>
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/blue"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_other_boards"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>
