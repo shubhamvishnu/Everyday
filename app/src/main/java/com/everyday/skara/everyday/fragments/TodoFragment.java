@@ -3,7 +3,6 @@ package com.everyday.skara.everyday.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,8 +32,6 @@ import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
 import com.everyday.skara.everyday.pojo.TodoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -52,9 +49,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
-
-import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class TodoFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

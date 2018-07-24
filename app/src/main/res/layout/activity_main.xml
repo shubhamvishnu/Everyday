@@ -4,48 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#bebcbc"
+    android:background="@color/blue"
     android:orientation="vertical"
     tools:context=".MainActivity">
-
-
-       <android.support.design.widget.FloatingActionButton
-        android:id="@+id/new_board_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
-        app:srcCompat="@drawable/ic_add_24dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_gravity="center"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:id="@+id/board_view_linear_layout"
-            android:orientation="horizontal">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:id="@+id/my_boards_button"
-                android:gravity="center"
-                android:text="My Boards"/>
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:id="@+id/shared_boards_button"
-                android:text="Shared Boards"/>
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,16 +29,36 @@
                 app:srcCompat="@drawable/ic_person_24dp" />
 
         </LinearLayout>
-
-        <Button
-            android:id="@+id/other_boards_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Other boards" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_boards"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="2dp"
+        android:gravity="right"
+        android:orientation="vertical">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/new_board_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fabSize="mini"
+            android:layout_marginBottom="4dp"
+            app:srcCompat="@drawable/ic_add_24dp" />
+
+        <ru.dimorinny.floatingtextbutton.FloatingTextButton
+            android:id="@+id/other_boards_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            app:floating_background_color="@color/colorAccent"
+            app:floating_right_icon="@drawable/ic_play_arrow_24dp"
+            app:floating_title="Other Boards"
+            app:floating_title_color="@android:color/white" />
     </LinearLayout>
 </RelativeLayout>

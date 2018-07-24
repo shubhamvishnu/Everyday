@@ -2,93 +2,92 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:layout_marginTop="8dp"
     android:background="@drawable/boards_background"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/todo_title_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="title"
-                    android:textColor="@android:color/black"
-                    android:textSize="22dp"
-                    android:textStyle="bold" />
-
-
-            </LinearLayout>
-
+            android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/todo_date_view"
-                android:layout_width="wrap_content"
+                android:id="@+id/todo_title_view"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="4dp"
-                android:padding="6dp"
-                android:text="date"
-                android:textSize="12dp" />
-
-            <!--<TextView-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="#999797" />-->
-
-            <GridLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:columnCount="3"
-                android:orientation="horizontal"
-                android:rowCount="1">
-
-                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/edit_todo_button"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="6dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle_background_green"
-                    android:padding="6dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_edit_24dp" />
+                android:layout_weight="1"
+                android:text="title"
+                android:textColor="@android:color/black"
+                android:textSize="22dp"
+                android:textStyle="bold" />
 
 
-                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/todo_more"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="6dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle_background_yellow"
-                    android:padding="6dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_arrow_drop_down_24dp" />
-
-                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/todo_delete_button"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_margin="6dp"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/circle_background_red"
-                    android:padding="6dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_delete_24dp" />
-            </GridLayout>
         </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/todo_date_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_marginTop="4dp"
+            android:padding="6dp"
+            android:text="date"
+            android:textSize="12dp" />
+
+        <!--<TextView-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="#999797" />-->
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:columnCount="3"
+            android:orientation="horizontal"
+            android:rowCount="1">
+
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/edit_todo_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="6dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/circle_background_green"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_edit_24dp" />
+
+
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/todo_more"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="6dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/circle_background_yellow"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_arrow_drop_down_24dp" />
+
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/todo_delete_button"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_margin="6dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/circle_background_red"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_delete_24dp" />
+        </GridLayout>
+    </LinearLayout>
 </LinearLayout>

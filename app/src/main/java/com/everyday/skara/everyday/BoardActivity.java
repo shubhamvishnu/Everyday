@@ -79,20 +79,20 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void initFragment() {
-        // Check that the activity is using the layout version with
-        // the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
-            TodoFragment todoFragment = new TodoFragment();
+            // Check that the activity is using the layout version with
+            // the fragment_container FrameLayout
+            if (findViewById(R.id.fragment_container) != null) {
+                TodoFragment todoFragment = new TodoFragment();
 
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("board_pojo", boardPOJO);
-            bundle.putSerializable("user_profile", userInfoPOJO);
-            todoFragment.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                todoFragment.setArguments(bundle);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, todoFragment).commit();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, todoFragment).commit();
 
-        }
+            }
 
 
     }

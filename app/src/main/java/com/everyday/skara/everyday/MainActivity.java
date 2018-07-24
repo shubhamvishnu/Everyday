@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -47,8 +49,9 @@ import java.lang.reflect.Member;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -59,8 +62,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // View elements
     FloatingActionButton mNewButton;
-    Button mOtherBoardsButton;
+    FloatingTextButton mOtherBoardsButton;
     ImageButton mUserAccountButton;
+
+    // Layouts
+    LinearLayout mLinearLayout;
 
     RecyclerView mBoardsRecyclerView;
 
@@ -96,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
         mUserAccountButton = findViewById(R.id.user_account_button);
 
+        mLinearLayout = findViewById(R.id.bottom_linear_layout);
+
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
         String name = sharedPreferences.getString("name", null);
@@ -114,7 +122,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showNewBoardDialog();
             }
         });
-        mOtherBoardsButton.setOnClickListener(this);
+        mOtherBoardsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toOtherBoardsActivity();
+            }
+        });
         mUserAccountButton.setOnClickListener(this);
 
         initRecyclerView();
@@ -197,256 +210,266 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boardsAdapter = new BoardsAdapter();
         mBoardsRecyclerView.setAdapter(boardsAdapter);
 
-        initBoards();
-    }
+        mBoardsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) {
+                    mLinearLayout.animate().alpha(0.0f);
+                    mLinearLayout.setVisibility(View.INVISIBLE);
+                }
+                else if (dy < 0) {
+                    mLinearLayout.animate().alpha(1.0f);
+                    mLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                    }
+                });
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (childEventListener != null) {
-            boardsReference.removeEventListener(childEventListener);
-        }
-    }
+                initBoards();
+            }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (childEventListener != null) {
-            boardsReference.removeEventListener(childEventListener);
-        }
-    }
+            @Override
+            protected void onStop() {
+                super.onStop();
+                if (childEventListener != null) {
+                    boardsReference.removeEventListener(childEventListener);
+                }
+            }
 
-    void toLoginActivity() {
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+            @Override
+            protected void onDestroy() {
+                super.onDestroy();
+                if (childEventListener != null) {
+                    boardsReference.removeEventListener(childEventListener);
+                }
+            }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+            void toLoginActivity() {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
 
-            case R.id.other_boards_button:
-                toOtherBoardsActivity();
-                break;
-            case R.id.user_account_button:
-                toUserAccountActivity();
-        }
-    }
-
-    void toUserAccountActivity() {
-        Intent intent = new Intent(MainActivity.this, UserAccountActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    void showNewBoardDialog() {
-        mNewBoardDialog = new BottomSheetDialog(this);
-        mNewBoardDialog.setContentView(R.layout.dialog_new_baord_layout);
-
-        mTitle = mNewBoardDialog.findViewById(R.id.board_title);
-        mDate = mNewBoardDialog.findViewById(R.id.board_date);
-        mDone = mNewBoardDialog.findViewById(R.id.board_done);
-
-        mDate.setText(DateTimeStamp.getDate());
-
-        mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String title = mTitle.getText().toString().trim();
-                if (!title.isEmpty()) {
-                    createBoard(title);
-                } else {
-                    // TODO: Show empty field alert
+                switch (v.getId()) {
+                    case R.id.user_account_button:
+                        toUserAccountActivity();
                 }
             }
-        });
 
-        mNewBoardDialog.setCanceledOnTouchOutside(false);
-        mNewBoardDialog.show();
-    }
+            void toUserAccountActivity() {
+                Intent intent = new Intent(MainActivity.this, UserAccountActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
 
-    void createBoard(final String title) {
-        mTitle.setEnabled(false);
-        mDone.setEnabled(false);
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS);
-        databaseReference.keepSynced(true);
-        final DatabaseReference boardReference = databaseReference.push();
-        boardReference.keepSynced(true);
-        final String boardKey = boardReference.getKey();
+            void showNewBoardDialog() {
+                mNewBoardDialog = new BottomSheetDialog(this);
+                mNewBoardDialog.setContentView(R.layout.dialog_new_baord_layout);
+
+                mTitle = mNewBoardDialog.findViewById(R.id.board_title);
+                mDate = mNewBoardDialog.findViewById(R.id.board_date);
+                mDone = mNewBoardDialog.findViewById(R.id.board_done);
+
+                mDate.setText(DateTimeStamp.getDate());
+
+                mDone.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String title = mTitle.getText().toString().trim();
+                        if (!title.isEmpty()) {
+                            createBoard(title);
+                        } else {
+                            // TODO: Show empty field alert
+                        }
+                    }
+                });
+
+                mNewBoardDialog.setCanceledOnTouchOutside(false);
+                mNewBoardDialog.show();
+            }
+
+            void createBoard(final String title) {
+                mTitle.setEnabled(false);
+                mDone.setEnabled(false);
+                databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS);
+                databaseReference.keepSynced(true);
+                final DatabaseReference boardReference = databaseReference.push();
+                boardReference.keepSynced(true);
+                final String boardKey = boardReference.getKey();
 
 
-        // initializing BoardPOJO class
-        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
+                // initializing BoardPOJO class
+                final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
 
-        // TODO: add a progress bar
-        boardReference.setValue(boardPOJO);
-        // updating the user group information
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
-        databaseReference.keepSynced(true);
-        databaseReference.setValue(boardPOJO);
-        // initializing ActivityPOJO class
-        ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                // TODO: add a progress bar
+                boardReference.setValue(boardPOJO);
+                // updating the user group information
+                databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
+                databaseReference.keepSynced(true);
+                databaseReference.setValue(boardPOJO);
+                // initializing ActivityPOJO class
+                ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
 
-        // pushing ActivityPOJO
-        boardReference.child("activity").push().setValue(activityPOJO);
-        mNewBoardDialog.dismiss();
-        toBoardActivity(boardPOJO);
-    }
+                // pushing ActivityPOJO
+                boardReference.child("activity").push().setValue(activityPOJO);
+                mNewBoardDialog.dismiss();
+                toBoardActivity(boardPOJO);
+            }
 
 
-    void showInternetAlerter() {
-        Alerter.create(this)
-                .setText("Oops! no internet connection...")
-                .setOnClickListener(new View.OnClickListener() {
+            void showInternetAlerter() {
+                Alerter.create(this)
+                        .setText("Oops! no internet connection...")
+                        .setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Connectivity.openInternetSettings(getApplicationContext());
+                            }
+                        })
+                        .setBackgroundColorRes(R.color.colorAccent)
+                        .show();
+            }
+
+            void toBoardActivity(BoardPOJO boardPOJO) {
+                Intent intent = new Intent(MainActivity.this, BoardActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("board_pojo", boardPOJO);
+                intent.putExtra("user_profile", userInfoPOJO);
+                startActivity(intent);
+            }
+
+            void toAddMembers(BoardPOJO boardPOJO) {
+                Intent intent = new Intent(MainActivity.this, AddBoardMembersActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra("board_pojo", boardPOJO);
+                intent.putExtra("user_profile", userInfoPOJO);
+                startActivity(intent);
+            }
+
+            void toOtherBoardsActivity() {
+                Intent intent = new Intent(MainActivity.this, OtherBoardsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
+
+                private LayoutInflater inflator;
+
+                public BoardsAdapter() {
+                    try {
+                        this.inflator = LayoutInflater.from(MainActivity.this);
+                    } catch (NullPointerException e) {
+
+                    }
+                }
+
+                @NonNull
+                @Override
+                public BoardsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = inflator.inflate(R.layout.recyclerview_boards_row_layout, parent, false);
+                    BoardsViewHolder viewHolder = new BoardsViewHolder(view);
+                    return viewHolder;
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull BoardsViewHolder holder, int position) {
+                    BoardPOJO boardPOJO = boardPOJOArrayList.get(position);
+                    holder.boardTitle.setText(boardPOJO.getTitle());
+                    initBoardMembersRecyclerview(holder, position);
+                }
+
+                void initBoardMembersRecyclerview(BoardsViewHolder holder, int position) {
+                    holder.mMemberRecyclerview.setHasFixedSize(true);
+                    LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.mMemberRecyclerview.getContext());
+                    holder.mMemberRecyclerview.setLayoutManager(linearLayoutManager);
+                    MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
+                    holder.mMemberRecyclerview.setAdapter(membersAdapter);
+                }
+
+                @Override
+                public int getItemCount() {
+                    return boardPOJOArrayList.size();
+                }
+
+                public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+                    public Button boardTitle;
+                    public ImageButton addMembers;
+
+                    public RecyclerView mMemberRecyclerview;
+
+                    public BoardsViewHolder(View itemView) {
+                        super(itemView);
+                        boardTitle = itemView.findViewById(R.id.boards_title_button);
+                        addMembers = itemView.findViewById(R.id.boards_add_member_button);
+                        mMemberRecyclerview = itemView.findViewById(R.id.boards_view_members_recyclerview);
+
+                        boardTitle.setOnClickListener(this);
+                        addMembers.setOnClickListener(this);
+                    }
+
                     @Override
                     public void onClick(View view) {
-                        Connectivity.openInternetSettings(getApplicationContext());
+                        switch (view.getId()) {
+                            case R.id.boards_title_button:
+                                toBoardActivity(boardPOJOArrayList.get(getPosition()));
+                                break;
+                            case R.id.boards_add_member_button:
+                                toAddMembers(boardPOJOArrayList.get(getPosition()));
+                                break;
+
+                        }
                     }
-                })
-                .setBackgroundColorRes(R.color.colorAccent)
-                .show();
-    }
-
-    void toBoardActivity(BoardPOJO boardPOJO) {
-        Intent intent = new Intent(MainActivity.this, BoardActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userInfoPOJO);
-        startActivity(intent);
-    }
-
-    void toAddMembers(BoardPOJO boardPOJO) {
-        Intent intent = new Intent(MainActivity.this, AddBoardMembersActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userInfoPOJO);
-        startActivity(intent);
-    }
-
-    void toOtherBoardsActivity() {
-        Intent intent = new Intent(MainActivity.this, OtherBoardsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
-    public class BoardsAdapter extends RecyclerView.Adapter<BoardsAdapter.BoardsViewHolder> {
-
-        private LayoutInflater inflator;
-
-        public BoardsAdapter() {
-            try {
-                this.inflator = LayoutInflater.from(MainActivity.this);
-            } catch (NullPointerException e) {
-
-            }
-        }
-
-        @NonNull
-        @Override
-        public BoardsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_boards_row_layout, parent, false);
-            BoardsViewHolder viewHolder = new BoardsViewHolder(view);
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull BoardsViewHolder holder, int position) {
-            BoardPOJO boardPOJO = boardPOJOArrayList.get(position);
-            holder.boardTitle.setText(boardPOJO.getTitle());
-            initBoardMembersRecyclerview(holder, position);
-        }
-
-        void initBoardMembersRecyclerview(BoardsViewHolder holder, int position) {
-            holder.mMemberRecyclerview.setHasFixedSize(true);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(holder.mMemberRecyclerview.getContext());
-            holder.mMemberRecyclerview.setLayoutManager(linearLayoutManager);
-            MembersViewAdapter membersAdapter = boardViewHolderClassArrayList.get(position).getMembersAdapter();
-            holder.mMemberRecyclerview.setAdapter(membersAdapter);
-        }
-
-        @Override
-        public int getItemCount() {
-            return boardPOJOArrayList.size();
-        }
-
-        public class BoardsViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-            public Button boardTitle;
-            public ImageButton addMembers;
-
-            public RecyclerView mMemberRecyclerview;
-
-            public BoardsViewHolder(View itemView) {
-                super(itemView);
-                boardTitle = itemView.findViewById(R.id.boards_title_button);
-                addMembers = itemView.findViewById(R.id.boards_add_member_button);
-                mMemberRecyclerview = itemView.findViewById(R.id.boards_view_members_recyclerview);
-
-                boardTitle.setOnClickListener(this);
-                addMembers.setOnClickListener(this);
-            }
-
-            @Override
-            public void onClick(View view) {
-                switch (view.getId()) {
-                    case R.id.boards_title_button:
-                        toBoardActivity(boardPOJOArrayList.get(getPosition()));
-                        break;
-                    case R.id.boards_add_member_button:
-                        toAddMembers(boardPOJOArrayList.get(getPosition()));
-                        break;
-
                 }
             }
-        }
-    }
 
 
-    public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
+            public class MembersViewAdapter extends RecyclerView.Adapter<MembersViewAdapter.MembersViewHolder> {
 
-        private LayoutInflater inflator;
-        int position;
+                private LayoutInflater inflator;
+                int position;
 
-        public MembersViewAdapter(int position) {
-            try {
-                this.inflator = LayoutInflater.from(MainActivity.this);
-                this.position = position;
-            } catch (NullPointerException e) {
+                public MembersViewAdapter(int position) {
+                    try {
+                        this.inflator = LayoutInflater.from(MainActivity.this);
+                        this.position = position;
+                    } catch (NullPointerException e) {
 
+                    }
+                }
+
+                @NonNull
+                @Override
+                public MembersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                    View view = inflator.inflate(R.layout.recyclerview_boards_view_members_row_layout, parent, false);
+                    MembersViewHolder viewHolder = new MembersViewHolder(view);
+                    return viewHolder;
+                }
+
+                @Override
+                public void onBindViewHolder(@NonNull MembersViewHolder holder, int position) {
+                    holder.mName.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getName());
+                    holder.mEmail.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getEmail());
+                    Glide.with(MainActivity.this).load(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getProfile_url()).into(holder.mProfile);
+                }
+
+                @Override
+                public int getItemCount() {
+                    return boardViewHolderClassArrayList.get(position).getBoardMembersPOJOArrayList().size();
+                }
+
+                class MembersViewHolder extends RecyclerView.ViewHolder {
+                    public TextView mName, mEmail;
+                    public CircleImageView mProfile;
+
+                    public MembersViewHolder(View itemView) {
+                        super(itemView);
+                        mName = itemView.findViewById(R.id.name_board_members_view_textview);
+                        mEmail = itemView.findViewById(R.id.email_board_members_view_textview);
+                        mProfile = itemView.findViewById(R.id.profile_image_board_members_view);
+                    }
+                }
             }
+
         }
-
-        @NonNull
-        @Override
-        public MembersViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_boards_view_members_row_layout, parent, false);
-            MembersViewHolder viewHolder = new MembersViewHolder(view);
-            return viewHolder;
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull MembersViewHolder holder, int position) {
-            holder.mName.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getName());
-            holder.mEmail.setText(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getEmail());
-            Glide.with(MainActivity.this).load(boardViewHolderClassArrayList.get(this.position).getBoardMembersPOJOArrayList().get(position).getUserInfoPOJO().getProfile_url()).into(holder.mProfile);
-        }
-
-        @Override
-        public int getItemCount() {
-            return boardViewHolderClassArrayList.get(position).getBoardMembersPOJOArrayList().size();
-        }
-
-        class MembersViewHolder extends RecyclerView.ViewHolder {
-            public TextView mName, mEmail;
-            public CircleImageView mProfile;
-
-            public MembersViewHolder(View itemView) {
-                super(itemView);
-                mName = itemView.findViewById(R.id.name_board_members_view_textview);
-                mEmail = itemView.findViewById(R.id.email_board_members_view_textview);
-                mProfile = itemView.findViewById(R.id.profile_image_board_members_view);
-            }
-        }
-    }
-
-}
