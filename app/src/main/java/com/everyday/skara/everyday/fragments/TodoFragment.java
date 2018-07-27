@@ -286,7 +286,7 @@ public class TodoFragment extends Fragment {
 
 
         public class TodoItemViewHolder extends RecyclerView.ViewHolder {
-            public EditText mItem;
+            public TextView mItem;
             public ImageButton mDelete;
             public CheckBox mCheckbox;
 
@@ -310,7 +310,6 @@ public class TodoFragment extends Fragment {
                 });
             }
         }
-
     }
 
     void setState(final int todoPosition, final int position, final boolean isChecked) {
@@ -325,17 +324,21 @@ public class TodoFragment extends Fragment {
     void deleteItem(final int todoPosition, final int position) {
         final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
-        todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue();
         try {
-            todoArrayList.get(todoPosition).getTodoPOJOArrayList().remove(position);
-            todoItemAdapter.notifyDataSetChanged();
+            todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue();
+            try {
+                todoArrayList.get(todoPosition).getTodoPOJOArrayList().remove(position);
+                todoItemAdapter.notifyDataSetChanged();
 
-            if (todoArrayList.get(todoPosition).getTodoPOJOArrayList().size() == 0) {
-                todoReference.removeValue();
-                todoAdapter.notifyItemRemoved(todoPosition);
-                mTodoItemsDialog.dismiss();
+                if (todoArrayList.get(todoPosition).getTodoPOJOArrayList().size() == 0) {
+                    todoReference.removeValue();
+                    mTodoItemsDialog.dismiss();
+                    init();
+                }
+            } catch (IndexOutOfBoundsException e) {
+
             }
-        } catch (IndexOutOfBoundsException e) {
+        } catch (Exception e) {
 
         }
     }
@@ -390,7 +393,7 @@ public class TodoFragment extends Fragment {
             todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(position).getTodoKey());
             todoInfoReference = todoDatabaseReference.child("info");
 
-            Button mCloseButton, mAddButton;
+            ImageButton mCloseButton, mAddButton;
             final EditText mItemEditText;
             mTodoItemsDialog = new BottomSheetDialog(getActivity());
             mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
@@ -565,4 +568,9 @@ public class TodoFragment extends Fragment {
         alertDialog.show();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        init();
+    }
 }

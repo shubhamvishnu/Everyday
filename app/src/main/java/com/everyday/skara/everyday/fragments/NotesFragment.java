@@ -217,15 +217,14 @@ public class NotesFragment extends Fragment {
     }
 
     void showEditNotesDialog(final int position) {
-        Button mClose, mDone;
-        TextView mDate;
+        ImageButton mClose;
+        Button mDone;
         mEditNotesDialog = new BottomSheetDialog(getActivity());
         mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout);
 
         final EditText mTitle = mEditNotesDialog.findViewById(R.id.title_edit_notes);
         final EditText mContent = mEditNotesDialog.findViewById(R.id.content_edit_notes);
 
-        mDate = mEditNotesDialog.findViewById(R.id.date_edit_notes);
         mClose = mEditNotesDialog.findViewById(R.id.close_edit_notes);
         mDone = mEditNotesDialog.findViewById(R.id.done_edit_notes);
 
@@ -234,7 +233,6 @@ public class NotesFragment extends Fragment {
 
         mTitle.setText(notePOJO.getTitle());
         mContent.setText(notePOJO.getContent());
-        mDate.setText(notePOJO.getDate());
 
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override

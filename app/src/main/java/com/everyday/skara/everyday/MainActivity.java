@@ -254,12 +254,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     void showNewBoardDialog() {
         mNewBoardDialog = new BottomSheetDialog(this);
         mNewBoardDialog.setContentView(R.layout.dialog_new_baord_layout);
+        ImageButton mClose = mNewBoardDialog.findViewById(R.id.close_new_board_dialog);
 
         mTitle = mNewBoardDialog.findViewById(R.id.board_title);
         mDate = mNewBoardDialog.findViewById(R.id.board_date);
         mDone = mNewBoardDialog.findViewById(R.id.board_done);
 
         mDate.setText(DateTimeStamp.getDate());
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNewBoardDialog.dismiss();
+            }
+        });
 
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override

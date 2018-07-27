@@ -1,32 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:hint="enter item"
-            android:id="@+id/dialog_todo_new_item_edittext"
-            />
+        android:layout_gravity="center"
+        android:gravity="right"
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="add"
-            android:id="@+id/dialog_todo_add_new_item_button"/>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="close"
-        android:id="@+id/close_todo_item_dialog"/>
-    </LinearLayout>
-<android.support.v7.widget.RecyclerView
-    android:layout_width="match_parent"
+        android:orientation="horizontal">
+<TextView
+    android:layout_width="0dp"
+    android:layout_weight="1"
     android:layout_height="wrap_content"
-    android:id="@+id/recyclerview_todo_view_items"></android.support.v7.widget.RecyclerView>
+    android:text="TODO Items"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:textColor="@android:color/black"
+    android:paddingRight="8dp"
+    android:textSize="18dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="8dp"/>
+        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/close_todo_item_dialog"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_close_24dp" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:background="#e6e6e6" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/dialog_todo_new_item_edittext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="enter item" />
+
+        <android.support.v7.widget.AppCompatImageButton
+            android:id="@+id/dialog_todo_add_new_item_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_add_back_24dp" />
+
+
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview_todo_view_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
 </LinearLayout>

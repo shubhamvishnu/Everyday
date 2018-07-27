@@ -228,15 +228,14 @@ public class LinksFragment extends Fragment {
         startActivity(intent);
     }
     void showEditLinkDialog(final int position) {
-        Button mClose, mDone;
-        TextView mDate;
+        ImageButton mClose;
+        Button mDone;
         mEditLinksDialog = new BottomSheetDialog(getActivity());
         mEditLinksDialog.setContentView(R.layout.dialog_edit_links_layout);
 
         final EditText mTitle = mEditLinksDialog.findViewById(R.id.title_edit_link);
         final EditText mContent = mEditLinksDialog.findViewById(R.id.link_edit_link);
 
-        mDate = mEditLinksDialog.findViewById(R.id.date_edit_link);
         mClose = mEditLinksDialog.findViewById(R.id.close_edit_link);
         mDone = mEditLinksDialog.findViewById(R.id.done_edit_link);
 
@@ -245,7 +244,6 @@ public class LinksFragment extends Fragment {
 
         mTitle.setText(linkPOJO.getTitle());
         mContent.setText(linkPOJO.getLink());
-        mDate.setText(linkPOJO.getDate());
 
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override
