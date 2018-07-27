@@ -6,6 +6,9 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,12 +29,10 @@ import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 public class BoardActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    FloatingActionButton mNewButton;
     FloatingTextButton mNewOptionsButton;
     ImageButton mFilterButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
-    Button mBoardMembersButton;
     int optionType;
 
     // Dialog
@@ -41,6 +42,8 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board);
+        Toolbar myToolbar = findViewById(R.id.board_view_toolbar);
+        setSupportActionBar(myToolbar);
         if (user != null) {
             init();
         } else {
@@ -60,7 +63,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         mNewOptionsButton = findViewById(R.id.new_options_button);
         mFilterButton = findViewById(R.id.filter_option_button);
 
-        mBoardMembersButton = findViewById(R.id.board_members_button);
 
         mNewOptionsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,16 +70,45 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 showOptionsDialog();
             }
         });
-        mBoardMembersButton.setOnClickListener(this);
 
-        mNewButton = findViewById(R.id.new_button);
-        mNewButton.setOnClickListener(this);
 
         mFilterButton.setOnClickListener(this);
         initFragment();
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_board_activity, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.board_members_menu_item:
+                toBoardMembersActivity();
+                return true;
+
+            case R.id.create_menu_item:
+                switch (optionType) {
+                    case NewOptionTypes.TYPE_TODO:
+                        toNewTodoActivity();
+                        break;
+                    case NewOptionTypes.TYPE_LINK:
+                        toNewLinkActivity();
+                        break;
+                    case NewOptionTypes.TYPE_NOTE:
+                        toNewNoteActivity();
+                        break;
+                }
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
     void initFragment() {
             // Check that the activity is using the layout version with
             // the fragment_container FrameLayout
@@ -107,23 +138,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.new_button:
-                switch (optionType) {
-                    case NewOptionTypes.TYPE_TODO:
-                        toNewTodoActivity();
-                        break;
-                    case NewOptionTypes.TYPE_LINK:
-                        toNewLinkActivity();
-                        break;
-                    case NewOptionTypes.TYPE_NOTE:
-                        toNewNoteActivity();
-                        break;
-                }
-                break;
-            case R.id.board_members_button:
-                toBoardMembersActivity();
-                break;
-
         }
     }
 
