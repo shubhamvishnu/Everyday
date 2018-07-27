@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="@color/blue"
+        app:title="New Note"
         android:elevation="4dp"
         android:theme="@style/AppTheme.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -57,7 +58,7 @@
         android:id="@+id/note_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
+        android:background="@color/blue"
         android:text="Done"
         android:textAllCaps="false"
         android:textColor="@android:color/white" />
