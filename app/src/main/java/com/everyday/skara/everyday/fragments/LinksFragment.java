@@ -30,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -56,6 +57,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LinksFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -228,6 +231,9 @@ public class LinksFragment extends Fragment {
         startActivity(intent);
     }
     void showEditLinkDialog(final int position) {
+        CircleImageView mProfileImage;
+        TextView mName, mEmail;
+
         ImageButton mClose;
         Button mDone;
         mEditLinksDialog = new BottomSheetDialog(getActivity());
@@ -239,8 +245,15 @@ public class LinksFragment extends Fragment {
         mClose = mEditLinksDialog.findViewById(R.id.close_edit_link);
         mDone = mEditLinksDialog.findViewById(R.id.done_edit_link);
 
+        mProfileImage = mEditLinksDialog.findViewById(R.id.link_created_member_image_view);
+        mName = mEditLinksDialog.findViewById(R.id.link_created_name_view);
+        mEmail = mEditLinksDialog.findViewById(R.id.link_created_email_view);
 
         final LinkPOJO linkPOJO = linkPOJOArrayList.get(position);
+
+        mName.setText(linkPOJO.getUserInfoPOJO().getName());
+        mEmail.setText(linkPOJO.getUserInfoPOJO().getEmail());
+        Glide.with(mEditLinksDialog.getContext()).load(linkPOJO.getUserInfoPOJO().getProfile_url()).into(mProfileImage);
 
         mTitle.setText(linkPOJO.getTitle());
         mContent.setText(linkPOJO.getLink());

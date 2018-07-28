@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -41,6 +42,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NotesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -93,6 +96,7 @@ public class NotesFragment extends Fragment {
         notePOJOArrayList = new ArrayList<>();
         initNotesRecyclerView();
     }
+
     void showFilterDialog() {
         Button mAsc, mDesc;
         mFilterDialog = new BottomSheetDialog(getActivity());
@@ -121,6 +125,7 @@ public class NotesFragment extends Fragment {
         mFilterDialog.setCanceledOnTouchOutside(true);
         mFilterDialog.show();
     }
+
     void sortDateAscending() {
         Collections.sort(notePOJOArrayList, new Comparator<NotePOJO>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -135,6 +140,7 @@ public class NotesFragment extends Fragment {
             }
         });
     }
+
     void sortDateDescending() {
         Collections.sort(notePOJOArrayList, new Comparator<NotePOJO>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -217,8 +223,12 @@ public class NotesFragment extends Fragment {
     }
 
     void showEditNotesDialog(final int position) {
+        CircleImageView mProfileImage;
+        TextView mName, mEmail;
+
         ImageButton mClose;
         Button mDone;
+
         mEditNotesDialog = new BottomSheetDialog(getActivity());
         mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout);
 
@@ -228,11 +238,19 @@ public class NotesFragment extends Fragment {
         mClose = mEditNotesDialog.findViewById(R.id.close_edit_notes);
         mDone = mEditNotesDialog.findViewById(R.id.done_edit_notes);
 
+        mProfileImage = mEditNotesDialog.findViewById(R.id.note_created_member_image_view);
+        mName = mEditNotesDialog.findViewById(R.id.note_created_name_view);
+        mEmail = mEditNotesDialog.findViewById(R.id.note_created_email_view);
+
 
         final NotePOJO notePOJO = notePOJOArrayList.get(position);
+        mName.setText(notePOJO.getUserInfoPOJO().getName());
+        mEmail.setText(notePOJO.getUserInfoPOJO().getEmail());
+        Glide.with(mEditNotesDialog.getContext()).load(notePOJO.getUserInfoPOJO().getProfile_url()).into(mProfileImage);
 
         mTitle.setText(notePOJO.getTitle());
         mContent.setText(notePOJO.getContent());
+
 
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -261,7 +279,7 @@ public class NotesFragment extends Fragment {
         mEditNotesDialog.show();
     }
 
-    void deleteNote(final int position){
+    void deleteNote(final int position) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getActivity());
@@ -293,6 +311,7 @@ public class NotesFragment extends Fragment {
         // show it
         alertDialog.show();
     }
+
     public class NotesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
 

@@ -6,10 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +42,16 @@ public class BoardMembersActivity extends AppCompatActivity {
     ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
     RecyclerView mMembersRecyclerView;
     MembersAdapter membersAdapter;
+    LinearLayout mEmptyLinearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board_members);
+
+        Toolbar myToolbar = findViewById(R.id.board_members_toolbar);
+        myToolbar.setTitle("Board Members");
+        setSupportActionBar(myToolbar);
         if (user != null) {
             init();
         } else {
@@ -61,6 +68,9 @@ public class BoardMembersActivity extends AppCompatActivity {
         boardMembersPOJOArrayList = new ArrayList<>();
 
         mMembersRecyclerView = findViewById(R.id.board_members_recyclerview);
+        mEmptyLinearLayout = (LinearLayout) findViewById(R.id.board_members_empty_linear_layout);
+
+        setEmptyVisibility(0);
 
         fetchMembers();
 
@@ -74,12 +84,15 @@ public class BoardMembersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
+
+                    setEmptyVisibility(1);
+
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         boardMembersPOJOArrayList.add(snapshot.getValue(BoardMembersPOJO.class));
                     }
                     initRecyclerView();
                 } else {
-
+                    setEmptyVisibility(0);
                 }
             }
 
@@ -88,6 +101,19 @@ public class BoardMembersActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    void setEmptyVisibility(int action) {
+        switch (action) {
+            case 0:
+                mMembersRecyclerView.setVisibility(View.INVISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                break;
+            case 1:
+                mMembersRecyclerView.setVisibility(View.VISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                break;
+        }
     }
 
     void initRecyclerView() {
@@ -144,6 +170,10 @@ public class BoardMembersActivity extends AppCompatActivity {
             boardMembersPOJOArrayList.remove(position);
             membersAdapter.notifyItemRemoved(position);
 
+            if(boardMembersPOJOArrayList.size() == 0){
+                setEmptyVisibility(0);
+            }
+
         }
 
         public class BoardViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -167,7 +197,7 @@ public class BoardMembersActivity extends AppCompatActivity {
                     case R.id.delete_member_to_group_button:
                         if (userInfoPOJO.getUser_key().equals(boardPOJO.getCreatedByProfilePOJO().getUser_key())) {
                             deleteMember(getPosition());
-                        }else{
+                        } else {
                             Toast.makeText(BoardMembersActivity.this, "Not the admin. You cannot delete a member.", Toast.LENGTH_SHORT).show();
                         }
                         break;

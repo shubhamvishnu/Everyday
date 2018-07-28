@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.BoardMembersType;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -40,7 +42,8 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     EditText mMemberSearchEditText;
     RecyclerView mMemberSearchRecyclerView;
-    Button mSearchDoneButton, mDoneButton, mBoardMembersButton;
+    ImageButton mSearchDoneButton;
+    Button mDoneButton, mBoardMembersButton;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference childDatabaseReference;
     ChildEventListener memberChildEventListener;
@@ -53,6 +56,7 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_add_board_members);
         if (user != null) {
             init();
@@ -144,7 +148,7 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
             UserInfoPOJO userInfoPOJO = userInfoPOJOArrayList.get(position);
             ((SearchViewHolder) holder).mName.setText(userInfoPOJO.getName());
             ((SearchViewHolder) holder).mEmail.setText(userInfoPOJO.getEmail());
-            //todo: implement glide
+            Glide.with(AddBoardMembersActivity.this).load(userInfoPOJO.getProfile_url()).into(((SearchViewHolder) holder).mCircleImageView);
         }
 
         @Override

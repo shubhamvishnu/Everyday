@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.Connectivity;
@@ -51,6 +52,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class TodoFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -444,7 +447,8 @@ public class TodoFragment extends Fragment {
 
         void showEditTodoDialog(final int position) {
             final EditText mTitle;
-            Button mClose, mDone;
+            ImageButton mClose;
+            Button mDone;
 
             Todo todo = todoArrayList.get(position);
             final TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
@@ -455,6 +459,7 @@ public class TodoFragment extends Fragment {
             mTitle = mEditTodoDialog.findViewById(R.id.title_edit_todo_dialog);
             mClose = mEditTodoDialog.findViewById(R.id.close_todo_edit_dialog);
             mDone = mEditTodoDialog.findViewById(R.id.done_edit_todo_dialog);
+
 
             mTitle.setText(todoInfoPOJO.getTitle());
 
