@@ -125,10 +125,10 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.todo_done:
                 addTodo();
                 break;
-            case R.id.todo_set_reminder:
-                DialogFragment dialog = createDialog();
-                dialog.show(getSupportFragmentManager(), "date");
-                break;
+//            case R.id.todo_set_reminder:
+//                DialogFragment dialog = createDialog();
+//                dialog.show(getSupportFragmentManager(), "date");
+//                break;
         }
     }
 

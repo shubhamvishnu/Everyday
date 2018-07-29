@@ -23,6 +23,7 @@
             android:layout_weight="1"
             android:textSize="18dp"
             android:padding="8dp"
+            android:textColor="@android:color/black"
             android:layout_height="wrap_content"
             android:text="Todo item" />
         <android.support.v7.widget.AppCompatImageButton
