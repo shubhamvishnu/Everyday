@@ -53,9 +53,10 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
-    TextView mReminder;
+    //TextView mReminder;
     EditText mItemEditText, mTodoTitle;
-    ImageButton mTodoDone, mCalendar;
+    ImageButton mTodoDone;
+    //mCalendar;
     ArrayList<TodoPOJO> todoPOJOArrayList;
     RecyclerView mTodoRecyclerView;
     TodoListAdapter todoListAdapter;
@@ -92,12 +93,12 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
         mItemEditText = findViewById(R.id.todo_item_edittext);
         mTodoTitle = findViewById(R.id.todo_title_edittext);
         mTodoDone = findViewById(R.id.todo_done);
-        mCalendar = findViewById(R.id.todo_set_reminder);
-        mReminder = findViewById(R.id.todo_set_reminder_textview);
+//        mCalendar = findViewById(R.id.todo_set_reminder);
+//        mReminder = findViewById(R.id.todo_set_reminder_textview);
         mTodoRecyclerView = findViewById(R.id.todo_recyclerview);
 
         mTodoDone.setOnClickListener(this);
-        mCalendar.setOnClickListener(this);
+        //   mCalendar.setOnClickListener(this);
 
         date = new String("");
         time = new String("");
@@ -289,7 +290,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void setReminder() {
-        AlarmManager alarmMgr = alarmMgr = (AlarmManager) this.getSystemService(TodoActivity.ALARM_SERVICE);
+        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(TodoActivity.ALARM_SERVICE);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
 
@@ -323,7 +324,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
             hours = hourOfDay;
             minutes = minute;
 
-            mReminder.setText("Reminder set at " + time + " on " + date);
+            //mReminder.setText("Reminder set at " + time + " on " + date);
             setReminder();
         }
     }

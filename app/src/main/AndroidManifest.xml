@@ -21,10 +21,10 @@
             android:value="@string/google_maps_key" />
 
         <receiver
-            android:name=".receivers.TodoReminderReceiver"
-            android:enabled="true">
+            android:name=".receivers.TodoReminderReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+                <action
+                    android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
 
