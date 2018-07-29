@@ -10,6 +10,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,7 +63,7 @@ public class TodoFragment extends Fragment {
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     ChildEventListener childEventListener;
-    ArrayList<Todo> todoArrayList;
+    ArrayList<Todo> todoArrayList = new ArrayList<>();
 
     // View elements
     RecyclerView mTodoRecyclerView;
@@ -82,6 +83,12 @@ public class TodoFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_todo_layout, container, false);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (getActivity() != null) {
             if (user != null) {
                 init();
@@ -89,7 +96,6 @@ public class TodoFragment extends Fragment {
                 toLoginActivity();
             }
         }
-        return view;
     }
 
     void init() {
@@ -127,7 +133,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sortDateAscending();
-                todoAdapter.notifyDataSetChanged();
+                init();
                 mFilterDialog.dismiss();
             }
         });
@@ -135,7 +141,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sortDateDescending();
-                todoAdapter.notifyDataSetChanged();
+                init();
                 mFilterDialog.dismiss();
             }
         });
@@ -156,9 +162,11 @@ public class TodoFragment extends Fragment {
     }
 
     void initTodos() {
+        todoArrayList = new ArrayList<>();
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
         databaseReference.keepSynced(true);
         childEventListener = new ChildEventListener() {
+
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
@@ -173,6 +181,7 @@ public class TodoFragment extends Fragment {
                         todoArrayList.add(todo);
                         sortDateDescending();
                         todoAdapter.notifyItemInserted(todoPOJOArrayList.size() - 1);
+
                     }
                 } catch (DatabaseException d) {
                 } catch (Exception e) {
@@ -573,9 +582,5 @@ public class TodoFragment extends Fragment {
         alertDialog.show();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        init();
-    }
+
 }

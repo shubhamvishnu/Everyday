@@ -57,8 +57,6 @@
             app:title="Board Members"
             app:titleTextColor="@color/white" />
 
-
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/board_members_recyclerview"
             android:layout_width="match_parent"

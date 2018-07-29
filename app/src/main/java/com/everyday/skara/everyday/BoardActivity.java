@@ -33,7 +33,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     ImageButton mFilterButton;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
-    int optionType;
+    public static int optionType;
 
     // Dialog
     BottomSheetDialog mNewOptionsDialog, mNewDialog;

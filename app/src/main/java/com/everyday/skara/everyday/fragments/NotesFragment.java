@@ -66,6 +66,12 @@ public class NotesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_notes_layout, container, false);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (getActivity() != null) {
             if (user != null) {
                 init();
@@ -73,7 +79,6 @@ public class NotesFragment extends Fragment {
                 toLoginActivity();
             }
         }
-        return view;
     }
 
     void init() {

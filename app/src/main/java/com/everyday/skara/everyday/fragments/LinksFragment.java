@@ -80,6 +80,12 @@ public class LinksFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_links_layout, container, false);
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (getActivity() != null) {
             if (user != null) {
                 init();
@@ -87,7 +93,6 @@ public class LinksFragment extends Fragment {
                 toLoginActivity();
             }
         }
-        return view;
     }
 
     void init() {
@@ -110,6 +115,7 @@ public class LinksFragment extends Fragment {
         });
         initLinksRecyclerView();
     }
+
     void showFilterDialog() {
         Button mAsc, mDesc;
         mFilterDialog = new BottomSheetDialog(getActivity());
@@ -138,6 +144,7 @@ public class LinksFragment extends Fragment {
         mFilterDialog.setCanceledOnTouchOutside(true);
         mFilterDialog.show();
     }
+
     void sortDateAscending() {
         Collections.sort(linkPOJOArrayList, new Comparator<LinkPOJO>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -152,6 +159,7 @@ public class LinksFragment extends Fragment {
             }
         });
     }
+
     void sortDateDescending() {
         Collections.sort(linkPOJOArrayList, new Comparator<LinkPOJO>() {
             DateFormat f = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
@@ -167,7 +175,7 @@ public class LinksFragment extends Fragment {
         });
     }
 
-    void initLinksRecyclerView(){
+    void initLinksRecyclerView() {
         mLinksRecyclerView.invalidate();
         mLinksRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -177,13 +185,14 @@ public class LinksFragment extends Fragment {
 
         initLinks();
     }
-    void initLinks(){
+
+    void initLinks() {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 LinkPOJO linkPOJO = dataSnapshot.getValue(LinkPOJO.class);
                 linkPOJOArrayList.add(linkPOJO);
-                mLinksAdapter.notifyItemInserted(linkPOJOArrayList.size()-1);
+                mLinksAdapter.notifyItemInserted(linkPOJOArrayList.size() - 1);
 
             }
 
@@ -210,6 +219,7 @@ public class LinksFragment extends Fragment {
 
         linksDatabaseReference.addChildEventListener(childEventListener);
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -225,11 +235,13 @@ public class LinksFragment extends Fragment {
             linksDatabaseReference.removeEventListener(childEventListener);
         }
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
     void showEditLinkDialog(final int position) {
         CircleImageView mProfileImage;
         TextView mName, mEmail;
@@ -284,7 +296,8 @@ public class LinksFragment extends Fragment {
         mEditLinksDialog.setCanceledOnTouchOutside(false);
         mEditLinksDialog.show();
     }
-    void deleteLink(final int position){
+
+    void deleteLink(final int position) {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
                 getActivity());
@@ -391,6 +404,7 @@ public class LinksFragment extends Fragment {
         }
 
     }
+
     void openWebBrowser(String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         browserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
