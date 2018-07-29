@@ -133,7 +133,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sortDateAscending();
-                init();
+                todoAdapter.notifyDataSetChanged();
                 mFilterDialog.dismiss();
             }
         });
@@ -141,7 +141,7 @@ public class TodoFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 sortDateDescending();
-                init();
+                todoAdapter.notifyDataSetChanged();
                 mFilterDialog.dismiss();
             }
         });

@@ -25,11 +25,19 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:gridlayout-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
 
-    // horizontal calendar view
+    // Bottom Sheet Picker
+    implementation('com.philliphsu:bottomsheetpickers:2.4.1') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'gridlayout-v7'
+    }
+
+    // Horizontal calendar view
     implementation 'com.github.jhonnyx2012:horizontal-picker:1.0.6'
 
     // Firebase Authentication
