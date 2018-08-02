@@ -19,6 +19,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,7 +78,9 @@ public class TodoFragment extends Fragment {
     TodoItemAdapter todoItemAdapter;
     View view;
     ImageButton mFilterButton;
-    BottomSheetDialog mEditTodoDialog, mFilterDialog;
+    BottomSheetDialog mEditTodoDialog;
+    public static boolean clicked = false;
+    LinearLayout mEmptyLinearLayout, mFragmentLinearLayout;
 
     @Nullable
     @Override
@@ -112,42 +115,40 @@ public class TodoFragment extends Fragment {
         todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/");
         todoDatabaseReference.keepSynced(true);
         mTodoRecyclerView = view.findViewById(R.id.todo_view_recycler);
+        mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_todos_linear_layout);
+        mEmptyLinearLayout.setVisibility(View.INVISIBLE);
+
+        mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_todo_fragment);
+
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilterDialog();
+                clicked = !clicked;
+                if (clicked) {
+                    mFilterButton.setRotation(180);
+                    sortDateAscending();
+                    todoAdapter.notifyDataSetChanged();
+                } else {
+                    mFilterButton.setRotation(0);
+                    sortDateDescending();
+                    todoAdapter.notifyDataSetChanged();
+                }
             }
         });
         initTodoRecyclerView();
     }
 
-    void showFilterDialog() {
-        Button mAsc, mDesc;
-        mFilterDialog = new BottomSheetDialog(getActivity());
-        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
-
-        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
-        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
-
-        mAsc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateAscending();
-                todoAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-        mDesc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateDescending();
-                todoAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-
-        mFilterDialog.setCanceledOnTouchOutside(true);
-        mFilterDialog.show();
+    void setEmptyVisibility(int action) {
+        switch (action) {
+            case 0:
+                mFragmentLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                break;
+            case 1:
+                mFragmentLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                break;
+        }
     }
 
     void initTodoRecyclerView() {
@@ -171,6 +172,7 @@ public class TodoFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 try {
                     if (dataSnapshot.hasChildren()) {
+                        setEmptyVisibility(1);
                         ArrayList<TodoPOJO> todoPOJOArrayList = new ArrayList<>();
                         TodoInfoPOJO todoInfoPOJO = dataSnapshot.child("info").getValue(TodoInfoPOJO.class);
                         for (DataSnapshot snapshot : dataSnapshot.child("todo_items").getChildren()) {
@@ -182,6 +184,8 @@ public class TodoFragment extends Fragment {
                         sortDateDescending();
                         todoAdapter.notifyItemInserted(todoPOJOArrayList.size() - 1);
 
+                    } else {
+                        setEmptyVisibility(0);
                     }
                 } catch (DatabaseException d) {
                 } catch (Exception e) {
@@ -330,6 +334,7 @@ public class TodoFragment extends Fragment {
         stateMap.put("state", isChecked);
         todoReference.updateChildren(stateMap);
         todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
+        todoAdapter.notifyItemChanged(todoPosition);
 
     }
 
@@ -389,7 +394,21 @@ public class TodoFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull TodoAdapter.TodoViewHolder holder, int position) {
             try {
+                int counter = 0;
                 Todo todo = todoArrayList.get(position);
+                if (todo.getTodoPOJOArrayList().size() > 0) {
+                    for (int i = 0; i < todo.getTodoPOJOArrayList().size(); i++) {
+                        if (todo.getTodoPOJOArrayList().get(i).isState()) {
+                            ++counter;
+                        }
+                    }
+                    String stat = counter + "/"  + (todo.getTodoPOJOArrayList().size());
+                    holder.mStats.setText(stat);
+                }else{
+                    holder.mStats.setText("0/0");
+                }
+
+
                 TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
 
                 holder.mTitle.setText(todoInfoPOJO.getTitle());
@@ -496,12 +515,18 @@ public class TodoFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if (todoArrayList.size() <= 0) {
+                setEmptyVisibility(0);
+            } else {
+                setEmptyVisibility(1);
+            }
             return todoArrayList.size();
         }
 
         public class TodoViewHolder extends RecyclerView.ViewHolder {
             public TextView mTitle, mDate;
             public ImageButton mMore, mEdit, mDelete;
+            public TextView mStats;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
@@ -510,9 +535,16 @@ public class TodoFragment extends Fragment {
                 mDate = itemView.findViewById(R.id.todo_date_view);
                 mEdit = itemView.findViewById(R.id.edit_todo_button);
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
+                mStats = itemView.findViewById(R.id.todo_item_stats_textview);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItems(getPosition());
+                    }
+                });
+                mStats.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showItems(getPosition());

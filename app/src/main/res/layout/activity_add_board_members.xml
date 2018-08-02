@@ -32,7 +32,6 @@
               android:layout_height="32dp"
               android:adjustViewBounds="true"
               android:background="@android:color/transparent"
-              android:padding="8dp"
               android:scaleType="fitCenter"
               app:srcCompat="@drawable/ic_search_24dp" />
 

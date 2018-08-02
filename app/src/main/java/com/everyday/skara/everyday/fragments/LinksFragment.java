@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,6 +49,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.philliphsu.bottomsheetpickers.Utils;
 
 import org.w3c.dom.Text;
 
@@ -74,7 +77,9 @@ public class LinksFragment extends Fragment {
     ArrayList<LinkPOJO> linkPOJOArrayList;
     View view;
     ImageButton mFilterButton;
-    BottomSheetDialog mEditLinksDialog, mFilterDialog;
+    BottomSheetDialog mEditLinksDialog;
+    LinearLayout mEmptyLinearLayout, mFragmentLinearLayout;
+    public static boolean clicked = false;
 
     @Nullable
     @Override
@@ -107,42 +112,41 @@ public class LinksFragment extends Fragment {
         mLinksRecyclerView = view.findViewById(R.id.links_view_recycler);
 
         mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+
+        mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_link_linear_layout);
+        mEmptyLinearLayout.setVisibility(View.INVISIBLE);
+
+        mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_links_fragment);
+
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilterDialog();
+                clicked = !clicked;
+                if (clicked) {
+                    mFilterButton.setRotation(180);
+                    sortDateAscending();
+                    mLinksAdapter.notifyDataSetChanged();
+                } else {
+                    mFilterButton.setRotation(0);
+                    sortDateDescending();
+                    mLinksAdapter.notifyDataSetChanged();
+                }
             }
         });
         initLinksRecyclerView();
     }
 
-    void showFilterDialog() {
-        Button mAsc, mDesc;
-        mFilterDialog = new BottomSheetDialog(getActivity());
-        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
-
-        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
-        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
-
-        mAsc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateAscending();
-                mLinksAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-        mDesc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateDescending();
-                mLinksAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-
-        mFilterDialog.setCanceledOnTouchOutside(true);
-        mFilterDialog.show();
+    void setEmptyVisibility(int action) {
+        switch (action) {
+            case 0:
+                mFragmentLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                break;
+            case 1:
+                mFragmentLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                break;
+        }
     }
 
     void sortDateAscending() {
@@ -190,10 +194,10 @@ public class LinksFragment extends Fragment {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                setEmptyVisibility(1);
                 LinkPOJO linkPOJO = dataSnapshot.getValue(LinkPOJO.class);
                 linkPOJOArrayList.add(linkPOJO);
                 mLinksAdapter.notifyItemInserted(linkPOJOArrayList.size() - 1);
-
             }
 
             @Override
@@ -360,6 +364,11 @@ public class LinksFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if (linkPOJOArrayList.size() <= 0) {
+                setEmptyVisibility(0);
+            } else {
+                setEmptyVisibility(1);
+            }
             return linkPOJOArrayList.size();
         }
 

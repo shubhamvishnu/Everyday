@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -58,8 +59,9 @@ public class NotesFragment extends Fragment {
     RecyclerView mNotesRecyclerView;
     NotesAdapter mNotesAdapter;
     ImageButton mFilterButton;
-    BottomSheetDialog mEditNotesDialog, mFilterDialog;
-
+    BottomSheetDialog mEditNotesDialog;
+    public static boolean clicked = false;
+    LinearLayout mEmptyLinearLayout, mFragmentLinearLayout;
     View view;
 
     @Nullable
@@ -92,44 +94,43 @@ public class NotesFragment extends Fragment {
         mNotesRecyclerView = view.findViewById(R.id.notes_view_recycler);
 
         mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+        mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_notes_linear_layout);
+        mEmptyLinearLayout.setVisibility(View.INVISIBLE);
+
+        mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_notes_fragment);
+
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showFilterDialog();
+                clicked = !clicked;
+                if (clicked) {
+                    mFilterButton.setRotation(180);
+                    sortDateAscending();
+                    mNotesAdapter.notifyDataSetChanged();
+                } else {
+                    mFilterButton.setRotation(0);
+                    sortDateDescending();
+                    mNotesAdapter.notifyDataSetChanged();
+                }
             }
         });
         notePOJOArrayList = new ArrayList<>();
         initNotesRecyclerView();
     }
 
-    void showFilterDialog() {
-        Button mAsc, mDesc;
-        mFilterDialog = new BottomSheetDialog(getActivity());
-        mFilterDialog.setContentView(R.layout.dialog_filter_layout);
-
-        mAsc = mFilterDialog.findViewById(R.id.filter_date_ascending);
-        mDesc = mFilterDialog.findViewById(R.id.filter_date_descending);
-
-        mAsc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateAscending();
-                mNotesAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-        mDesc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                sortDateDescending();
-                mNotesAdapter.notifyDataSetChanged();
-                mFilterDialog.dismiss();
-            }
-        });
-
-        mFilterDialog.setCanceledOnTouchOutside(true);
-        mFilterDialog.show();
+    void setEmptyVisibility(int action) {
+        switch (action) {
+            case 0:
+                mFragmentLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                break;
+            case 1:
+                mFragmentLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                break;
+        }
     }
+
 
     void sortDateAscending() {
         Collections.sort(notePOJOArrayList, new Comparator<NotePOJO>() {
@@ -177,6 +178,7 @@ public class NotesFragment extends Fragment {
         childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                setEmptyVisibility(1);
                 NotePOJO notePOJO = dataSnapshot.getValue(NotePOJO.class);
                 notePOJOArrayList.add(notePOJO);
                 mNotesAdapter.notifyItemInserted(notePOJOArrayList.size() - 1);
@@ -347,6 +349,11 @@ public class NotesFragment extends Fragment {
 
         @Override
         public int getItemCount() {
+            if(notePOJOArrayList.size() <= 0){
+                setEmptyVisibility(0);
+            }else{
+                setEmptyVisibility(1);
+            }
             return notePOJOArrayList.size();
         }
 
