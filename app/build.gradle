@@ -50,6 +50,9 @@ dependencies {
     // Firebase Analytics
     implementation 'com.google.firebase:firebase-core:16.0.0'
 
+    // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+
     // Circle Image View library
     implementation 'de.hdodenhof:circleimageview:2.1.0'
 
