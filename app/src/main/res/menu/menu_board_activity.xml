@@ -9,5 +9,9 @@
         android:title="Members"
         android:icon="@drawable/ic_group_24dp"
         app:showAsAction="always"/>
+    <item android:id="@+id/chat_board_menu_item"
+        android:title="Chat"
+        android:icon="@drawable/ic_chat_24dp"
+        app:showAsAction="always"/>
 
 </menu>

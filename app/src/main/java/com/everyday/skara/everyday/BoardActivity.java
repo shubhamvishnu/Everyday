@@ -157,12 +157,21 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                         break;
                 }
                 return true;
+            case R.id.chat_board_menu_item:
+                toChatActivity();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+    void toChatActivity(){
+        Intent intent = new Intent(BoardActivity.this, ChatActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
     void initFragment() {
             // Check that the activity is using the layout version with
