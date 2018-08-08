@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -304,12 +305,20 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
     void showSeenByDialog(ChatPOJO chatPOJO) {
         RecyclerView mChatInfoRecyclerView;
+        LinearLayout mNoViewsLinearLayout;
+
         mChatInfoDialog = new BottomSheetDialog(this);
         mChatInfoDialog.setContentView(R.layout.dialog_chat_info_layout);
         ImageButton mClose = mChatInfoDialog.findViewById(R.id.close_chat_info);
 
         mChatInfoRecyclerView = mChatInfoDialog.findViewById(R.id.recyclerview_chat_info);
+        mNoViewsLinearLayout = mChatInfoDialog.findViewById(R.id.no_views_linear_layout);
 
+        if(chatPOJO.getUserInfoPOJOArrayList().size() <= 0){
+            mNoViewsLinearLayout.setVisibility(LinearLayout.VISIBLE);
+        }else{
+            mNoViewsLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+        }
         mChatInfoRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mChatInfoRecyclerView.setLayoutManager(linearLayoutManager);
