@@ -110,16 +110,29 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                         userKeysArrayList = new ArrayList<>();
                         userKeysArrayList.add(userInfoPOJO);
                         chatPOJO.setUserInfoPOJOArrayList(userKeysArrayList);
+
+                        DatabaseReference userInfoDatabaseRef = databaseReference;
+                        Map<String, Object> chatObjectMap = new HashMap<>();
+                        chatObjectMap.put(chatPOJO.getMessageKey(), chatPOJO);
+                        userInfoDatabaseRef.updateChildren(chatObjectMap);
+
                     } else if (!chatPOJO.getUserInfoPOJOArrayList().contains(userInfoPOJO.getUser_key())) {
                         userKeysArrayList = chatPOJO.getUserInfoPOJOArrayList();
                         userKeysArrayList.add(userInfoPOJO);
                         chatPOJO.setUserInfoPOJOArrayList(userKeysArrayList);
+
+                        DatabaseReference userInfoDatabaseRef = databaseReference;
+                        Map<String, Object> chatObjectMap = new HashMap<>();
+                        chatObjectMap.put(chatPOJO.getMessageKey(), chatPOJO);
+                        userInfoDatabaseRef.updateChildren(chatObjectMap);
+
+                    }
+
+                }else{
+                    if (chatPOJO.getUserInfoPOJOArrayList() == null || chatPOJO.getUserInfoPOJOArrayList().size() == 0) {
+                        chatPOJO.setUserInfoPOJOArrayList(new ArrayList<UserInfoPOJO>());
                     }
                 }
-                DatabaseReference userInfoDatabaseRef = databaseReference;
-                Map<String, Object> chatObjectMap = new HashMap<>();
-                chatObjectMap.put(chatPOJO.getMessageKey(), chatPOJO);
-                userInfoDatabaseRef.updateChildren(chatObjectMap);
                 chatPOJOArrayList.add(chatPOJO);
                 chatAdapter.notifyItemInserted(chatPOJOArrayList.size() - 1);
                 mChatRecyclerView.scrollToPosition(chatPOJOArrayList.size() - 1);
@@ -259,7 +272,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         showSeenByDialog(chatPOJOArrayList.get(getPosition()));
-
                     }
                 });
             }
@@ -310,7 +322,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                 mChatInfoDialog.dismiss();
             }
         });
-        mChatInfoDialog.setCanceledOnTouchOutside(false);
+        mChatInfoDialog.setCanceledOnTouchOutside(true);
         mChatInfoDialog.show();
 
     }
