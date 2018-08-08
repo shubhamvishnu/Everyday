@@ -5,14 +5,24 @@ import java.io.Serializable;
 public class ActivityPOJO implements Serializable{
     String action;
     String time;
+    int actionType;
     UserInfoPOJO userInfoPOJO;
 
     public ActivityPOJO(){}
 
-    public ActivityPOJO(String action, String time, UserInfoPOJO userInfoPOJO) {
+    public ActivityPOJO(String action, String time, int actionType, UserInfoPOJO userInfoPOJO) {
         this.action = action;
         this.time = time;
+        this.actionType = actionType;
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public int getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(int actionType) {
+        this.actionType = actionType;
     }
 
     public String getAction() {
@@ -37,5 +47,14 @@ public class ActivityPOJO implements Serializable{
 
     public void setUserInfoPOJO(UserInfoPOJO userInfoPOJO) {
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    @Override
+    public String toString() {
+        return "ActivityPOJO{" +
+                "action='" + action + '\'' +
+                ", time='" + time + '\'' +
+                ", userInfoPOJO=" + userInfoPOJO +
+                '}';
     }
 }

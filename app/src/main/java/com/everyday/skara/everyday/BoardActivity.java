@@ -128,6 +128,7 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
         initFragment();
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_board_activity, menu);
@@ -159,6 +160,10 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
                 return true;
             case R.id.chat_board_menu_item:
                 toChatActivity();
+                return true;
+            case R.id.board_timeline_menu_item:
+                toTimelineActivity();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -166,61 +171,71 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         }
     }
-    void toChatActivity(){
+
+    void toTimelineActivity() {
+        Intent intent = new Intent(BoardActivity.this, TimelineActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+    void toChatActivity() {
         Intent intent = new Intent(BoardActivity.this, ChatActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+
     void initFragment() {
-            // Check that the activity is using the layout version with
-            // the fragment_container FrameLayout
-            if (findViewById(R.id.fragment_container) != null) {
-                if(optionType == NewOptionTypes.TYPE_NOTE){
-                    NotesFragment notesFragment = new NotesFragment();
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.fragment_container) != null) {
+            if (optionType == NewOptionTypes.TYPE_NOTE) {
+                NotesFragment notesFragment = new NotesFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("board_pojo", boardPOJO);
-                    bundle.putSerializable("user_profile", userInfoPOJO);
-                    notesFragment.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                notesFragment.setArguments(bundle);
 
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_container, notesFragment).commit();
-                }else if(optionType == NewOptionTypes.TYPE_LINK){
-                    LinksFragment linksFragment = new LinksFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, notesFragment).commit();
+            } else if (optionType == NewOptionTypes.TYPE_LINK) {
+                LinksFragment linksFragment = new LinksFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("board_pojo", boardPOJO);
-                    bundle.putSerializable("user_profile", userInfoPOJO);
-                    linksFragment.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                linksFragment.setArguments(bundle);
 
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_container, linksFragment).commit();
-                }else if(optionType == NewOptionTypes.TYPE_TODO){
-                    TodoFragment todoFragment = new TodoFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, linksFragment).commit();
+            } else if (optionType == NewOptionTypes.TYPE_TODO) {
+                TodoFragment todoFragment = new TodoFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("board_pojo", boardPOJO);
-                    bundle.putSerializable("user_profile", userInfoPOJO);
-                    todoFragment.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                todoFragment.setArguments(bundle);
 
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_container, todoFragment).commit();
-                }else{
-                    TodoFragment todoFragment = new TodoFragment();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, todoFragment).commit();
+            } else {
+                TodoFragment todoFragment = new TodoFragment();
 
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("board_pojo", boardPOJO);
-                    bundle.putSerializable("user_profile", userInfoPOJO);
-                    todoFragment.setArguments(bundle);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                todoFragment.setArguments(bundle);
 
-                    getSupportFragmentManager().beginTransaction()
-                            .add(R.id.fragment_container, todoFragment).commit();
-
-                }
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_container, todoFragment).commit();
 
             }
+
+        }
 
 
     }

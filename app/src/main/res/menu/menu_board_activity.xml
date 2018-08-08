@@ -13,5 +13,10 @@
         android:title="Chat"
         android:icon="@drawable/ic_chat_24dp"
         app:showAsAction="always"/>
+    <item android:id="@+id/board_timeline_menu_item"
+        android:title="Timeline"
+        android:icon="@drawable/ic_timeline_24dp"
+        app:showAsAction="always"/>
+
 
 </menu>

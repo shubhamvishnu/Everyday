@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -460,8 +461,6 @@ public class TodoFragment extends Fragment {
                         final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
 
                         todoReference.setValue(todoPOJO);
-                        ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-                        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
                         todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
                         todoItemAdapter.notifyDataSetChanged();
                         Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();

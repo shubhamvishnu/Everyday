@@ -192,7 +192,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             mMessage.setText(null);
             Toast.makeText(this, "" + message, Toast.LENGTH_SHORT).show();
             DatabaseReference chatDatabaseRef = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/chats").push();
-            ChatPOJO chatPOJO = new ChatPOJO(chatDatabaseRef.getKey(), 1, userInfoPOJO, message, "date", new ArrayList<UserInfoPOJO>());
+            ChatPOJO chatPOJO = new ChatPOJO(chatDatabaseRef.getKey(), 1, userInfoPOJO, message, DateTimeStamp.getDate(), new ArrayList<UserInfoPOJO>());
             chatDatabaseRef.setValue(chatPOJO);
         }
     }

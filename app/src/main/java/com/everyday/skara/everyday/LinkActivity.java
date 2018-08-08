@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -133,7 +134,7 @@ public class LinkActivity extends AppCompatActivity implements View.OnClickListe
                 linkDatabaseReference.keepSynced(true);
                 LinkPOJO linkPOJO = new LinkPOJO(link, title, DateTimeStamp.getDate(), linkDatabaseReference.getKey(), userInfoPOJO);
                 linkDatabaseReference.setValue(linkPOJO);
-                ActivityPOJO activityPOJO = new ActivityPOJO("link saved on "+boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                ActivityPOJO activityPOJO = new ActivityPOJO("New Link Saved", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_LINK, userInfoPOJO);
                 firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
                 toBoardsActivity();
             }else{

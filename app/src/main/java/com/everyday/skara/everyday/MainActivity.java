@@ -21,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
@@ -304,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         databaseReference.keepSynced(true);
         databaseReference.setValue(boardPOJO);
         // initializing ActivityPOJO class
-        ActivityPOJO activityPOJO = new ActivityPOJO(title + " created on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+        ActivityPOJO activityPOJO = new ActivityPOJO("New Board Created", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_CREATE_BOARD, userInfoPOJO);
 
         // pushing ActivityPOJO
         boardReference.child("activity").push().setValue(activityPOJO);

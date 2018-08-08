@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -94,7 +95,7 @@ public class NewNoteActivity extends AppCompatActivity implements View.OnClickLi
             if (!content.isEmpty()) {
                 NotePOJO notePOJO = new NotePOJO(notesReference.getKey(), title, content, DateTimeStamp.getDate(), userInfoPOJO);
                 notesReference.setValue(notePOJO);
-                ActivityPOJO activityPOJO = new ActivityPOJO("New note saved on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
+                ActivityPOJO activityPOJO = new ActivityPOJO("New Note Saved", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_NOTE, userInfoPOJO);
                 firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
                 toBoardsActivity();
             } else {

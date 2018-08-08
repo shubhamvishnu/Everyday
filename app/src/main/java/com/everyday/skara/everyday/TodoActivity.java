@@ -22,6 +22,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -63,6 +64,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     String date, time;
     int day, month, year;
     int hours, minutes;
+    boolean timelineUpdated = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,7 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
 
         date = new String("");
         time = new String("");
+        timelineUpdated = false;
         initRecyclerView();
     }
 
@@ -123,6 +126,11 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.todo_done:
+                if(!timelineUpdated){
+                    timelineUpdated = true;
+                    ActivityPOJO activityPOJO = new ActivityPOJO("New Todo Created", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_TODO, userInfoPOJO);
+                    firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+                }
                 addTodo();
                 break;
 //            case R.id.todo_set_reminder:
@@ -147,8 +155,8 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
             todoInfoReference.setValue(todoInfoPOJO);
             final TodoPOJO todoPOJO = new TodoPOJO(item, todoReference.getKey(), false, DateTimeStamp.getDate(), todoDatabaseReference.getKey(), userInfoPOJO);
             todoReference.setValue(todoPOJO);
-            ActivityPOJO activityPOJO = new ActivityPOJO("New item added on " + boardPOJO.getDate() + "by" + userInfoPOJO.getName(), boardPOJO.getDate(), userInfoPOJO);
-            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey()).child("activity").push().setValue(activityPOJO);
+
+
             todoPOJOArrayList.add(todoPOJO);
             todoListAdapter.notifyItemInserted(todoPOJOArrayList.size());
             Toast.makeText(TodoActivity.this, "Item added", Toast.LENGTH_SHORT).show();
@@ -274,12 +282,8 @@ public class TodoActivity extends AppCompatActivity implements View.OnClickListe
                         todoListAdapter.notifyItemRemoved(position);
 
                         if (todoPOJOArrayList.size() == 0) {
-                            todoDatabaseReference.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
+                            todoDatabaseReference.removeValue();
 
-                                }
-                            });
                         }
                     } catch (IndexOutOfBoundsException e) {
 
