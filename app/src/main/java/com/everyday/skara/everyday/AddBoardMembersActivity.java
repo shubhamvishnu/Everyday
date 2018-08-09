@@ -1,19 +1,23 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +27,6 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
-import com.everyday.skara.everyday.pojo.TodoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,10 +43,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AddBoardMembersActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    EditText mMemberSearchEditText;
     RecyclerView mMemberSearchRecyclerView;
-    ImageButton mSearchDoneButton;
-    Button mDoneButton, mBoardMembersButton;
+    Button mDoneButton;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference childDatabaseReference;
     ChildEventListener memberChildEventListener;
@@ -58,6 +59,8 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_add_board_members);
+        Toolbar myToolbar = findViewById(R.id.search_toolbar);
+        setSupportActionBar(myToolbar);
         if (user != null) {
             init();
         } else {
@@ -78,13 +81,10 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         userInfoPOJOArrayList = new ArrayList<>();
-        
-        mMemberSearchEditText = findViewById(R.id.add_members_edittext);
+
         mMemberSearchRecyclerView = findViewById(R.id.add_members_recyclerview);
-        mSearchDoneButton = findViewById(R.id.search_done_button);
         mDoneButton = findViewById(R.id.done_adding_members_button);
 
-        mSearchDoneButton.setOnClickListener(this);
         mDoneButton.setOnClickListener(this);
         initRecyclerView();
     }
@@ -112,7 +112,9 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
                         boardMembersPOJOArrayList.add(dataSnapshot.getValue(BoardMembersPOJO.class));
                     }
                 } else {
-                    fetchFromFirebase(input);
+                    if (!input.equalsIgnoreCase("")) {
+                        fetchFromFirebase(input);
+                    }
                 }
             }
 
@@ -212,7 +214,6 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
                 try {
 
                     UserInfoPOJO userInfoPOJO1 = dataSnapshot.getValue(UserInfoPOJO.class);
-                    Toast.makeText(AddBoardMembersActivity.this, "" + userInfoPOJO1.getName(), Toast.LENGTH_SHORT).show();
                     if (!userInfoPOJO1.getUser_key().equals(userInfoPOJO.getUser_key())) {
 
                         if (!checkForExistenceFromList(userInfoPOJO1)) {
@@ -283,11 +284,6 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.search_done_button:
-                String input = mMemberSearchEditText.getText().toString();
-                removeChildEventListener();
-                checkExistingBoardMembers(input);
-                break;
             case R.id.done_adding_members_button:
                 removeChildEventListener();
                 toBoardsActivity();
@@ -301,5 +297,33 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_add_members_activity, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+        EditText searchEditText = (EditText) searchView.findViewById(android.support.v7.appcompat.R.id.search_src_text);
+        searchEditText.setTextColor(getResources().getColor(R.color.white));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.white));
+        ImageView searchClose = searchView.findViewById(android.support.v7.appcompat.R.id.search_close_btn);
+        searchClose.setImageResource(R.drawable.ic_close_white_24dp);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                removeChildEventListener();
+                checkExistingBoardMembers(newText);
+                return false;
+            }
+        });
+        searchView.setQueryHint("Search");
+        return super.onCreateOptionsMenu(menu);
     }
 }

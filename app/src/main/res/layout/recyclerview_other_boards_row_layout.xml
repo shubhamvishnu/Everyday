@@ -1,89 +1,102 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardElevation="1dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:background="@drawable/boards_background"
-    android:orientation="vertical"
-    android:padding="8dp">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="left"
-        android:text="Board Title" />
-    <Button
-        android:id="@+id/boards_other_title_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="22dp"
-        android:textAllCaps="false"
-        android:background="@android:color/transparent" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Created By:" />
+    android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/admin_profile_image"
-
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="8dp" />
+            android:gravity="left"
+            android:text="Board Title" />
+
+        <Button
+            android:id="@+id/boards_other_title_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:textAllCaps="false"
+            android:textSize="22dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Created By:" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/admin_name"
-                android:layout_width="match_parent"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/admin_profile_image"
+
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:layout_margin="8dp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="sdcd"
-                android:textColor="@android:color/black"
-                android:textSize="18dp" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/admin_email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:text="sdcd"
-                android:textColor="@color/grey"
-                android:textSize="14dp" />
+                <TextView
+                    android:id="@+id/admin_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="sdcd"
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey" />
+                <TextView
+                    android:id="@+id/admin_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:text="sdcd"
+                    android:textColor="@color/grey"
+                    android:textSize="14dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/grey" />
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Board Members" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/other_boards_view_members_recyclerview"
-            android:layout_width="0dp"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:text="Board Members" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/other_boards_view_members_recyclerview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+    </LinearLayout></android.support.v7.widget.CardView>
