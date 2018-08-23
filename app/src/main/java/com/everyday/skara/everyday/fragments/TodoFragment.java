@@ -1,6 +1,9 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -26,16 +29,19 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.TodoActivity;
 import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
 import com.everyday.skara.everyday.pojo.TodoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
+import com.everyday.skara.everyday.receivers.TodoReminderReceiver;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -44,12 +50,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
+import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
+import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
 import com.tapadoo.alerter.Alerter;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,7 +68,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TodoFragment extends Fragment {
+public class TodoFragment extends Fragment implements BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener{
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
@@ -82,6 +92,11 @@ public class TodoFragment extends Fragment {
     BottomSheetDialog mEditTodoDialog;
     public static boolean clicked = false;
     LinearLayout mEmptyLinearLayout, mFragmentLinearLayout;
+    String date, time;
+    int day, month, year;
+    int hours, minutes;
+    TextView mReminder;
+
 
     @Nullable
     @Override
@@ -403,9 +418,9 @@ public class TodoFragment extends Fragment {
                             ++counter;
                         }
                     }
-                    String stat = counter + "/"  + (todo.getTodoPOJOArrayList().size());
+                    String stat = counter + "/" + (todo.getTodoPOJOArrayList().size());
                     holder.mStats.setText(stat);
-                }else{
+                } else {
                     holder.mStats.setText("0/0");
                 }
 
@@ -425,7 +440,9 @@ public class TodoFragment extends Fragment {
             todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/todos/" + todoArrayList.get(position).getTodoKey());
             todoInfoReference = todoDatabaseReference.child("info");
 
-            ImageButton mCloseButton, mAddButton;
+            ImageButton mCloseButton, mAddButton, mCalendar;
+
+
             final EditText mItemEditText;
             mTodoItemsDialog = new BottomSheetDialog(getActivity());
             mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
@@ -433,6 +450,8 @@ public class TodoFragment extends Fragment {
             mItemEditText = mTodoItemsDialog.findViewById(R.id.dialog_todo_new_item_edittext);
             mAddButton = mTodoItemsDialog.findViewById(R.id.dialog_todo_add_new_item_button);
             mCloseButton = mTodoItemsDialog.findViewById(R.id.close_todo_item_dialog);
+            mCalendar = mTodoItemsDialog.findViewById(R.id.todo_set_reminder);
+            mReminder = mTodoItemsDialog.findViewById(R.id.todo_set_reminder_textview);
 
             mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
             mTodoItemsRecyclerView.invalidate();
@@ -467,6 +486,16 @@ public class TodoFragment extends Fragment {
                     }
                 }
             });
+            mCalendar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    android.support.v4.app.DialogFragment dialog = createDialog();
+                    dialog.show(getActivity().getSupportFragmentManager(), "date");
+                }
+            });
+            date = new String("");
+            time = new String("");
+
             mTodoItemsDialog.setCanceledOnTouchOutside(true);
             mTodoItemsDialog.show();
 
@@ -612,6 +641,114 @@ public class TodoFragment extends Fragment {
         // show it
         alertDialog.show();
     }
+    /**
+     * Bottom sheet picker for date and time
+     * [STARTS HERE]
+     */
+    @Override
+    public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
+        Calendar cal = new java.util.GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MINUTE, minute);
+        time = android.text.format.DateFormat.getTimeFormat(getActivity()).format(cal.getTime());
+        if (!(time.isEmpty() || time.equals(""))) {
 
+            hours = hourOfDay;
+            minutes = minute;
+
+            if(mReminder != null)
+            mReminder.setText("Reminder set at " + time + " on " + date);
+            //setReminder();
+        }
+    }
+
+    void setReminder() {
+        AlarmManager alarmMgr = (AlarmManager) getActivity().getSystemService(TodoActivity.ALARM_SERVICE);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, day);
+        calendar.set(Calendar.HOUR_OF_DAY, hours);
+        calendar.set(Calendar.MINUTE, minutes);
+
+        Intent intent = new Intent(getActivity(), TodoReminderReceiver.class);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
+
+// With setInexactRepeating(), you have to use one of the AlarmManager interval
+// constants--in this case, AlarmManager.INTERVAL_DAY.
+        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
+    }
+    @Override
+    public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        Calendar cal = new java.util.GregorianCalendar();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, monthOfYear);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        date = android.text.format.DateFormat.getDateFormat(getActivity()).format(cal.getTime());
+
+        if (!(date.isEmpty() || date.equals(""))) {
+            this.year = year;
+            this.month = monthOfYear;
+            this.day = dayOfMonth;
+
+            // calling the time dialog
+            android.support.v4.app.DialogFragment dialog1 = createTimeDialog();
+            dialog1.show(getActivity().getSupportFragmentManager(), "time");
+        }
+    }
+
+
+    private android.support.v4.app.DialogFragment createDialog() {
+        return createDialogWithSetters();
+    }
+
+    private android.support.v4.app.DialogFragment createTimeDialog() {
+        return createTimeDialogWithSetters();
+    }
+
+    private android.support.v4.app.DialogFragment createTimeDialogWithSetters() {
+        BottomSheetPickerDialog dialog = null;
+        boolean custom = false;
+        boolean customDark = false;
+        boolean themeDark = true;
+
+        Calendar now = Calendar.getInstance();
+        dialog = GridTimePickerDialog.newInstance(
+                TodoFragment.this,
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                android.text.format.DateFormat.is24HourFormat(getActivity()));
+        GridTimePickerDialog gridDialog = (GridTimePickerDialog) dialog;
+        dialog.setThemeDark(themeDark);
+
+        return dialog;
+    }
+
+    private android.support.v4.app.DialogFragment createDialogWithSetters() {
+        BottomSheetPickerDialog dialog = null;
+        boolean themeDark = true;
+
+        Calendar now = Calendar.getInstance();
+        dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
+                TodoFragment.this,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH));
+
+        com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
+        Calendar minCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2018");
+        Calendar maxCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2025");
+        dateDialog.setMinDate(minCalendar);
+        dateDialog.setMaxDate(maxCalendar);
+        dateDialog.setYearRange(1920, 2050);
+        dialog.setThemeDark(themeDark);
+
+        return dialog;
+    }
+    //[ENDS HERE]
 
 }
