@@ -4,9 +4,10 @@ import com.everyday.skara.everyday.BoardMembersActivity;
 import com.everyday.skara.everyday.MainActivity;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class BoardViewHolderClass {
+public class BoardViewHolderClass implements Serializable{
     public int position;
     public MainActivity.BoardsAdapter boardsAdapter;
     public MainActivity.MembersViewAdapter membersAdapter;

@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.BoardMembersType;
+import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
@@ -292,7 +293,12 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     }
 
     void toBoardsActivity() {
-        Intent intent = new Intent(AddBoardMembersActivity.this, BoardActivity.class);
+        Intent intent = null;
+        if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
+            intent = new Intent(AddBoardMembersActivity.this, BoardActivity.class);
+        }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
+            intent = new Intent(AddBoardMembersActivity.this, FinancialBoardActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);

@@ -246,7 +246,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void initRecyclerView() {
         boardPOJOArrayList = new ArrayList<>();
-
         mBoardsRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mBoardsRecyclerView.setLayoutManager(linearLayoutManager);

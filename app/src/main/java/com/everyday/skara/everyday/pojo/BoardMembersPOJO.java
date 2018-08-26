@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday.pojo;
 
-public class BoardMembersPOJO {
+import java.io.Serializable;
+
+public class BoardMembersPOJO implements Serializable{
     String memberKey;
     String timestamp;
     UserInfoPOJO userInfoPOJO;

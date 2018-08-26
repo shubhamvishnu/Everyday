@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.OtherBoardViewHolderClass;
@@ -261,7 +262,12 @@ public class OtherBoardsActivity extends AppCompatActivity implements View.OnCli
     }
 
     void toBoardActivity(BoardPOJO boardPOJO) {
-        Intent intent = new Intent(this, BoardActivity.class);
+        Intent intent = null;
+        if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
+            intent = new Intent(OtherBoardsActivity.this, BoardActivity.class);
+        }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
+            intent = new Intent(OtherBoardsActivity.this, FinancialBoardActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
