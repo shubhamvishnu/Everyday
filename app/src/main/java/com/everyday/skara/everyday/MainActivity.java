@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
             intent = new Intent(MainActivity.this, BoardActivity.class);
         }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
-            intent = new Intent(MainActivity.this, BoardActivity.class);
+            intent = new Intent(MainActivity.this, FinancialBoardActivity.class);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);

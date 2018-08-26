@@ -49,7 +49,8 @@
         <!-- </service> -->
 
         <activity android:name=".ChatActivity" />
-        <activity android:name=".TimelineActivity"></activity>
+        <activity android:name=".TimelineActivity" />
+        <activity android:name=".FinancialBoardActivity"></activity>
     </application>
 
 </manifest>
