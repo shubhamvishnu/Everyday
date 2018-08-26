@@ -6,15 +6,25 @@ public class BoardPOJO implements Serializable{
     String title;
     String date;
     String boardKey;
+    int boardType;
     UserInfoPOJO createdByProfilePOJO;
 
     public BoardPOJO(){}
 
-    public BoardPOJO(String title, String date, String boardKey, UserInfoPOJO createdByProfilePOJO) {
+    public BoardPOJO(String title, String date, String boardKey, int boardType, UserInfoPOJO createdByProfilePOJO) {
         this.title = title;
         this.date = date;
         this.boardKey = boardKey;
+        this.boardType = boardType;
         this.createdByProfilePOJO = createdByProfilePOJO;
+    }
+
+    public int getBoardType() {
+        return boardType;
+    }
+
+    public void setBoardType(int boardType) {
+        this.boardType = boardType;
     }
 
     public String getTitle() {

@@ -25,10 +25,6 @@
         {
           "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
           "client_type": 3
-        },
-        {
-          "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
@@ -63,14 +59,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "622153174323-mc0g144tpkcs5jvo6mg4mgiti927e6nj.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.everyday.skara.everyday",
-            "certificate_hash": "c9b4b3f080ed4fad37c9db8d1c129e3fa20c38e2"
-          }
-        },
-        {
           "client_id": "622153174323-749i678e8tpv9adk2ngiev4n8k314s2p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -79,8 +67,20 @@
           }
         },
         {
-          "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
-          "client_type": 3
+          "client_id": "622153174323-mc0g144tpkcs5jvo6mg4mgiti927e6nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.everyday.skara.everyday",
+            "certificate_hash": "c9b4b3f080ed4fad37c9db8d1c129e3fa20c38e2"
+          }
+        },
+        {
+          "client_id": "622153174323-00iujn4l2pkv4t0mc20ftkm79kv9uoa8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.everyday.skara.everyday",
+            "certificate_hash": "ea400a595bfa70990b92878321e1213e524c5919"
+          }
         },
         {
           "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",

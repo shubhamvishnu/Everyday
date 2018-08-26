@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.ActionType;
+import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
 
             case R.id.action_new_board:
-                showNewBoardDialog();
+                showBoardTypesDialog();
                 return true;
 
             case R.id.action_other_board:
@@ -137,7 +138,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+    int boardType = 0;
+    void showBoardTypesDialog(){
+        final BottomSheetDialog mBoardTypesDialog = new BottomSheetDialog(this);
+        mBoardTypesDialog.setContentView(R.layout.dialog_board_types_layout);
+        boardType = 0;
+        Button mProdType, mFinancialType;
+        ImageButton mClose;
+         mClose = mBoardTypesDialog.findViewById(R.id.close_board_types_dialog);
 
+         mProdType = mBoardTypesDialog.findViewById(R.id.prod_type);
+         mFinancialType = mBoardTypesDialog.findViewById(R.id.financial_type);
+
+         mProdType.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 boardType = BoardTypes.BOARD_TYPE_PRODUCTIVITY;
+                 mBoardTypesDialog.dismiss();
+                 showNewBoardDialog(boardType);
+             }
+         });
+        mFinancialType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boardType = BoardTypes.BOARD_TYPE_FINANCIAL;
+                mBoardTypesDialog.dismiss();
+                showNewBoardDialog(boardType);
+            }
+        });
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBoardTypesDialog.dismiss();
+            }
+        });
+
+        mBoardTypesDialog.setCanceledOnTouchOutside(false);
+        mBoardTypesDialog.show();
+    }
     void initBoards() {
         boardViewHolderClassArrayList = new ArrayList<>();
         boardPOJOArrayList = new ArrayList<>();
@@ -252,7 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    void showNewBoardDialog() {
+    void showNewBoardDialog(final int boardType) {
         mNewBoardDialog = new BottomSheetDialog(this);
         mNewBoardDialog.setContentView(R.layout.dialog_new_baord_layout);
         ImageButton mClose = mNewBoardDialog.findViewById(R.id.close_new_board_dialog);
@@ -274,7 +313,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 String title = mTitle.getText().toString().trim();
                 if (!title.isEmpty()) {
-                    createBoard(title);
+                    createBoard(title, boardType);
                 } else {
                     // TODO: Show empty field alert
                 }
@@ -285,7 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNewBoardDialog.show();
     }
 
-    void createBoard(final String title) {
+    void createBoard(final String title, final int boardType) {
         mTitle.setEnabled(false);
         mDone.setEnabled(false);
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS);
@@ -296,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         // initializing BoardPOJO class
-        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, userInfoPOJO);
+        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey,boardType, userInfoPOJO);
 
         // TODO: add a progress bar
         boardReference.setValue(boardPOJO);
@@ -328,7 +367,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void toBoardActivity(BoardPOJO boardPOJO) {
-        Intent intent = new Intent(MainActivity.this, BoardActivity.class);
+        Intent intent = null;
+        if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
+            intent = new Intent(MainActivity.this, BoardActivity.class);
+        }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
+            intent = new Intent(MainActivity.this, BoardActivity.class);
+        }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
