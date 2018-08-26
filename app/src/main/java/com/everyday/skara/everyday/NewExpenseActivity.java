@@ -93,11 +93,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
         date = new String("");
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        ;
         month = Calendar.getInstance().get(Calendar.MONTH);
-        ;
         year = Calendar.getInstance().get(Calendar.YEAR);
-        ;
         mExpenseEntryDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
 
 
@@ -147,8 +144,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 }
 
                 DatabaseReference newExpenseDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses/").push();
-               //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
-                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, expenseType, new ArrayList<BoardMembersPOJO>(), notes, transactionId, year, month, day);
+                //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
+                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, expenseType, new ArrayList<BoardMembersPOJO>(), notes, transactionId, year, month, day, userInfoPOJO, new ArrayList<BoardMembersPOJO>());
                 newExpenseDatabaseReference.setValue(expensePOJO);
                 toFinancialActivity();
             }
@@ -156,7 +153,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
 
     }
-    void toFinancialActivity(){
+
+    void toFinancialActivity() {
         Intent intent = new Intent(NewExpenseActivity.this, FinancialBoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
