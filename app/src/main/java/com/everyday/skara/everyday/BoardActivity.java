@@ -53,7 +53,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
 
         mFilterButton = findViewById(R.id.filter_option_button);
 
-
         mTodo = findViewById(R.id.view_todo_image);
         mNotes = findViewById(R.id.view_notes_image);
         mLinks = findViewById(R.id.view_links_image);

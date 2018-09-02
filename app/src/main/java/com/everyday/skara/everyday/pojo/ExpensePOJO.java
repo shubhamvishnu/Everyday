@@ -16,7 +16,7 @@ public class ExpensePOJO implements Serializable{
     int month;
     int day;
     UserInfoPOJO userInfoPOJO;
-    ArrayList<BoardMembersPOJO> settledArrayList;
+    ArrayList<SettlementPOJO> settledArrayList;
 
     public ExpensePOJO(String entryKey, Double amount, String description, String date, int expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day, UserInfoPOJO userInfoPOJO, ArrayList<BoardMembersPOJO> settledArrayList) {
         this.entryKey = entryKey;
@@ -42,11 +42,11 @@ public class ExpensePOJO implements Serializable{
         this.userInfoPOJO = userInfoPOJO;
     }
 
-    public ArrayList<BoardMembersPOJO> getSettledArrayList() {
+    public ArrayList<SettlementPOJO> getSettledArrayList() {
         return settledArrayList;
     }
 
-    public void setSettledArrayList(ArrayList<BoardMembersPOJO> settledArrayList) {
+    public void setSettledArrayList(ArrayList<SettlementPOJO> settledArrayList) {
         this.settledArrayList = settledArrayList;
     }
 
