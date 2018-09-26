@@ -8,30 +8,26 @@ public class ExpensePOJO implements Serializable{
     Double amount;
     String description;
     String date;
-    int expenseType;
-    ArrayList<BoardMembersPOJO> sharedByArrayList;
     String note;
     String transactionId;
     int year;
     int month;
     int day;
     UserInfoPOJO userInfoPOJO;
-    ArrayList<SettlementPOJO> settledArrayList;
 
-    public ExpensePOJO(String entryKey, Double amount, String description, String date, int expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day, UserInfoPOJO userInfoPOJO, ArrayList<BoardMembersPOJO> settledArrayList) {
+    public ExpensePOJO(){
+    }
+    public ExpensePOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, UserInfoPOJO userInfoPOJO) {
         this.entryKey = entryKey;
         this.amount = amount;
         this.description = description;
         this.date = date;
-        this.expenseType = expenseType;
-        this.sharedByArrayList = sharedByArrayList;
         this.note = note;
         this.transactionId = transactionId;
         this.year = year;
         this.month = month;
         this.day = day;
         this.userInfoPOJO = userInfoPOJO;
-        this.settledArrayList = new ArrayList<>();
     }
 
     public UserInfoPOJO getUserInfoPOJO() {
@@ -40,14 +36,6 @@ public class ExpensePOJO implements Serializable{
 
     public void setUserInfoPOJO(UserInfoPOJO userInfoPOJO) {
         this.userInfoPOJO = userInfoPOJO;
-    }
-
-    public ArrayList<SettlementPOJO> getSettledArrayList() {
-        return settledArrayList;
-    }
-
-    public void setSettledArrayList(ArrayList<SettlementPOJO> settledArrayList) {
-        this.settledArrayList = settledArrayList;
     }
 
     public String getEntryKey() {
@@ -80,22 +68,6 @@ public class ExpensePOJO implements Serializable{
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public int getExpenseType() {
-        return expenseType;
-    }
-
-    public void setExpenseType(int expenseType) {
-        this.expenseType = expenseType;
-    }
-
-    public ArrayList<BoardMembersPOJO> getSharedByArrayList() {
-        return sharedByArrayList;
-    }
-
-    public void setSharedByArrayList(ArrayList<BoardMembersPOJO> sharedByArrayList) {
-        this.sharedByArrayList = sharedByArrayList;
     }
 
     public String getNote() {

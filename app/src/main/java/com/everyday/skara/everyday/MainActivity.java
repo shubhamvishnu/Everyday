@@ -57,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     UserInfoPOJO userInfoPOJO;
 
 
-
     RecyclerView mBoardsRecyclerView;
 
     // Dialog
@@ -73,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
 
+    TextView mPersonalFinanceTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +90,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void init() {
-
-
         firebaseDatabase = FirebaseDatabase.getInstance();
         mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
-
+        mPersonalFinanceTitle = findViewById(R.id.personal_financial_cardview_title);
 
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
@@ -108,7 +106,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
         userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
 
+        mPersonalFinanceTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalFinanceActivity();
+            }
+        });
         initRecyclerView();
+    }
+
+    void toPersonalFinanceActivity() {
+        Intent intent = new Intent(MainActivity.this, PersonalFinancialBoardActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     @Override
@@ -125,7 +136,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
 
             case R.id.action_new_board:
-                showBoardTypesDialog();
+                boardType = BoardTypes.BOARD_TYPE_PRODUCTIVITY;
+                showNewBoardDialog(boardType);
+                //showBoardTypesDialog();
                 return true;
 
             case R.id.action_other_board:
@@ -138,26 +151,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     }
+
     int boardType = 0;
-    void showBoardTypesDialog(){
+
+    void showBoardTypesDialog() {
         final BottomSheetDialog mBoardTypesDialog = new BottomSheetDialog(this);
         mBoardTypesDialog.setContentView(R.layout.dialog_board_types_layout);
         boardType = 0;
         Button mProdType, mFinancialType;
         ImageButton mClose;
-         mClose = mBoardTypesDialog.findViewById(R.id.close_board_types_dialog);
+        mClose = mBoardTypesDialog.findViewById(R.id.close_board_types_dialog);
 
-         mProdType = mBoardTypesDialog.findViewById(R.id.prod_type);
-         mFinancialType = mBoardTypesDialog.findViewById(R.id.financial_type);
+        mProdType = mBoardTypesDialog.findViewById(R.id.prod_type);
+        mFinancialType = mBoardTypesDialog.findViewById(R.id.financial_type);
 
-         mProdType.setOnClickListener(new View.OnClickListener() {
-             @Override
-             public void onClick(View view) {
-                 boardType = BoardTypes.BOARD_TYPE_PRODUCTIVITY;
-                 mBoardTypesDialog.dismiss();
-                 showNewBoardDialog(boardType);
-             }
-         });
+        mProdType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boardType = BoardTypes.BOARD_TYPE_PRODUCTIVITY;
+                mBoardTypesDialog.dismiss();
+                showNewBoardDialog(boardType);
+            }
+        });
         mFinancialType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -177,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBoardTypesDialog.setCanceledOnTouchOutside(false);
         mBoardTypesDialog.show();
     }
+
     void initBoards() {
         boardViewHolderClassArrayList = new ArrayList<>();
         boardPOJOArrayList = new ArrayList<>();
@@ -334,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         // initializing BoardPOJO class
-        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey,boardType, userInfoPOJO);
+        final BoardPOJO boardPOJO = new BoardPOJO(title, DateTimeStamp.getDate(), boardKey, boardType, userInfoPOJO);
 
         // TODO: add a progress bar
         boardReference.setValue(boardPOJO);
@@ -367,9 +383,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void toBoardActivity(BoardPOJO boardPOJO) {
         Intent intent = null;
-        if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
+        if (boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
             intent = new Intent(MainActivity.this, BoardActivity.class);
-        }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
+        } else if (boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL) {
             intent = new Intent(MainActivity.this, FinancialBoardActivity.class);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

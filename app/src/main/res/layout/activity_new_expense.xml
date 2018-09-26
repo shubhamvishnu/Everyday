@@ -66,11 +66,7 @@
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_calendar" />
             </LinearLayout>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="expense type"
-                android:id="@+id/expense_type_button"/>
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

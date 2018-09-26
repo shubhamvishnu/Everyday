@@ -51,7 +51,8 @@
         <activity android:name=".ChatActivity" />
         <activity android:name=".TimelineActivity" />
         <activity android:name=".FinancialBoardActivity" />
-        <activity android:name=".NewExpenseActivity"></activity>
+        <activity android:name=".NewExpenseActivity" />
+        <activity android:name=".PersonalFinancialBoardActivity"></activity>
     </application>
 
 </manifest>

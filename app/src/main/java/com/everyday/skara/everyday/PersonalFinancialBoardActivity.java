@@ -23,21 +23,18 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class FinancialBoardActivity extends AppCompatActivity {
+public class PersonalFinancialBoardActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     ArrayList<ExpensePOJO> expensePOJOArrayList;
 
     ChildEventListener mExpenseChildEventListener;
     DatabaseReference mExpensesDatabaseReference;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_financial_board);
+        setContentView(R.layout.activity_personal_financial_board);
         Toolbar myToolbar = findViewById(R.id.financial_board_toolbar);
         setSupportActionBar(myToolbar);
         if (user != null) {
@@ -50,13 +47,13 @@ public class FinancialBoardActivity extends AppCompatActivity {
 
     void init() {
         Intent intent = getIntent();
-        boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
-
+        initExpenses();
     }
 
     void initExpenses() {
-        mExpensesDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses");
+        expensePOJOArrayList = new ArrayList<>();
+        mExpensesDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"/expenses");
         mExpenseChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -125,15 +122,14 @@ public class FinancialBoardActivity extends AppCompatActivity {
     }
 
     void toNewExpenseActivity() {
-        Intent intent = new Intent(FinancialBoardActivity.this, NewExpenseActivity.class);
+        Intent intent = new Intent(PersonalFinancialBoardActivity.this, NewExpenseActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
     void toLoginActivity() {
-        Intent intent = new Intent(FinancialBoardActivity.this, LoginActivity.class);
+        Intent intent = new Intent(PersonalFinancialBoardActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

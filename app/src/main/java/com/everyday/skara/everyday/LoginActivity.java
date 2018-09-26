@@ -12,11 +12,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.Connectivity;
+import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.LoginTypes;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.classes.UserAccountType;
+import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -69,7 +73,6 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
                 updateUI(user);
             }
         };
-
 
 
     }
@@ -224,7 +227,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
                     referenceKey.setValue(userProfilePOJO, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReferenceChild) {
-                            setKey(referenceKey.getKey(), email, name, photoUrl.toString(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER);
+                            setNewUserKey(referenceKey.getKey(), email, name, photoUrl.toString(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER);
                         }
                     });
 
@@ -240,6 +243,20 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
 
 
     }
+    void setNewUserKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("name", name);
+        editor.putString("email", email);
+        editor.putString("url", url);
+        editor.putString("user_key", userKey);
+        editor.putString("login_type", loginType);
+        editor.putInt("user_account_type", userAccountType);
+        editor.apply();
+        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey);
+        Toast.makeText(this, userKey + email + name + url, Toast.LENGTH_SHORT).show();
+        createPersonalBoard(userInfoPOJO);
+    }
 
     void setKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
@@ -251,8 +268,15 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         editor.putString("login_type", loginType);
         editor.putInt("user_account_type", userAccountType);
         editor.apply();
-
+        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey);
         Toast.makeText(this, userKey + email + name + url, Toast.LENGTH_SHORT).show();
+        toMainActivity();
+    }
+
+    void createPersonalBoard(UserInfoPOJO userInfoPOJO) {
+        final BoardPOJO boardPOJO = new BoardPOJO("Financial Board", DateTimeStamp.getDate(), "-financial_board", BoardTypes.BOARD_TYPE_FINANCIAL, userInfoPOJO);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
+        databaseReference.setValue(boardPOJO);
         toMainActivity();
     }
 

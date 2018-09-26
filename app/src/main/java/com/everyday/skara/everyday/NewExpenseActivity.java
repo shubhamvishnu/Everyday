@@ -41,20 +41,17 @@ import java.util.Locale;
 public class NewExpenseActivity extends AppCompatActivity implements View.OnClickListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    BoardPOJO boardPOJO;
+//    BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
 
-    int expenseType = ExpenseType.TYPE_SHARED_EVERYONE;
     EditText mDescription;
     EditText mExpenseAmount;
     TextView mExpenseEntryDate;
     ImageButton mChooseDateImageButton;
     EditText mTransactionId;
     EditText mNote;
-    Button mExpenseType;
     Button mDoneExpenseEntry;
 
-    BottomSheetDialog mExpenseTypeDialog;
 
     String date;
     int day, month, year;
@@ -74,7 +71,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
     void init() {
         Intent intent = getIntent();
-        boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
+//        boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
         mDescription = findViewById(R.id.expense_description_edittext);
@@ -82,20 +79,17 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         mExpenseEntryDate = findViewById(R.id.expense_entry_date_textview);
         mChooseDateImageButton = findViewById(R.id.choose_expense_entry_date_image_button);
         mTransactionId = findViewById(R.id.transaction_id_edittext);
-        mExpenseType = findViewById(R.id.expense_type_button);
         mNote = findViewById(R.id.expense_note_edittext);
-        mExpenseType.setText("Share with everyone");
         mDoneExpenseEntry = findViewById(R.id.done_expense_button);
 
         mChooseDateImageButton.setOnClickListener(this);
-        mExpenseType.setOnClickListener(this);
         mDoneExpenseEntry.setOnClickListener(this);
 
-        date = new String("");
+        date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
         day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         month = Calendar.getInstance().get(Calendar.MONTH);
         year = Calendar.getInstance().get(Calendar.YEAR);
-        mExpenseEntryDate.setText(new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date()));
+        mExpenseEntryDate.setText(date);
 
 
     }
@@ -113,9 +107,6 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
             case R.id.choose_expense_entry_date_image_button:
                 DialogFragment dialog = createDialog();
                 dialog.show(getSupportFragmentManager(), "date");
-                break;
-            case R.id.expense_type_button:
-                showExpenseTypeDialog();
                 break;
 
             case R.id.done_expense_button:
@@ -143,9 +134,9 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                     notes = " ";
                 }
 
-                DatabaseReference newExpenseDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses/").push();
+                DatabaseReference newExpenseDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"expenses").push();
                 //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
-                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, expenseType, new ArrayList<BoardMembersPOJO>(), notes, transactionId, year, month, day, userInfoPOJO, new ArrayList<BoardMembersPOJO>());
+                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, userInfoPOJO);
                 newExpenseDatabaseReference.setValue(expensePOJO);
                 toFinancialActivity();
             }
@@ -155,53 +146,11 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
     }
 
     void toFinancialActivity() {
-        Intent intent = new Intent(NewExpenseActivity.this, FinancialBoardActivity.class);
+        Intent intent = new Intent(NewExpenseActivity.this, PersonalFinancialBoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("board_pojo", boardPOJO);
+//        intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
-    }
-
-    void showExpenseTypeDialog() {
-        mExpenseTypeDialog = new BottomSheetDialog(this);
-        mExpenseTypeDialog.setContentView(R.layout.dialog_choose_board_type_layout);
-        Button mPersonal, mEveryone;
-        ImageButton mClose = mExpenseTypeDialog.findViewById(R.id.close_board_type_options_dialog);
-        Button mDone = mExpenseTypeDialog.findViewById(R.id.done_choose_board_type);
-
-        mEveryone = mExpenseTypeDialog.findViewById(R.id.share_everyone_expense_type);
-        mPersonal = mExpenseTypeDialog.findViewById(R.id.personal_expense_type);
-
-        mEveryone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                expenseType = ExpenseType.TYPE_SHARED_EVERYONE;
-                mExpenseType.setText("Share with everyone");
-            }
-        });
-        mPersonal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                expenseType = ExpenseType.TYPE_PERSONAL;
-                mExpenseType.setText("Personal expense");
-            }
-        });
-        mClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mExpenseTypeDialog.dismiss();
-            }
-        });
-
-        mDone.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mExpenseTypeDialog.dismiss();
-            }
-        });
-
-        mExpenseTypeDialog.setCanceledOnTouchOutside(false);
-        mExpenseTypeDialog.show();
     }
 
     /**
@@ -229,8 +178,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, monthOfYear);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-        date = DateFormat.getDateFormat(this).format(cal.getTime());
+     //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
+        date =  new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
 
         if (!(date.isEmpty() || date.equals(""))) {
             this.year = year;
