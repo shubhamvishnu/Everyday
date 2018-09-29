@@ -237,11 +237,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 now.get(Calendar.DAY_OF_MONTH));
 
         com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
-        Calendar minCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2018");
-        Calendar maxCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2025");
-        dateDialog.setMinDate(minCalendar);
-        dateDialog.setMaxDate(maxCalendar);
-        dateDialog.setYearRange(1920, 2050);
+        dateDialog.setYearRange(1900, 3000);
         dialog.setThemeDark(themeDark);
 
         return dialog;

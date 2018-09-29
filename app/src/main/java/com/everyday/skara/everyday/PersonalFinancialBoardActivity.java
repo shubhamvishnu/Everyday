@@ -10,6 +10,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.fragments.LinksFragment;
+import com.everyday.skara.everyday.fragments.NotesFragment;
+import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
+import com.everyday.skara.everyday.fragments.TodoFragment;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -27,10 +32,9 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
 
-    ChildEventListener mExpenseChildEventListener;
-    DatabaseReference mExpensesDatabaseReference;
+
+    public static int optionType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,68 +42,38 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.financial_board_toolbar);
         setSupportActionBar(myToolbar);
         if (user != null) {
-            init();
-        } else {
-            toLoginActivity();
-        }
-
+        init();
+    } else {
+        toLoginActivity();
     }
+}
 
     void init() {
         Intent intent = getIntent();
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
-        initExpenses();
-    }
+        optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+        initFragment();
+     }
+    void initFragment() {
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.financial_fragment_container) != null) {
+            if (optionType == NewOptionTypes.TYPE_PERSONAL_EXPENSE) {
+                PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
-    void initExpenses() {
-        expensePOJOArrayList = new ArrayList<>();
-        mExpensesDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"/expenses");
-        mExpenseChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
-                expensePOJOArrayList.add(expensePOJO);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceFragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.financial_fragment_container, personalFinanceFragment).commit();
             }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-        mExpensesDatabaseReference.addChildEventListener(mExpenseChildEventListener);
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
         }
+
+
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
