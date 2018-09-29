@@ -1,12 +1,16 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -20,14 +24,19 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.ExpenseType;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.TimeDateStamp;
+import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
 import com.philliphsu.bottomsheetpickers.date.DatePickerDialog;
 import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
@@ -40,7 +49,7 @@ import java.util.Locale;
 
 public class NewExpenseActivity extends AppCompatActivity implements View.OnClickListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseDatabase firebaseDatabase;
+    FirebaseDatabase firebaseDatabas = FirebaseDatabase.getInstance();
 //    BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
 
@@ -55,6 +64,39 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
     String date;
     int day, month, year;
+
+    Button mCategoryChoiceOption;
+    BottomSheetDialog mCategoriesDialog;
+
+    ArrayList<Categories> categoriesArrayList;
+
+    Categories selectedCat;
+
+
+    void initCategories(){
+        categoriesArrayList = new ArrayList<>();
+        final DatabaseReference databaseReference = firebaseDatabas.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories");
+        databaseReference.keepSynced(true);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Categories categories = snapshot.getValue(Categories.class);
+                    categoriesArrayList.add(categories);
+                }
+                selectedCat = categoriesArrayList.get(0);
+                mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +124,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         mNote = findViewById(R.id.expense_note_edittext);
         mDoneExpenseEntry = findViewById(R.id.done_expense_button);
 
+        mCategoryChoiceOption= findViewById(R.id.category_choose_option);
+
         mChooseDateImageButton.setOnClickListener(this);
         mDoneExpenseEntry.setOnClickListener(this);
 
@@ -91,6 +135,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         year = Calendar.getInstance().get(Calendar.YEAR);
         mExpenseEntryDate.setText(date);
 
+        mCategoryChoiceOption.setOnClickListener(this);
+        initCategories();
 
     }
 
@@ -112,9 +158,93 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
             case R.id.done_expense_button:
                 expenseDoneClicked();
                 break;
+
+            case R.id.category_choose_option:
+                showCategoryChoiceDialog();
+                break;
         }
 
     }
+    void showCategoryChoiceDialog(){
+        mCategoriesDialog = new BottomSheetDialog(this);
+        mCategoriesDialog.setContentView(R.layout.dialog_choose_category_layout);
+        ImageButton mClose = mCategoriesDialog.findViewById(R.id.close_cat_option_dialog);
+        RecyclerView mCategoriesRecyclerView = mCategoriesDialog.findViewById(R.id.recyclerview_choose_category);
+
+        mCategoriesRecyclerView.invalidate();
+        mCategoriesRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mCategoriesRecyclerView.setLayoutManager(linearLayoutManager);
+        CatAdapter catAdapter = new CatAdapter();
+        mCategoriesRecyclerView.setAdapter(catAdapter);
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCategoriesDialog.dismiss();
+            }
+        });
+
+
+        mCategoriesDialog.setCanceledOnTouchOutside(false);
+        mCategoriesDialog.show();
+    }
+    void updateCategorySelected(int position){
+        selectedCat = categoriesArrayList.get(position);
+        mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+
+    }
+
+    public class CatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private LayoutInflater inflator;
+        //ArrayList<Categories> categoriesArrayList;
+
+        public CatAdapter() {
+            try {
+                this.inflator = LayoutInflater.from(mCategoriesDialog.getContext());
+               // this.categoriesArrayList = categoriesArrayList;
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
+            return new CatViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Categories categories = categoriesArrayList.get(position);
+            ((CatViewHolder)holder).mCatName.setText(categories.getCategoryName());
+
+             }
+
+
+        @Override
+        public int getItemCount() {
+            return categoriesArrayList.size();
+        }
+
+        public class CatViewHolder extends RecyclerView.ViewHolder {
+            public Button mCatName;
+
+            public CatViewHolder(View itemView) {
+                super(itemView);
+               mCatName = itemView.findViewById(R.id.category_name_row_textview);
+               mCatName.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
+                        updateCategorySelected(getPosition());
+                   }
+               });
+            }
+        }
+
+    }
+
 
     void expenseDoneClicked() {
         String description = mDescription.getText().toString().trim();
@@ -134,9 +264,9 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                     notes = " ";
                 }
 
-                DatabaseReference newExpenseDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"expenses").push();
+                DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"expenses").push();
                 //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
-                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, userInfoPOJO);
+                ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, selectedCat, userInfoPOJO);
                 newExpenseDatabaseReference.setValue(expensePOJO);
                 toFinancialActivity();
             }

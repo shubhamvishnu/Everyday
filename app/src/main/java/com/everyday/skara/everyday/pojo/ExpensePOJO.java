@@ -13,11 +13,12 @@ public class ExpensePOJO implements Serializable{
     int year;
     int month;
     int day;
+    Categories categories;
     UserInfoPOJO userInfoPOJO;
 
     public ExpensePOJO(){
     }
-    public ExpensePOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, UserInfoPOJO userInfoPOJO) {
+    public ExpensePOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, Categories categories, UserInfoPOJO userInfoPOJO) {
         this.entryKey = entryKey;
         this.amount = amount;
         this.description = description;
@@ -27,7 +28,16 @@ public class ExpensePOJO implements Serializable{
         this.year = year;
         this.month = month;
         this.day = day;
+        this.categories = categories;
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public Categories getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Categories categories) {
+        this.categories = categories;
     }
 
     public UserInfoPOJO getUserInfoPOJO() {
