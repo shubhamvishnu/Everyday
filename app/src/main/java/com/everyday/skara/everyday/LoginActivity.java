@@ -20,6 +20,7 @@ import com.everyday.skara.everyday.classes.LoginTypes;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.classes.UserAccountType;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
 import com.google.android.gms.auth.api.Auth;
@@ -41,6 +42,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.tapadoo.alerter.Alerter;
+
+import java.util.ArrayList;
 
 public class LoginActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
@@ -277,6 +280,11 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         final BoardPOJO boardPOJO = new BoardPOJO("Financial Board", DateTimeStamp.getDate(), "-financial_board", BoardTypes.BOARD_TYPE_FINANCIAL, userInfoPOJO);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
         databaseReference.setValue(boardPOJO);
+        databaseReference.child("categories").push().setValue(new Categories("Others", databaseReference.getKey()));
+        databaseReference.child("categories").push().setValue(new Categories("Food and Drinks", databaseReference.getKey()));
+        databaseReference.child("categories").push().setValue(new Categories("Transport", databaseReference.getKey()));
+        databaseReference.child("categories").push().setValue(new Categories("Shopping", databaseReference.getKey()));
+        databaseReference.child("categories").push().setValue(new Categories("Lesuire", databaseReference.getKey()));
         toMainActivity();
     }
 

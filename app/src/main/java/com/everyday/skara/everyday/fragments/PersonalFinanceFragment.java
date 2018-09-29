@@ -51,7 +51,6 @@ public class PersonalFinanceFragment extends Fragment {
     TextView mTotalExpenseTextView;
     View view;
 
-
     int currentYear;
     int currentMonth;
 
@@ -143,7 +142,6 @@ public class PersonalFinanceFragment extends Fragment {
             public void onClick(View v) {
                 currentMonth = 0;
                 updateExpenses();
-
                 mMonthBottomSheetDialog.dismiss();
             }
         });
@@ -299,6 +297,7 @@ public class PersonalFinanceFragment extends Fragment {
                 if (dateExpenseArrayListHashMap.containsKey(expensePOJO.getDate())) {
                     ArrayList<ExpensePOJO> expensePOJOArrayList1 = dateExpenseArrayListHashMap.get(expensePOJO.getDate());
                     expensePOJOArrayList1.add(expensePOJO);
+                    dateExpenseArrayListHashMap.put(expensePOJO.getDate(), expensePOJOArrayList1);
                 } else {
                     ArrayList<ExpensePOJO> expensePOJOArrayList1 = new ArrayList<>();
                     expensePOJOArrayList1.add(expensePOJO);
@@ -316,7 +315,33 @@ public class PersonalFinanceFragment extends Fragment {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
 
+                expensePOJOArrayList.remove(expensePOJO);
+
+                // expense year and month wise
+                if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
+                    if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                        ArrayList<ExpensePOJO> expensePOJOArrayList2 = yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                        expensePOJOArrayList2.remove(expensePOJO);
+                        if(expensePOJOArrayList2.size() == 0){
+                            yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).remove(expensePOJO.getMonth());
+                        }else {
+                            yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
+                        }
+                    }
+                }
+
+                // expenses date wise
+                if (dateExpenseArrayListHashMap.containsKey(expensePOJO.getDate())) {
+                    ArrayList<ExpensePOJO> expensePOJOArrayList1 = dateExpenseArrayListHashMap.get(expensePOJO.getDate());
+                    expensePOJOArrayList1.remove(expensePOJO);
+                    if(expensePOJOArrayList1.size() == 0){
+                        dateExpenseArrayListHashMap.remove(expensePOJO.getDate());
+                    }else {
+                        dateExpenseArrayListHashMap.put(expensePOJO.getDate(), expensePOJOArrayList1);
+                    }
+                }
             }
 
             @Override
@@ -333,6 +358,9 @@ public class PersonalFinanceFragment extends Fragment {
     }
 
     void updateExpenses() {
+
+        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+
         // check if the year is present in hashmap
         if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
             // check if the month from the year is present
@@ -373,6 +401,7 @@ public class PersonalFinanceFragment extends Fragment {
         }
     }
 
+
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
         ArrayList<ExpensePOJO> expensePOJOArrayList;
@@ -381,7 +410,7 @@ public class PersonalFinanceFragment extends Fragment {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
                 totalExpense = 0.0;
-                mTotalExpenseTextView.setText(String.valueOf(totalExpense));
+                mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
                 this.expensePOJOArrayList = expensePOJOSArrayList;
             } catch (NullPointerException e) {
 
@@ -399,22 +428,47 @@ public class PersonalFinanceFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ExpensePOJO expensePOJO = this.expensePOJOArrayList.get(position);
             totalExpense += expensePOJO.getAmount();
-            mTotalExpenseTextView.setText(String.valueOf(totalExpense));
+            mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
             ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
+            ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
+            ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());
+            ((PersonalFinanceViewHolder) holder).mTransactionId.setText(expensePOJO.getTransactionId());
+            ((PersonalFinanceViewHolder) holder).mNote.setText(expensePOJO.getNote());
         }
+
+        void deleteExpense(int position) {
+            this.expensePOJOArrayList.remove(position);
+            totalExpense -= this.expensePOJOArrayList.get(position).getAmount();
+            mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
+            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses/" + expensePOJOArrayList.get(position).getEntryKey()).removeValue();
+            notifyItemRemoved(position);
+        }
+
 
         @Override
         public int getItemCount() {
             return this.expensePOJOArrayList.size();
         }
 
-
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
-            public TextView description;
+            public TextView description, mAmount, mDate, mTransactionId, mNote;
+            public Button mDeleteExpense;
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 description = itemView.findViewById(R.id.expense_description_text_view);
+                mAmount = itemView.findViewById(R.id.amount_textview);
+                mDate = itemView.findViewById(R.id.expense_entry_date_textview_row);
+                mTransactionId = itemView.findViewById(R.id.transaction_id_textview);
+                mNote = itemView.findViewById(R.id.expense_note_textview);
+
+                mDeleteExpense = itemView.findViewById(R.id.delete_expense_button);
+                mDeleteExpense.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteExpense(getPosition());
+                    }
+                });
             }
         }
 
