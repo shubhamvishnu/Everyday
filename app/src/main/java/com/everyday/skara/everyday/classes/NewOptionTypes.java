@@ -5,5 +5,7 @@ public class NewOptionTypes {
     public final static int TYPE_NOTE = 2;
     public final static int TYPE_LINK = 3;
     public final static int TYPE_PERSONAL_EXPENSE = 4;
+    public final static int TYPE_PERSONAL_CAT_EXPENSE = 5;
+
 
 }

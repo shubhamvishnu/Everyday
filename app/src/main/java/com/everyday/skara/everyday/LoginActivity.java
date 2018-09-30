@@ -280,11 +280,21 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         final BoardPOJO boardPOJO = new BoardPOJO("Financial Board", DateTimeStamp.getDate(), "-financial_board", BoardTypes.BOARD_TYPE_FINANCIAL, userInfoPOJO);
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
         databaseReference.setValue(boardPOJO);
-        databaseReference.child("categories").push().setValue(new Categories("Others", databaseReference.getKey()));
-        databaseReference.child("categories").push().setValue(new Categories("Food and Drinks", databaseReference.getKey()));
-        databaseReference.child("categories").push().setValue(new Categories("Transport", databaseReference.getKey()));
-        databaseReference.child("categories").push().setValue(new Categories("Shopping", databaseReference.getKey()));
-        databaseReference.child("categories").push().setValue(new Categories("Lesuire", databaseReference.getKey()));
+
+        DatabaseReference catReference = databaseReference.child("categories").push();
+        catReference.setValue(new Categories("Others", catReference.getKey()));
+
+        DatabaseReference catReference2 = databaseReference.child("categories").push();
+        catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey()));
+
+        DatabaseReference catReference3 = databaseReference.child("categories").push();
+        catReference3.setValue(new Categories("Transport", catReference3.getKey()));
+
+        DatabaseReference catReference4 = databaseReference.child("categories").push();
+        catReference4.setValue(new Categories("Shopping", catReference4.getKey()));
+
+        DatabaseReference catReference5 = databaseReference.child("categories").push();
+        catReference5.setValue(new Categories("Leisure", catReference5.getKey()));
         toMainActivity();
     }
 

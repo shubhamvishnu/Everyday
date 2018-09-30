@@ -13,6 +13,7 @@ import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
 import com.everyday.skara.everyday.fragments.LinksFragment;
 import com.everyday.skara.everyday.fragments.NotesFragment;
+import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
 import com.everyday.skara.everyday.fragments.TodoFragment;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -35,6 +36,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
 
     public static int optionType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,18 +44,19 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         Toolbar myToolbar = findViewById(R.id.financial_board_toolbar);
         setSupportActionBar(myToolbar);
         if (user != null) {
-        init();
-    } else {
-        toLoginActivity();
+            init();
+        } else {
+            toLoginActivity();
+        }
     }
-}
 
     void init() {
         Intent intent = getIntent();
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
-        optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+        optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
         initFragment();
-     }
+    }
+
     void initFragment() {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -67,6 +70,15 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.financial_fragment_container, personalFinanceFragment).commit();
+            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE) {
+                PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceCategoriesFragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.financial_fragment_container, personalFinanceCategoriesFragment).commit();
             }
 
         }
