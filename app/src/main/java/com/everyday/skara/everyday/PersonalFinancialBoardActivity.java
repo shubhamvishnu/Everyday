@@ -3,11 +3,14 @@ package com.everyday.skara.everyday;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
@@ -36,6 +39,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
 
     public static int optionType;
+    ImageButton mExpenses, mCatExpenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +57,47 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     void init() {
         Intent intent = getIntent();
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
-        optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
+        optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+
+        mExpenses = findViewById(R.id.expenses_option_icon);
+        mCatExpenses = findViewById(R.id.category_expenses_icon);
+
+        mExpenses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+                PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.financial_fragment_container, personalFinanceFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
+        mCatExpenses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
+                PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceCategoriesFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.financial_fragment_container, personalFinanceCategoriesFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
         initFragment();
     }
 

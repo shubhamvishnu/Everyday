@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_arrow_back_24dp" />
-                            <entry key="sourceFile" value="C:\Users\sh395048\Downloads\calendar.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_category_icon" />
+                            <entry key="sourceFile" value="C:\Users\sh395048\Downloads\ic_category_icon.svg" />
                           </map>
                         </option>
                       </PersistentState>
