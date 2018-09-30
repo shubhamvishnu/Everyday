@@ -31,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class PersonalFinanceFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -409,7 +410,7 @@ public class PersonalFinanceFragment extends Fragment {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
                 totalExpense = 0.0;
-                mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
+                mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
                 this.expensePOJOArrayList = expensePOJOSArrayList;
             } catch (NullPointerException e) {
 
@@ -427,7 +428,7 @@ public class PersonalFinanceFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ExpensePOJO expensePOJO = this.expensePOJOArrayList.get(position);
             totalExpense += expensePOJO.getAmount();
-            mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
+            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
             ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
             ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
             ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());
@@ -438,7 +439,7 @@ public class PersonalFinanceFragment extends Fragment {
         void deleteExpense(int position) {
             this.expensePOJOArrayList.remove(position);
             totalExpense -= this.expensePOJOArrayList.get(position).getAmount();
-            mTotalExpenseTextView.setText(String.format("%.2f", totalExpense));
+            mTotalExpenseTextView.setText(String.format(Locale.getDefault(),"%.2f", totalExpense));
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses/" + expensePOJOArrayList.get(position).getEntryKey()).removeValue();
             notifyItemRemoved(position);
         }

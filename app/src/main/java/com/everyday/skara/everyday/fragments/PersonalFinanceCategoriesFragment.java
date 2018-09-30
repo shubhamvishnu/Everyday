@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class PersonalFinanceCategoriesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -56,6 +57,8 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     int currentYear;
     int currentMonth;
+
+    Double totalExpense = 0.0;
 
     @Nullable
     @Override
@@ -410,15 +413,14 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                         for(int i = 0; i < expensePOJOArrayList.size(); i++){
                             total += expensePOJOArrayList.get(i).getAmount();
                         }
+
                     }
                 }
             }
-
-
-
-
             ((PersonalFinanceViewHolder)holder).mCatName.setText(categories.getCategoryName());
-            ((PersonalFinanceViewHolder)holder).mTotal.setText(String.valueOf(total));
+            ((PersonalFinanceViewHolder)holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
+            totalExpense += total;
+            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
         }
 
         @Override
