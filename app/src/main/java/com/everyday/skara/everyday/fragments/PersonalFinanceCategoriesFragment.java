@@ -256,6 +256,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     void initCategories(){
         categoriesArrayList = new ArrayList<>();
+
         mExpensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories");
         mExpensesDatabaseReference.keepSynced(true);
         mExpensesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
