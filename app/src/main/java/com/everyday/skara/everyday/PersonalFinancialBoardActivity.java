@@ -1,37 +1,23 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
-import com.everyday.skara.everyday.fragments.LinksFragment;
-import com.everyday.skara.everyday.fragments.NotesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceDayFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
-import com.everyday.skara.everyday.fragments.TodoFragment;
-import com.everyday.skara.everyday.pojo.BoardPOJO;
-import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
 
 public class PersonalFinancialBoardActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -180,6 +166,13 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
     void toLoginActivity() {
         Intent intent = new Intent(PersonalFinancialBoardActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(PersonalFinancialBoardActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
