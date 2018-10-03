@@ -339,7 +339,14 @@ public class PersonalFinanceDayFragment extends Fragment {
     void updateExpenses() {
         mMonthSelectionButton.setText(String.valueOf(currentMonth));
         mPersonalFinanceRecyclerView.invalidate();
-        mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthDateHashMap.get(currentYear).get(currentMonth));
+        if(yearMonthDateHashMap.containsKey(currentYear)){
+            if(yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)){
+                mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthDateHashMap.get(currentYear).get(currentMonth));
+            }else{
+                mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<ExpensePOJO>>());
+            }
+
+        }
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
         mPersonalFinanceAdapter.notifyDataSetChanged();
 
@@ -371,6 +378,7 @@ public class PersonalFinanceDayFragment extends Fragment {
                 this.inflator = LayoutInflater.from(getActivity());
                 totalExpense = 0.0;
                 mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+
                 dateExpenseHolderArrayList = new ArrayList<>();
                 for (Map.Entry<String, ArrayList<ExpensePOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
                     dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));

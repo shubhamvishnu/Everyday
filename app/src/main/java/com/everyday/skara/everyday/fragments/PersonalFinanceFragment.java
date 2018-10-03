@@ -44,7 +44,6 @@ public class PersonalFinanceFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
     RecyclerView mPersonalFinanceRecyclerView;
     PersonalFinanceAdapter mPersonalFinanceAdapter;
     ChildEventListener mExpenseChildEventListener;
@@ -63,7 +62,6 @@ public class PersonalFinanceFragment extends Fragment {
     int currentYear;
     int currentMonth;
 
-    Double totalExpense = 0.0;
 
     BottomSheetDialog mEditExpenseDialog;
 
@@ -99,7 +97,6 @@ public class PersonalFinanceFragment extends Fragment {
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
 
-        expensePOJOArrayList = new ArrayList<>();
 
         dateExpenseArrayListHashMap = new HashMap<>();
         yearMonthExpenseArrayListHashMap = new HashMap<>();
@@ -270,14 +267,13 @@ public class PersonalFinanceFragment extends Fragment {
         mPersonalFinanceRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mPersonalFinanceRecyclerView.setLayoutManager(linearLayoutManager);
-        mPersonalFinanceAdapter = new PersonalFinanceAdapter(new ArrayList<ExpensePOJO>());
+        mPersonalFinanceAdapter = new PersonalFinanceAdapter();
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
 
         initExpenses();
     }
 
     void initExpenses() {
-        expensePOJOArrayList = new ArrayList<>();
 
         dateExpenseArrayListHashMap = new HashMap<>();
         yearMonthExpenseArrayListHashMap = new HashMap<>();
@@ -289,7 +285,6 @@ public class PersonalFinanceFragment extends Fragment {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
-                expensePOJOArrayList.add(expensePOJO);
 
                 // expense year and month wise
                 if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
@@ -328,12 +323,6 @@ public class PersonalFinanceFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
-                for (int i = 0; i < expensePOJOArrayList.size(); i++) {
-                    if(expensePOJOArrayList.get(i).getEntryKey().equals(expensePOJO.getEntryKey())){
-                        expensePOJOArrayList.set(i, expensePOJO);
-                    }
-                }
-
                 // expense year and month wise
                 if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
                     if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
@@ -365,31 +354,20 @@ public class PersonalFinanceFragment extends Fragment {
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                 ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
 
-                expensePOJOArrayList.remove(expensePOJO);
-
                 // expense year and month wise
                 if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
                     if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
                         ArrayList<ExpensePOJO> expensePOJOArrayList2 = yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
-                        expensePOJOArrayList2.remove(expensePOJO);
-                        if (expensePOJOArrayList2.size() == 0) {
-                            yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).remove(expensePOJO.getMonth());
-                        } else {
-                            yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
+                        for(int i = 0; i < expensePOJOArrayList2.size(); i++){
+                            if(expensePOJOArrayList2.get(i).getEntryKey().equals(expensePOJO.getEntryKey())){
+                                expensePOJOArrayList2.remove(i);
+                            }
                         }
+                        yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
                     }
                 }
 
-                // expenses date wise
-                if (dateExpenseArrayListHashMap.containsKey(expensePOJO.getDate())) {
-                    ArrayList<ExpensePOJO> expensePOJOArrayList1 = dateExpenseArrayListHashMap.get(expensePOJO.getDate());
-                    expensePOJOArrayList1.remove(expensePOJO);
-                    if (expensePOJOArrayList1.size() == 0) {
-                        dateExpenseArrayListHashMap.remove(expensePOJO.getDate());
-                    } else {
-                        dateExpenseArrayListHashMap.put(expensePOJO.getDate(), expensePOJOArrayList1);
-                    }
-                }
+                updateExpenses();
             }
 
             @Override
@@ -408,32 +386,14 @@ public class PersonalFinanceFragment extends Fragment {
     void updateExpenses() {
 
         mMonthSelectionButton.setText(String.valueOf(currentMonth));
-        mPersonalFinanceRecyclerView.invalidate();
-        mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth));
-        mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
+        if(yearMonthExpenseArrayListHashMap.containsKey(currentYear)){
+            if(yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)){
+                if(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0){
+                    mTotalExpenseTextView.setText("0.00");
+                }
+            }
+        }
         mPersonalFinanceAdapter.notifyDataSetChanged();
-//        // check if the year is present in hashmap
-//        if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
-//            // check if the month from the year is present
-//            if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
-//                // update the recyclerview with the updated expenses array HashMap
-//                mPersonalFinanceRecyclerView.invalidate();
-//                mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth));
-//                mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
-//                mPersonalFinanceAdapter.notifyDataSetChanged();
-//            } else {
-//                mPersonalFinanceRecyclerView.invalidate();
-//                mPersonalFinanceAdapter = new PersonalFinanceAdapter(new ArrayList<ExpensePOJO>());
-//                mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
-//                mPersonalFinanceAdapter.notifyDataSetChanged();
-//            }
-//        } else {
-//            mPersonalFinanceRecyclerView.invalidate();
-//            mPersonalFinanceAdapter = new PersonalFinanceAdapter(new ArrayList<ExpensePOJO>());
-//            mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
-//            mPersonalFinanceAdapter.notifyDataSetChanged();
-//        }
-
     }
 
     @Override
@@ -455,14 +415,12 @@ public class PersonalFinanceFragment extends Fragment {
 
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
-        ArrayList<ExpensePOJO> expensePOJOArrayList;
-
-        public PersonalFinanceAdapter(ArrayList<ExpensePOJO> expensePOJOSArrayList) {
+        double totalExpense = 0.0;
+        public PersonalFinanceAdapter() {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
-                totalExpense = 0.0;
-                mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
-                this.expensePOJOArrayList = expensePOJOSArrayList;
+                this.totalExpense = 0.0;
+                mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", this.totalExpense));
             } catch (NullPointerException e) {
 
             }
@@ -477,9 +435,12 @@ public class PersonalFinanceFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ExpensePOJO expensePOJO = this.expensePOJOArrayList.get(position);
-            totalExpense += expensePOJO.getAmount();
-            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+            if(position == 0){
+                this.totalExpense = 0.0;
+            }
+            ExpensePOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
+            this.totalExpense += expensePOJO.getAmount();
+            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", this.totalExpense));
             ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
             ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
             ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());
@@ -488,11 +449,7 @@ public class PersonalFinanceFragment extends Fragment {
         }
 
         void deleteExpense(int position) {
-            totalExpense -= this.expensePOJOArrayList.get(position).getAmount();
-            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses/" + this.expensePOJOArrayList.get(position).getEntryKey()).removeValue();
-            this.expensePOJOArrayList.remove(position);
-            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
-            notifyItemRemoved(position);
+            FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "expenses").child(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position).getEntryKey()).removeValue();
         }
 
         EditText mDescription;
@@ -503,7 +460,7 @@ public class PersonalFinanceFragment extends Fragment {
 
 
         void showEditExpenseDialog(int position) {
-            final ExpensePOJO expensePOJO = this.expensePOJOArrayList.get(position);
+            final ExpensePOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
 
             mEditExpenseDialog = new BottomSheetDialog(getActivity());
             mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout);
@@ -539,12 +496,9 @@ public class PersonalFinanceFragment extends Fragment {
                                 notes = " ";
                             }
 
-                            DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "expenses/");
-                            //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
-                            ExpensePOJO expensePOJO1 = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, expensePOJO.getDate(), notes, transactionId, expensePOJO.getYear(), expensePOJO.getMonth(), expensePOJO.getDay(), expensePOJO.getCategories(), userInfoPOJO);
-                            Map<String, Object> expenseMap = new HashMap<>();
-                            expenseMap.put(expensePOJO.getEntryKey(), expensePOJO1);
-                            newExpenseDatabaseReference.updateChildren(expenseMap);
+                            ExpensePOJO expensePOJO1 = new ExpensePOJO(expensePOJO.getEntryKey(), Double.valueOf(amount), description, expensePOJO.getDate(), notes, transactionId, expensePOJO.getYear(), expensePOJO.getMonth(), expensePOJO.getDay(), expensePOJO.getCategories(), userInfoPOJO);
+                            FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "expenses").child(expensePOJO.getEntryKey()).setValue(expensePOJO1);
+
                             mEditExpenseDialog.dismiss();
                         }
                     }
@@ -566,7 +520,12 @@ public class PersonalFinanceFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return this.expensePOJOArrayList.size();
+            if(yearMonthExpenseArrayListHashMap.containsKey(currentYear)){
+                if(yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)){
+                    return yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size();
+                }
+            }
+           return 0;
         }
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
