@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,12 +53,14 @@ public class PersonalFinanceFragment extends Fragment {
 
     Button mMonthSelectionButton;
     TextView mTotalExpenseTextView;
+    TextView mCurencyTextView;
     View view;
 
     int currentYear;
     int currentMonth;
 
     Double totalExpense = 0.0;
+
 
     @Nullable
     @Override
@@ -79,9 +84,14 @@ public class PersonalFinanceFragment extends Fragment {
     void init() {
         userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
 
+
         mPersonalFinanceRecyclerView = view.findViewById(R.id.personal_finance_recyclerview);
         mMonthSelectionButton = view.findViewById(R.id.month_selection_button);
         mTotalExpenseTextView = view.findViewById(R.id.total_amount_textview);
+
+        mCurencyTextView = view.findViewById(R.id.currency_textview);
+        String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+        mCurencyTextView.setText(currency);
 
         expensePOJOArrayList = new ArrayList<>();
 
@@ -101,6 +111,7 @@ public class PersonalFinanceFragment extends Fragment {
                 showMonthSelectionDialog();
             }
         });
+
         initFinanceRecyclerView();
 
     }
@@ -437,10 +448,10 @@ public class PersonalFinanceFragment extends Fragment {
         }
 
         void deleteExpense(int position) {
-            this.expensePOJOArrayList.remove(position);
             totalExpense -= this.expensePOJOArrayList.get(position).getAmount();
+            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses/" + this.expensePOJOArrayList.get(position).getEntryKey()).removeValue();
+            this.expensePOJOArrayList.remove(position);
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(),"%.2f", totalExpense));
-            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses/" + expensePOJOArrayList.get(position).getEntryKey()).removeValue();
             notifyItemRemoved(position);
         }
 

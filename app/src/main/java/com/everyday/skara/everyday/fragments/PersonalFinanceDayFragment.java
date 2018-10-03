@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
@@ -52,6 +54,8 @@ public class PersonalFinanceDayFragment extends Fragment {
 
     Button mMonthSelectionButton;
     TextView mTotalExpenseTextView;
+    TextView mCurencyTextView;
+
     View view;
 
     int currentYear;
@@ -84,7 +88,9 @@ public class PersonalFinanceDayFragment extends Fragment {
         mPersonalFinanceRecyclerView = view.findViewById(R.id.personal_finance_recyclerview);
         mMonthSelectionButton = view.findViewById(R.id.month_selection_button);
         mTotalExpenseTextView = view.findViewById(R.id.total_amount_textview);
-
+        mCurencyTextView = view.findViewById(R.id.currency_textview);
+        String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+        mCurencyTextView.setText(currency);
         expensePOJOArrayList = new ArrayList<>();
 
         yearMonthDateHashMap = new HashMap<>();
@@ -301,7 +307,6 @@ public class PersonalFinanceDayFragment extends Fragment {
                     monthDateExpenseHashMap.put(expensePOJO.getMonth(), dateExpenseHashMap);
                     yearMonthDateHashMap.put(expensePOJO.getYear(), monthDateExpenseHashMap);
                 }
-
 
                 // reflect updated data
                 updateExpenses();

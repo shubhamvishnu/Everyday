@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Everyday</string>
+
+    <string name="inr">\u20B9</string>
 </resources>

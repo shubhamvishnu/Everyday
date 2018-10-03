@@ -52,7 +52,8 @@
         <activity android:name=".TimelineActivity" />
         <activity android:name=".FinancialBoardActivity" />
         <activity android:name=".NewExpenseActivity" />
-        <activity android:name=".PersonalFinancialBoardActivity"></activity>
+        <activity android:name=".PersonalFinancialBoardActivity" />
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

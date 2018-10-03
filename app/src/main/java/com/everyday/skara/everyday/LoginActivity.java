@@ -246,6 +246,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
 
 
     }
+
     void setNewUserKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -273,7 +274,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         editor.apply();
         UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey);
         Toast.makeText(this, userKey + email + name + url, Toast.LENGTH_SHORT).show();
-        toMainActivity();
+        initBasicSettings();
     }
 
     void createPersonalBoard(UserInfoPOJO userInfoPOJO) {
@@ -295,6 +296,14 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
 
         DatabaseReference catReference5 = databaseReference.child("categories").push();
         catReference5.setValue(new Categories("Leisure", catReference5.getKey()));
+        initBasicSettings();
+    }
+
+    void initBasicSettings() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("curreny", getResources().getString(R.string.inr));
+        editor.apply();
         toMainActivity();
     }
 

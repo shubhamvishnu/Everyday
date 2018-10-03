@@ -6,6 +6,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="currency"
+        android:id="@+id/currency_textview"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:textSize="18dp"
         android:textStyle="bold"
         android:id="@+id/total_amount_textview"/>
