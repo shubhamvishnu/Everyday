@@ -17,6 +17,7 @@ import com.everyday.skara.everyday.classes.NewOptionTypes;
 import com.everyday.skara.everyday.fragments.LinksFragment;
 import com.everyday.skara.everyday.fragments.NotesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
+import com.everyday.skara.everyday.fragments.PersonalFinanceDayFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
 import com.everyday.skara.everyday.fragments.TodoFragment;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -39,7 +40,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
 
     public static int optionType;
-    ImageButton mExpenses, mCatExpenses;
+    ImageButton mExpenses, mCatExpenses, mDayExpenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +62,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
         mExpenses = findViewById(R.id.expenses_option_icon);
         mCatExpenses = findViewById(R.id.category_expenses_icon);
+        mDayExpenses = findViewById(R.id.day_wise_expense_option);
 
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +95,24 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                 transaction.replace(R.id.financial_fragment_container, personalFinanceCategoriesFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
+        mDayExpenses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
+                PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceDayFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.financial_fragment_container, personalFinanceDayFragment);
                 transaction.addToBackStack(null);
 
                 transaction.commit();
