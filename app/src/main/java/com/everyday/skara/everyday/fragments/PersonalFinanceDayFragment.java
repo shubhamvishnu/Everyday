@@ -330,6 +330,7 @@ public class PersonalFinanceDayFragment extends Fragment {
         mExpensesDatabaseReference.addChildEventListener(mExpenseChildEventListener);
     }
 
+
     void updateExpenses() {
 
         mMonthSelectionButton.setText(String.valueOf(currentMonth));
