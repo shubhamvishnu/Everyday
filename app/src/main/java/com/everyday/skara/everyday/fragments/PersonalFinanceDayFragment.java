@@ -420,7 +420,6 @@ public class PersonalFinanceDayFragment extends Fragment {
         }
 
     }
-
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
