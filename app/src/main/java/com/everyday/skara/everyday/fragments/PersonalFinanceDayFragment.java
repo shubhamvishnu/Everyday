@@ -332,7 +332,6 @@ public class PersonalFinanceDayFragment extends Fragment {
 
 
     void updateExpenses() {
-
         mMonthSelectionButton.setText(String.valueOf(currentMonth));
         mPersonalFinanceRecyclerView.invalidate();
         mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthDateHashMap.get(currentYear).get(currentMonth));
