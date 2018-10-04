@@ -1,27 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <TextView
+
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="currency"
-        android:id="@+id/currency_textview"/>
-    <TextView
-        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/total_amount_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="22dp"
+            android:text="currency"
+            android:textColor="@color/black"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/currency_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="8dp"
+            android:text="symbol"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/month_selection_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        android:id="@+id/total_amount_textview"/>
-    <Button
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_gravity="center_horizontal"
+        app:floating_background_color="@color/blue"
+        app:floating_right_icon="@drawable/ic_arrow_drop_down_24dp"
+        app:floating_title="MONTH"
+        app:floating_title_color="@android:color/white" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/personal_finance_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/month_selection_button" />
-<android.support.v7.widget.RecyclerView
-    android:layout_width="match_parent"
-    android:id="@+id/personal_finance_recyclerview"
-    android:layout_height="0dp"
-    android:layout_weight="1">
-</android.support.v7.widget.RecyclerView>
+        android:layout_height="0dp"
+        android:layout_weight="1"></android.support.v7.widget.RecyclerView>
 </LinearLayout>

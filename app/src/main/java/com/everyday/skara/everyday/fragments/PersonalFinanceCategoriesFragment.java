@@ -38,6 +38,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class PersonalFinanceCategoriesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -53,7 +55,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     LinkedHashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>>> catYearMonthExpenseArrayListHashMap;
     ArrayList<Categories> categoriesArrayList;
 
-    Button mMonthSelectionButton;
+    FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView;
     TextView mCurencyTextView;
 
@@ -99,7 +101,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
         mTotalExpenseTextView.setText("0.00");
 
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,7 +366,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     void updateExpenses() {
 
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
         mPersonalFinanceRecyclerView.invalidate();
         mPersonalFinanceAdapter = new PersonalFinanceAdapter();
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);

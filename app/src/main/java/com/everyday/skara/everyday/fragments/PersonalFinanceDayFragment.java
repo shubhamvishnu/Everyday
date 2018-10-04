@@ -38,6 +38,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class PersonalFinanceDayFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -52,7 +54,7 @@ public class PersonalFinanceDayFragment extends Fragment {
 
     HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>>> yearMonthDateHashMap;
 
-    Button mMonthSelectionButton;
+    FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView;
     TextView mCurencyTextView;
 
@@ -100,7 +102,7 @@ public class PersonalFinanceDayFragment extends Fragment {
 
         mTotalExpenseTextView.setText("0.00");
 
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -337,7 +339,7 @@ public class PersonalFinanceDayFragment extends Fragment {
 
 
     void updateExpenses() {
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
         mPersonalFinanceRecyclerView.invalidate();
         if(yearMonthDateHashMap.containsKey(currentYear)){
             if(yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)){

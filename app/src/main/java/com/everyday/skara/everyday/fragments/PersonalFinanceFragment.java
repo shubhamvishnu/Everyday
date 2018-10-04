@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class PersonalFinanceFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -54,7 +56,7 @@ public class PersonalFinanceFragment extends Fragment {
     HashMap<String, ArrayList<ExpensePOJO>> dateExpenseArrayListHashMap;
     HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>> yearMonthExpenseArrayListHashMap;
 
-    Button mMonthSelectionButton;
+    FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView;
     TextView mCurencyTextView;
     View view;
@@ -106,7 +108,7 @@ public class PersonalFinanceFragment extends Fragment {
 
         mTotalExpenseTextView.setText("0.00");
 
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -385,7 +387,7 @@ public class PersonalFinanceFragment extends Fragment {
 
     void updateExpenses() {
 
-        mMonthSelectionButton.setText(String.valueOf(currentMonth));
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
         if(yearMonthExpenseArrayListHashMap.containsKey(currentYear)){
             if(yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)){
                 if(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0){
@@ -444,8 +446,7 @@ public class PersonalFinanceFragment extends Fragment {
             ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
             ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
             ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());
-            ((PersonalFinanceViewHolder) holder).mTransactionId.setText(expensePOJO.getTransactionId());
-            ((PersonalFinanceViewHolder) holder).mNote.setText(expensePOJO.getNote());
+
         }
 
         void deleteExpense(int position) {
@@ -529,17 +530,14 @@ public class PersonalFinanceFragment extends Fragment {
         }
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
-            public TextView description, mAmount, mDate, mTransactionId, mNote;
-            public Button mDeleteExpense, mEditExpense;
+            public TextView description, mAmount, mDate;
+            public ImageButton mDeleteExpense;
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 description = itemView.findViewById(R.id.expense_description_text_view);
                 mAmount = itemView.findViewById(R.id.amount_textview);
                 mDate = itemView.findViewById(R.id.expense_entry_date_textview_row);
-                mTransactionId = itemView.findViewById(R.id.transaction_id_textview);
-                mNote = itemView.findViewById(R.id.expense_note_textview);
-                mEditExpense = itemView.findViewById(R.id.edit_expense_button);
                 mDeleteExpense = itemView.findViewById(R.id.delete_expense_button);
                 mDeleteExpense.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -547,7 +545,8 @@ public class PersonalFinanceFragment extends Fragment {
                         deleteExpense(getPosition());
                     }
                 });
-                mEditExpense.setOnClickListener(new View.OnClickListener() {
+
+                description.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         showEditExpenseDialog(getPosition());
