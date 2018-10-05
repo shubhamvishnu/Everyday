@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_cat_2005" />
-                            <entry key="sourceFile" value="C:\Users\sh395048\Downloads\ic_category_icon.svg" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_cat_2006" />
+                            <entry key="sourceFile" value="C:\Users\sh395048\Desktop\icons\ic_cat_2006.svg" />
                           </map>
                         </option>
                       </PersistentState>

@@ -65,7 +65,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_todo);
+        setContentView(R.layout.activity_personal_new_todo);
 
         if (user != null) {
             init();

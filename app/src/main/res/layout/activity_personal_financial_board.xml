@@ -20,6 +20,7 @@
         android:id="@+id/financial_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#e6e6e6"
         android:layout_weight="1" />
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/posts_card_view"

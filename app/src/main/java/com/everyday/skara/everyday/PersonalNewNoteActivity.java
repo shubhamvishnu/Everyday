@@ -35,7 +35,7 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_note);
+        setContentView(R.layout.activity_personal_new_note);
         if (user != null) {
             init();
         } else {
