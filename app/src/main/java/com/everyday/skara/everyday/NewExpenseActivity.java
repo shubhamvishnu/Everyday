@@ -50,7 +50,7 @@ import java.util.Locale;
 public class NewExpenseActivity extends AppCompatActivity implements View.OnClickListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabas = FirebaseDatabase.getInstance();
-//    BoardPOJO boardPOJO;
+    //    BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
 
     EditText mDescription;
@@ -73,14 +73,14 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
     Categories selectedCat;
 
 
-    void initCategories(){
+    void initCategories() {
         categoriesArrayList = new ArrayList<>();
         final DatabaseReference databaseReference = firebaseDatabas.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories");
         databaseReference.keepSynced(true);
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Categories categories = snapshot.getValue(Categories.class);
                     categoriesArrayList.add(categories);
                 }
@@ -124,7 +124,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         mNote = findViewById(R.id.expense_note_edittext);
         mDoneExpenseEntry = findViewById(R.id.done_expense_button);
 
-        mCategoryChoiceOption= findViewById(R.id.category_choose_option);
+        mCategoryChoiceOption = findViewById(R.id.category_choose_option);
 
         mChooseDateImageButton.setOnClickListener(this);
         mDoneExpenseEntry.setOnClickListener(this);
@@ -165,7 +165,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         }
 
     }
-    void showCategoryChoiceDialog(){
+
+    void showCategoryChoiceDialog() {
         mCategoriesDialog = new BottomSheetDialog(this);
         mCategoriesDialog.setContentView(R.layout.dialog_choose_category_layout);
         ImageButton mClose = mCategoriesDialog.findViewById(R.id.close_cat_option_dialog);
@@ -189,7 +190,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         mCategoriesDialog.setCanceledOnTouchOutside(false);
         mCategoriesDialog.show();
     }
-    void updateCategorySelected(int position){
+
+    void updateCategorySelected(int position) {
         selectedCat = categoriesArrayList.get(position);
         mCategoryChoiceOption.setText(selectedCat.getCategoryName());
 
@@ -202,7 +204,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         public CatAdapter() {
             try {
                 this.inflator = LayoutInflater.from(mCategoriesDialog.getContext());
-               // this.categoriesArrayList = categoriesArrayList;
+                // this.categoriesArrayList = categoriesArrayList;
             } catch (NullPointerException e) {
 
             }
@@ -218,10 +220,36 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Categories categories = categoriesArrayList.get(position);
-            ((CatViewHolder)holder).mCatName.setText(categories.getCategoryName());
+            ((CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
+            showCatIcon(holder, categories);
+        }
 
-             }
 
+        void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getCategoryIconId()) {
+                case 2000:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+                case 2001:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    break;
+                case 2002:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    break;
+                case 2003:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    break;
+                case 2004:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    break;
+                case 2005:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                    break;
+                case 2006:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    break;
+            }
+        }
 
         @Override
         public int getItemCount() {
@@ -230,16 +258,18 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
         public class CatViewHolder extends RecyclerView.ViewHolder {
             public Button mCatName;
+            public ImageButton mCatIcon;
 
             public CatViewHolder(View itemView) {
                 super(itemView);
-               mCatName = itemView.findViewById(R.id.category_name_row_textview);
-               mCatName.setOnClickListener(new View.OnClickListener() {
-                   @Override
-                   public void onClick(View v) {
+                mCatName = itemView.findViewById(R.id.category_name_row_textview);
+                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_row);
+                mCatName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
                         updateCategorySelected(getPosition());
-                   }
-               });
+                    }
+                });
             }
         }
 
@@ -264,7 +294,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                     notes = " ";
                 }
 
-                DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL +"expenses").push();
+                DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "expenses").push();
                 //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
                 ExpensePOJO expensePOJO = new ExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, selectedCat, userInfoPOJO);
                 newExpenseDatabaseReference.setValue(expensePOJO);
@@ -308,8 +338,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         cal.set(Calendar.YEAR, year);
         cal.set(Calendar.MONTH, monthOfYear);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-     //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
-        date =  new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
+        //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
+        date = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
 
         if (!(date.isEmpty() || date.equals(""))) {
             this.year = year;

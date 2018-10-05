@@ -13,6 +13,10 @@
         android:title="New Board"
         android:icon="@drawable/ic_add_24dp"
         app:showAsAction="always"/>
+    <item android:id="@+id/action_Settings"
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_icon"
+        app:showAsAction="always"/>
     <item android:id="@+id/action_other_board"
         android:title="Other Boards"
 

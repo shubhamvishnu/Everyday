@@ -283,19 +283,19 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         databaseReference.setValue(boardPOJO);
 
         DatabaseReference catReference = databaseReference.child("categories").push();
-        catReference.setValue(new Categories("Others", catReference.getKey()));
+        catReference.setValue(new Categories("Others", catReference.getKey(), 2005));
 
         DatabaseReference catReference2 = databaseReference.child("categories").push();
-        catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey()));
+        catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey(), 2002));
 
         DatabaseReference catReference3 = databaseReference.child("categories").push();
-        catReference3.setValue(new Categories("Transport", catReference3.getKey()));
+        catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000));
 
         DatabaseReference catReference4 = databaseReference.child("categories").push();
-        catReference4.setValue(new Categories("Shopping", catReference4.getKey()));
+        catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001));
 
         DatabaseReference catReference5 = databaseReference.child("categories").push();
-        catReference5.setValue(new Categories("Leisure", catReference5.getKey()));
+        catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006));
 
         final BoardPOJO boardPOJO1 = new BoardPOJO("Productivity Board", DateTimeStamp.getDate(), "-productivity_board", BoardTypes.BOARD_TYPE_PERSONAL_PRODUCTIVITY, userInfoPOJO);
         DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD);

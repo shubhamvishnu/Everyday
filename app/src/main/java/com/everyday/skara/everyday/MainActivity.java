@@ -157,6 +157,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.action_other_board:
                 toOtherBoardsActivity();
                 return true;
+
+            case R.id.action_Settings:
+                toSettingsActivity();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -406,7 +410,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
-
+    void toSettingsActivity(){
+        Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
     void toAddMembers(BoardPOJO boardPOJO) {
         Intent intent = new Intent(MainActivity.this, AddBoardMembersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
