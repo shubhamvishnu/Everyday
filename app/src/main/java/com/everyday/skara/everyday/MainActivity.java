@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.ActionType;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
 import com.everyday.skara.everyday.classes.Connectivity;
@@ -77,6 +78,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        boolean themeState = getSharedPreferences(SPNames.DEFAULT_SETTINGS, MODE_PRIVATE).getBoolean("theme", BasicSettings.DEFAULT_THEME);
+//        if(!themeState){
+//            setTheme(R.style.CardViewTheme);
+//        }else{
+//            setTheme(R.style.DarkTheme);
+//        }
         setContentView(R.layout.activity_main);
         Toolbar myToolbar = findViewById(R.id.boards_toolbar);
         myToolbar.setTitle("My Boards");

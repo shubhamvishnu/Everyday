@@ -42,6 +42,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="left"
+                    style="@style/titleTheme"
                     android:text="Producitivity Board" />
                 <Button
                     android:id="@+id/personal_prod_cardview_title"
@@ -75,6 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="left"
+                    style="@style/titleTheme"
                     android:text="Financial Board" />
                 <Button
                     android:id="@+id/personal_financial_cardview_title"

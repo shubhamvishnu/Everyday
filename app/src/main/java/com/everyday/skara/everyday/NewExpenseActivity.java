@@ -248,6 +248,9 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 case 2006:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
                     break;
+                default:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
             }
         }
 

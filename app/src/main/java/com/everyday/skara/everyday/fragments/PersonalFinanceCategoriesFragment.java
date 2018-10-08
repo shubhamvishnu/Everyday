@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.NewExpenseActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -265,7 +266,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         initExpenses();
     }
 
-    void initCategories(){
+    void initCategories() {
         categoriesArrayList = new ArrayList<>();
 
         mExpensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories");
@@ -277,6 +278,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                     categoriesArrayList.add(snapshot.getValue(Categories.class));
                 }
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
@@ -287,6 +289,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
 
     }
+
     void initExpenses() {
         expensePOJOArrayList = new ArrayList<>();
 
@@ -414,21 +417,51 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             ArrayList<ExpensePOJO> expensePOJOArrayList = new ArrayList<>();
             double total = 0.0;
             Categories categories = categoriesArrayList.get(position);
-            if(catYearMonthExpenseArrayListHashMap.containsKey(categories.getCategoryKey())){
-                if(catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).containsKey(currentYear)){
-                    if(catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).containsKey(currentMonth)){
+            if (catYearMonthExpenseArrayListHashMap.containsKey(categories.getCategoryKey())) {
+                if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).containsKey(currentYear)) {
+                    if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).containsKey(currentMonth)) {
                         expensePOJOArrayList = catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).get(currentMonth);
-                        for(int i = 0; i < expensePOJOArrayList.size(); i++){
+                        for (int i = 0; i < expensePOJOArrayList.size(); i++) {
                             total += expensePOJOArrayList.get(i).getAmount();
                         }
 
                     }
                 }
             }
-            ((PersonalFinanceViewHolder)holder).mCatName.setText(categories.getCategoryName());
-            ((PersonalFinanceViewHolder)holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
+            ((PersonalFinanceViewHolder) holder).mCatName.setText(categories.getCategoryName());
+            ((PersonalFinanceViewHolder) holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
+            showCatIcon(holder, categories);
             totalExpense += total;
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+        }
+
+        void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getCategoryIconId()) {
+                case 2000:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+                case 2001:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    break;
+                case 2002:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    break;
+                case 2003:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    break;
+                case 2004:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    break;
+                case 2005:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                    break;
+                case 2006:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    break;
+                default:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+            }
         }
 
         @Override
@@ -438,11 +471,15 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
             public TextView mCatName, mTotal;
+            public ImageButton mCatIcon;
+
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 mCatName = itemView.findViewById(R.id.cat_name_text_view_recyclerview);
                 mTotal = itemView.findViewById(R.id.total_amount_cat_recyclerview);
+                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_recyclerview);
+
             }
         }
 

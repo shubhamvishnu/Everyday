@@ -18,6 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="left"
+        style="@style/titleTheme"
+
         android:text="Board Title" />
     <Button
         android:id="@+id/boards_title_button"
@@ -41,6 +43,8 @@
             android:layout_weight="1"
             android:layout_gravity="center"
             android:gravity="left"
+            style="@style/titleTheme"
+
             android:text="Board Members" />
 
 

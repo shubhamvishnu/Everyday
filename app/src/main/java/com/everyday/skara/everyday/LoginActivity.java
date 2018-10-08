@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
@@ -308,6 +309,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("curreny", getResources().getString(R.string.inr));
+        editor.putBoolean("theme", BasicSettings.DEFAULT_THEME);
         editor.apply();
         toMainActivity();
     }

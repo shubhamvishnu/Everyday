@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.fragments.PersoanalLinksFragment;
 import com.everyday.skara.everyday.fragments.PersonalNotesFragment;
 import com.everyday.skara.everyday.fragments.PersonalTodoFragment;
@@ -32,6 +34,12 @@ public class PersonalProductivityBoard extends AppCompatActivity implements View
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        boolean themeState = getSharedPreferences(SPNames.DEFAULT_SETTINGS, MODE_PRIVATE).getBoolean("theme", BasicSettings.DEFAULT_THEME);
+//        if(!themeState){
+//            setTheme(R.style.LightTheme);
+//        }else{
+//            setTheme(R.style.DarkTheme);
+//        }
         setContentView(R.layout.activity_personal_productivity_board);
         Toolbar myToolbar = findViewById(R.id.personal_prod_toolbar);
         setSupportActionBar(myToolbar);
