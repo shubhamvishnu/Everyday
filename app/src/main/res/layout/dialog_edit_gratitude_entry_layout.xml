@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="right"
+
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingTop="8dp"
+                    android:text="Gratitude Entry"
+                    android:textColor="@android:color/black"
+                    android:textSize="18dp" />
+
+                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/close_gratitude_entry_dialog"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:adjustViewBounds="true"
+                    android:background="@android:color/transparent"
+                    android:padding="2dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_close_24dp" />
+            </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:text="3 grateful things about today"
+                android:textSize="16dp" />
+            <EditText
+                android:id="@+id/entry_1_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="Entry 1"
+                android:padding="12dp"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/entry_2_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="Entry 2"
+                android:padding="12dp"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/entry_3_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="Entry 3"
+                android:padding="12dp"
+                android:textSize="22dp" />
+
+            <EditText
+                android:id="@+id/entry_note_edittext"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:background="@android:color/transparent"
+                android:hint="Write something..."
+                android:inputType="textUri"
+                android:padding="12dp"
+                android:textColor="#c0392b"
+                android:textSize="18dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="8dp"
+                android:text="How are you feeling today?"
+                android:textSize="16dp" />
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/mood1_gratitude_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="16dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_in_love" />
+
+
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/mood2_gratitude_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="16dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_happy" />
+
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/mood3_gratitude_image"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_margin="16dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_sad" />
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                android:background="#e6e6e6" />
+
+
+            <Button
+                android:id="@+id/done_gratitude_entry_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/blue"
+                android:text="Done"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

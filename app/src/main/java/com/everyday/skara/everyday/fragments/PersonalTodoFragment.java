@@ -2,6 +2,7 @@ package com.everyday.skara.everyday.fragments;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,6 +31,7 @@ import com.everyday.skara.everyday.TodoActivity;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.NotificationHolder;
 import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
@@ -44,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
 import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
 import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
@@ -57,13 +60,15 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
-public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener{
+public class PersonalTodoFragment extends Fragment implements BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
+    DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference, reminderDatabaseReference;
     UserInfoPOJO userInfoPOJO;
+    ValueEventListener reminderValueEventListener;
     ChildEventListener childEventListener;
     ArrayList<Todo> todoArrayList = new ArrayList<>();
 
@@ -86,6 +91,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
     int day, month, year;
     int hours, minutes;
     TextView mReminder;
+    HashMap<String, NotificationHolder> notificationHolderArrayList;
 
 
     @Nullable
@@ -117,7 +123,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
         firebaseDatabase = FirebaseDatabase.getInstance();
 
 
-        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD  + "/todos/");
+        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/");
         todoDatabaseReference.keepSynced(true);
         mTodoRecyclerView = view.findViewById(R.id.todo_view_recycler);
         mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_todos_linear_layout);
@@ -140,7 +146,30 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
                 }
             }
         });
-        initTodoRecyclerView();
+        initReminders();
+
+    }
+
+    void initReminders() {
+        notificationHolderArrayList = new HashMap<>();
+        reminderDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
+        reminderDatabaseReference.keepSynced(true);
+        reminderValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    NotificationHolder notificationHolder = snapshot.getValue(NotificationHolder.class);
+                    notificationHolderArrayList.put(notificationHolder.getItemKey(), notificationHolder);
+                }
+                initTodoRecyclerView();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+        reminderDatabaseReference.addValueEventListener(reminderValueEventListener);
     }
 
     void setEmptyVisibility(int action) {
@@ -169,7 +198,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
 
     void initTodos() {
         todoArrayList = new ArrayList<>();
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/");
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/");
         databaseReference.keepSynced(true);
         childEventListener = new ChildEventListener() {
 
@@ -188,13 +217,11 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
                         todoArrayList.add(todo);
                         sortDateDescending();
                         todoAdapter.notifyItemInserted(todoPOJOArrayList.size() - 1);
-
                     } else {
                         setEmptyVisibility(0);
                     }
                 } catch (DatabaseException d) {
                 } catch (Exception e) {
-
                 }
             }
 
@@ -258,6 +285,9 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
         if (childEventListener != null) {
             databaseReference.removeEventListener(childEventListener);
         }
+        if (reminderValueEventListener != null) {
+            reminderDatabaseReference.removeEventListener(reminderValueEventListener);
+        }
     }
 
     @Override
@@ -265,6 +295,9 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
         super.onDestroy();
         if (childEventListener != null) {
             databaseReference.removeEventListener(childEventListener);
+        }
+        if (reminderValueEventListener != null) {
+            reminderDatabaseReference.removeEventListener(reminderValueEventListener);
         }
     }
 
@@ -334,7 +367,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
     }
 
     void setState(final int todoPosition, final int position, final boolean isChecked) {
-        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD  + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey() + "/");
+        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey() + "/");
         HashMap<String, Object> stateMap = new HashMap<>();
         stateMap.put("state", isChecked);
         todoReference.updateChildren(stateMap);
@@ -344,8 +377,8 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
     }
 
     void deleteItem(final int todoPosition, final int position) {
-        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD  + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
-        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD +  "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
+        final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(todoPosition).getTodoKey());
+        todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/");
         try {
             todoDatabaseReference.child(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey()).removeValue();
             try {
@@ -426,7 +459,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
 
 
         void showItems(final int position) {
-            todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD  + "/todos/" + todoArrayList.get(position).getTodoKey());
+            todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(position).getTodoKey());
             todoInfoReference = todoDatabaseReference.child("info");
 
             ImageButton mCloseButton, mAddButton, mCalendar;
@@ -442,6 +475,10 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
             mCalendar = mTodoItemsDialog.findViewById(R.id.todo_set_reminder);
             mReminder = mTodoItemsDialog.findViewById(R.id.todo_set_reminder_textview);
 
+            if (notificationHolderArrayList.containsKey(todoArrayList.get(position).getTodoKey())) {
+                String reminderText = "Reminder set at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getYear() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getMonth() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getDay() + ", at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getHours() + ":" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getMinutes();
+                mReminder.setText(reminderText);
+            }
             mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
             mTodoItemsRecyclerView.invalidate();
             mTodoItemsRecyclerView.setHasFixedSize(true);
@@ -518,7 +555,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
                 @Override
                 public void onClick(View v) {
                     todoInfoPOJO.setTitle(mTitle.getText().toString());
-                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD +  "/todos/" + todoInfoPOJO.getTodoKey() + "/info/");
+                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoInfoPOJO.getTodoKey() + "/info/");
                     databaseReference.setValue(todoInfoPOJO);
                     todoArrayList.get(position).setTodoInfoPOJO(todoInfoPOJO);
                     notifyItemChanged(position);
@@ -595,7 +632,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
 
     void deleteTodo(int position) {
         Todo todo = todoArrayList.get(position);
-        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD +  "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
+        firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
         todoArrayList.remove(position);
         todoAdapter.notifyItemRemoved(position);
     }
@@ -630,6 +667,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
         // show it
         alertDialog.show();
     }
+
     /**
      * Bottom sheet picker for date and time
      * [STARTS HERE]
@@ -645,7 +683,7 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
             hours = hourOfDay;
             minutes = minute;
 
-            if(mReminder != null)
+            if (mReminder != null)
                 mReminder.setText("Reminder set at " + time + " on " + date);
             //setReminder();
         }
@@ -662,14 +700,15 @@ public class PersonalTodoFragment  extends Fragment implements BottomSheetTimePi
         calendar.set(Calendar.HOUR_OF_DAY, hours);
         calendar.set(Calendar.MINUTE, minutes);
 
-        Intent intent = new Intent(getActivity(), TodoReminderReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
-
-// With setInexactRepeating(), you have to use one of the AlarmManager interval
-// constants--in this case, AlarmManager.INTERVAL_DAY.
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+//        Intent intent = new Intent(getActivity(), TodoReminderReceiver.class);
+//        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
+//
+//// With setInexactRepeating(), you have to use one of the AlarmManager interval
+//// constants--in this case, AlarmManager.INTERVAL_DAY.
+//        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+//                AlarmManager.INTERVAL_DAY, alarmIntent);
     }
+
     @Override
     public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
         Calendar cal = new java.util.GregorianCalendar();

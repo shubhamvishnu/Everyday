@@ -90,49 +90,41 @@
                     android:gravity="left|center" />
 
             </LinearLayout></android.support.v7.widget.CardView>
-        <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="56dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:background="@color/blue"-->
-        <!--android:gravity="right"-->
-        <!--android:orientation="horizontal">-->
 
-        <!--<android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"-->
-        <!--android:id="@+id/user_account_button"-->
-        <!--android:layout_width="36dp"-->
-        <!--android:layout_height="36dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:padding="4dp"-->
-        <!--android:scaleType="fitCenter"-->
-        <!--app:srcCompat="@drawable/ic_person_24dp" />-->
+        <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:cardElevation="1dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <!--<android.support.v7.widget.AppCompatImageButton-->
-        <!--android:id="@+id/new_board_button"-->
-        <!--android:layout_width="36dp"-->
-        <!--android:layout_height="42dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:adjustViewBounds="true"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:padding="4dp"-->
-        <!--android:scaleType="fitCenter"-->
-        <!--app:srcCompat="@drawable/ic_add_24dp" />-->
+            <LinearLayout  android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:orientation="vertical"
+                android:padding="8dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="left"
+                    style="@style/titleTheme"
+                    android:text="Gratitude Board" />
+                <Button
+                    android:id="@+id/personal_gratitude_cardview_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="22dp"
+                    android:textAllCaps="false"
+                    android:text="Personal Gratitude Board"
+                    android:background="@android:color/transparent"
+                    android:gravity="left|center" />
 
-        <!--<Button-->
-        <!--android:id="@+id/other_boards_button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:gravity="center"-->
-        <!--android:padding="4dp"-->
-        <!--android:text="Other Boards"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:textSize="14dp" />-->
+            </LinearLayout></android.support.v7.widget.CardView>
 
-        <!--</LinearLayout>-->
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_boards"

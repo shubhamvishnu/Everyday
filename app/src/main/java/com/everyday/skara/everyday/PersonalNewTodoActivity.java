@@ -24,6 +24,8 @@ import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.NotificationHolder;
+import com.everyday.skara.everyday.classes.NotificationTypes;
 import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
@@ -50,10 +52,10 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
     UserInfoPOJO userInfoPOJO;
-    //TextView mReminder;
+    TextView mReminder;
     EditText mItemEditText, mTodoTitle;
     ImageButton mTodoDone;
-    //mCalendar;
+    ImageButton mCalendar;
     ArrayList<TodoPOJO> todoPOJOArrayList;
     RecyclerView mTodoRecyclerView;
     TodoListAdapter todoListAdapter;
@@ -61,6 +63,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     int day, month, year;
     int hours, minutes;
     boolean timelineUpdated = false;
+    TodoInfoPOJO todoInfoPOJOReminder = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
         Intent intent = getIntent();
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD+ "/todos/");
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/");
         databaseReference.keepSynced(true);
         todoDatabaseReference = databaseReference.push();
         todoDatabaseReference.keepSynced(true);
@@ -90,15 +93,17 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
         mItemEditText = findViewById(R.id.todo_item_edittext);
         mTodoTitle = findViewById(R.id.todo_title_edittext);
         mTodoDone = findViewById(R.id.todo_done);
-//        mCalendar = findViewById(R.id.todo_set_reminder);
-//        mReminder = findViewById(R.id.todo_set_reminder_textview);
+        mCalendar = findViewById(R.id.todo_personal_set_reminder);
+        mReminder = findViewById(R.id.todo_personal_set_reminder_textview);
         mTodoRecyclerView = findViewById(R.id.todo_recyclerview);
 
         mTodoDone.setOnClickListener(this);
-        //   mCalendar.setOnClickListener(this);
+        mCalendar.setOnClickListener(this);
 
         date = new String("");
         time = new String("");
+        hours = 0;
+        minutes = 0;
         timelineUpdated = false;
         initRecyclerView();
     }
@@ -121,17 +126,17 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.todo_done:
-                if(!timelineUpdated){
+                if (!timelineUpdated) {
                     timelineUpdated = true;
                     ActivityPOJO activityPOJO = new ActivityPOJO("New Todo Created", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_TODO, userInfoPOJO);
-                    firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
+                    firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
                 }
                 addTodo();
                 break;
-//            case R.id.todo_set_reminder:
-//                DialogFragment dialog = createDialog();
-//                dialog.show(getSupportFragmentManager(), "date");
-//                break;
+            case R.id.todo_personal_set_reminder:
+                DialogFragment dialog = createDialog();
+                dialog.show(getSupportFragmentManager(), "date");
+                break;
         }
     }
 
@@ -288,23 +293,36 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     }
 
     void setReminder() {
-        AlarmManager alarmMgr = (AlarmManager) this.getSystemService(TodoActivity.ALARM_SERVICE);
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(System.currentTimeMillis());
+        if (!(date.isEmpty() || time.isEmpty() || hours == 0 || minutes == 0 || date.equals("") || time.equals(""))) {
 
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, day);
-        calendar.set(Calendar.HOUR_OF_DAY, hours);
-        calendar.set(Calendar.MINUTE, minutes);
 
-        Intent intent = new Intent(this, TodoReminderReceiver.class);
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            AlarmManager alarmMgr = (AlarmManager) this.getSystemService(TodoActivity.ALARM_SERVICE);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(System.currentTimeMillis());
+
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR_OF_DAY, hours);
+            calendar.set(Calendar.MINUTE, minutes);
+
+
+            // String itemKey, String title, String message, String holderKey, int day, int month, int year, int hours, int minutes, int intervalType, int notificationType
+            DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
+            reminderReference.keepSynced(true);
+            NotificationHolder notificationHolder = new NotificationHolder(todoDatabaseReference.getKey(), "Reminder", "Todo Reminder", todoDatabaseReference.getKey(), day, month, year, hours, minutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
+            reminderReference.child(todoDatabaseReference.getKey()).setValue(notificationHolder);
+   /*
+            Intent intent = new Intent(this, TodoReminderReceiver.class);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+
 
 // With setInexactRepeating(), you have to use one of the AlarmManager interval
 // constants--in this case, AlarmManager.INTERVAL_DAY.
-        alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
-                AlarmManager.INTERVAL_DAY, alarmIntent);
+            alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                    AlarmManager.INTERVAL_DAY, alarmIntent);
+                    */
+        }
     }
 
     /**
@@ -322,8 +340,9 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
             hours = hourOfDay;
             minutes = minute;
 
-            //mReminder.setText("Reminder set at " + time + " on " + date);
+            mReminder.setText("Reminder set at " + time + " on " + date);
             setReminder();
+
         }
     }
 

@@ -23,8 +23,6 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;
-
-
     public static int optionType;
     ImageButton mExpenses, mCatExpenses, mDayExpenses;
 

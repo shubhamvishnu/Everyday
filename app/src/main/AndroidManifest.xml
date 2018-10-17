@@ -64,7 +64,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".PersonalNewTodoActivity" />
-        <activity android:name=".CategoriesActivity"></activity>
+        <activity android:name=".CategoriesActivity" />
+        <activity android:name=".PersonalGratitudeBoardActivity"></activity>
     </application>
 
 </manifest>
