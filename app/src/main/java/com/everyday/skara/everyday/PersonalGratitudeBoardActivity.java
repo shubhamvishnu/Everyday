@@ -33,8 +33,8 @@ public class PersonalGratitudeBoardActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
     BottomSheetDialog mNewEntryDialog;
-    int moodChoice = -1;
     public static int optionType;
+    int moodChoice = -1;
     ImageButton mGratitudeEntriesIcon;
     ImageButton mMoodsViewIcon;
 
@@ -76,7 +76,23 @@ public class PersonalGratitudeBoardActivity extends AppCompatActivity {
                 transaction.commit();
             }
         });
+        initFragment();
 
+    }
+    void initFragment(){
+        optionType = NewOptionTypes.TYPE_PERSONAL_GRATITUDE_ENTRIES;
+        PersonalGratitudeEntriesFragment personalGratitudeEntriesFragment= new PersonalGratitudeEntriesFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("user_profile", userInfoPOJO);
+        personalGratitudeEntriesFragment.setArguments(bundle);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.gratitude_fragment_container, personalGratitudeEntriesFragment);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -146,6 +162,7 @@ public class PersonalGratitudeBoardActivity extends AppCompatActivity {
         mNewEntryDialog.setCanceledOnTouchOutside(false);
         mNewEntryDialog.show();
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(PersonalGratitudeBoardActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -302,6 +302,12 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_GRATITUDE);
         databaseReference3.setValue(boardPOJO3);
 
+
+        final BoardPOJO boardPOJO4 = new BoardPOJO("Habit Board", DateTimeStamp.getDate(), "-habit_board", BoardTypes.BOARD_TYPE_PERSONAL_HABIT, userInfoPOJO);
+        DatabaseReference databaseReference4 = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS);
+        databaseReference4.setValue(boardPOJO4);
+
+
         final BoardPOJO boardPOJO1 = new BoardPOJO("Productivity Board", DateTimeStamp.getDate(), "-productivity_board", BoardTypes.BOARD_TYPE_PERSONAL_PRODUCTIVITY, userInfoPOJO);
         DatabaseReference databaseReference1 = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD);
         databaseReference1.setValue(boardPOJO1);

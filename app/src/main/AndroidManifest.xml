@@ -65,7 +65,8 @@
         </activity>
         <activity android:name=".PersonalNewTodoActivity" />
         <activity android:name=".CategoriesActivity" />
-        <activity android:name=".PersonalGratitudeBoardActivity"></activity>
+        <activity android:name=".PersonalGratitudeBoardActivity" />
+        <activity android:name=".PersonalHabitActivity"></activity>
     </application>
 
 </manifest>

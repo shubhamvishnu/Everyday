@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
 
-    TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle;
+    TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPersonalFinanceTitle = findViewById(R.id.personal_financial_cardview_title);
         mPersoanlProdTitle = findViewById(R.id.personal_prod_cardview_title);
         mPersonalGratitudeTitle = findViewById(R.id.personal_gratitude_cardview_title);
+        mPersonalHabitTitle = findViewById(R.id.personal_habits_cardview_title);
 
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
@@ -133,6 +134,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toPersonalGratitudeActivity();
             }
         });
+
+        mPersonalHabitTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalHabitActivity();
+            }
+        });
         initRecyclerView();
     }
 
@@ -149,12 +157,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+
     void toPersonalGratitudeActivity(){
         Intent intent = new Intent(MainActivity.this, PersonalGratitudeBoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+
+    void toPersonalHabitActivity(){
+        Intent intent = new Intent(MainActivity.this, PersonalHabitActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main_activity, menu);
