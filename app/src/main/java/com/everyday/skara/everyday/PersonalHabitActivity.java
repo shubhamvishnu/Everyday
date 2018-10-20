@@ -104,7 +104,8 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         initFragment();
 
     }
-    void initFragment(){
+
+    void initFragment() {
         persoanlHabitFragmentManager = getSupportFragmentManager();
         optionType = NewOptionTypes.TYPE_PERSONAL_HABIT_ENTRIES;
         HabitsFragment habitsFragment = new HabitsFragment();
@@ -142,6 +143,16 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
     }
 
     void showNewHabitDailog() {
+        mStartDateValue = "";
+        mStartYear = 0;
+        mStartMonth = 0;
+        mStartDay = 0;
+
+        mEndDateValue = "";
+        mEndDay = 0;
+        mEndMonth = 0;
+        mEndYear = 0;
+
         mNewEntryDialog = new BottomSheetDialog(this);
         mNewEntryDialog.setContentView(R.layout.dialog_new_habit_layout);
         ImageButton mClose;
@@ -160,6 +171,24 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         mClose = mNewEntryDialog.findViewById(R.id.close_habit_entry_dialog);
         mDone = mNewEntryDialog.findViewById(R.id.done_habit_entry_button);
 
+        mForeverCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mEndDateValue = "";
+                    mEndDay = 0;
+                    mEndMonth = 0;
+                    mEndYear = 0;
+                    mEndDateTextView.setText("00/00/0000 at 00:00");
+                }else{
+                    mEndDateValue = "";
+                    mEndDay = 0;
+                    mEndMonth = 0;
+                    mEndYear = 0;
+                    mEndDateTextView.setText(null);
+                }
+            }
+        });
         mStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -193,25 +222,33 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
                 }
                 if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
                     if (mForeverCheckbox.isChecked()) {
-                        if (mEndDateValue.isEmpty() || mEndDateValue.equals("")) {
-                            mEndDateValue = "";
-                            mEndDay = 0;
-                            mEndMonth = 0;
-                            mEndYear = 0;
-                        }
+                        mEndDateValue = "";
+                        mEndDay = 0;
+                        mEndMonth = 0;
+                        mEndYear = 0;
                         DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
                         databaseReference.keepSynced(true);
                         final DatabaseReference entryDatabaseReference = databaseReference.push();
                         entryDatabaseReference.keepSynced(true);
                         //String habitEntryKey, String title, String description, String startDate, String endDate, boolean isForever, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO
-                        HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(),mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                        HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                         entryDatabaseReference.setValue(habitPOJO);
                         mNewEntryDialog.dismiss();
                     } else {
-                        Toast.makeText(PersonalHabitActivity.this, "End Date Missing", Toast.LENGTH_SHORT).show();
+                        if (!(mEndDateValue.isEmpty() || mEndDateValue.equals(""))) {
+                            DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
+                            databaseReference.keepSynced(true);
+                            final DatabaseReference entryDatabaseReference = databaseReference.push();
+                            entryDatabaseReference.keepSynced(true);
+                            //String habitEntryKey, String title, String description, String startDate, String endDate, boolean isForever, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO
+                            HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                            entryDatabaseReference.setValue(habitPOJO);
+                            mNewEntryDialog.dismiss();
+                        } else {
+                            Toast.makeText(PersonalHabitActivity.this, "End Date Missing", Toast.LENGTH_SHORT).show();
+                        }
                     }
-
-                } else{
+                } else {
                     Toast.makeText(PersonalHabitActivity.this, "Cannot be blank", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -241,22 +278,17 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
         if (isStartSelected) {
             mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-            if (!(mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
                 this.mStartYear = year;
                 this.mStartMonth = monthOfYear;
                 this.mStartDay = dayOfMonth;
                 mStartDateTextView.setText(mStartDateValue);
-            }
         } else {
             mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-            if (!(mEndDateValue.isEmpty() || mEndDateValue.equals(""))) {
                 this.mEndYear = year;
                 this.mEndMonth = monthOfYear;
                 this.mEndDay = dayOfMonth;
                 mEndDateTextView.setText(mEndDateValue);
             }
-        }
-
     }
 
     @Override

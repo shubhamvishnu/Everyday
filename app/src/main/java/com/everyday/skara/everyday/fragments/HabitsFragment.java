@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,7 +45,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class HabitsFragment extends android.support.v4.app.Fragment{
+public class HabitsFragment extends android.support.v4.app.Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     View view;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -108,20 +109,16 @@ public class HabitsFragment extends android.support.v4.app.Fragment{
                 //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
                 if (isStartSelected) {
                     mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                    if (!(mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
-                        mStartYear = year;
-                        mStartMonth = monthOfYear;
-                        mStartDay = dayOfMonth;
-                        mStartDateTextView.setText(mStartDateValue);
-                    }
+                    mStartYear = year;
+                    mStartMonth = monthOfYear;
+                    mStartDay = dayOfMonth;
+                    mStartDateTextView.setText(mStartDateValue);
                 } else {
                     mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                    if (!(mEndDateValue.isEmpty() || mEndDateValue.equals(""))) {
-                        mEndYear = year;
-                        mEndMonth = monthOfYear;
-                        mEndDay = dayOfMonth;
-                        mEndDateTextView.setText(mEndDateValue);
-                    }
+                    mEndYear = year;
+                    mEndMonth = monthOfYear;
+                    mEndDay = dayOfMonth;
+                    mEndDateTextView.setText(mEndDateValue);
                 }
             }
 
@@ -255,7 +252,31 @@ public class HabitsFragment extends android.support.v4.app.Fragment{
             mForeverCheckbox.setChecked(habitPOJO1.isForever());
             mStartDateTextView.setText(habitPOJO1.getStartDate());
             mEndDateTextView.setText(habitPOJO1.getEndDate());
-
+            if(habitPOJO1.isForever()){
+                mEndDateValue = "";
+                mEndDay = 0;
+                mEndMonth = 0;
+                mEndYear = 0;
+                mEndDateTextView.setText("00/00/0000 at 00:00");
+            }
+            mForeverCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if (isChecked) {
+                        mEndDateValue = "";
+                        mEndDay = 0;
+                        mEndMonth = 0;
+                        mEndYear = 0;
+                        mEndDateTextView.setText("00/00/0000 at 00:00");
+                    }else{
+                        mEndDateValue = "";
+                        mEndDay = 0;
+                        mEndMonth = 0;
+                        mEndYear = 0;
+                        mEndDateTextView.setText(null);
+                    }
+                }
+            });
             mStartDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -291,22 +312,31 @@ public class HabitsFragment extends android.support.v4.app.Fragment{
                     }
                     if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
                         if (mForeverCheckbox.isChecked()) {
-                            if (mEndDateValue.isEmpty() || mEndDateValue.equals("")) {
-                                mEndDateValue = "";
-                                mEndDay = 0;
-                                mEndMonth = 0;
-                                mEndYear = 0;
-                            }
-                            mHabitsPojoArrayList.set(position, habitPOJO1);
+                            mEndDateValue = "";
+                            mEndDay = 0;
+                            mEndMonth = 0;
+                            mEndYear = 0;
+
 
                             Map<String, Object> habitMap = new HashMap<>();
                             HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                             habitMap.put(habitPOJO1.getHabitEntryKey(), habitPOJO2);
                             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").updateChildren(habitMap);
-
+                            mHabitsPojoArrayList.set(position, habitPOJO2);
                             mEntriesAdapter.notifyItemChanged(position);
                         } else {
-                            Toast.makeText(getActivity(), "End Date Missing", Toast.LENGTH_SHORT).show();
+                            if (!(mEndDateValue.isEmpty() || mEndDateValue.equals(""))) {
+
+                                Map<String, Object> habitMap = new HashMap<>();
+                                HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                                habitMap.put(habitPOJO1.getHabitEntryKey(), habitPOJO2);
+                                firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").updateChildren(habitMap);
+                                mHabitsPojoArrayList.set(position, habitPOJO2);
+
+                                mEntriesAdapter.notifyItemChanged(position);
+                            } else {
+                                Toast.makeText(getActivity(), "End Date Missing", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         mEditEntryDialog.dismiss();
