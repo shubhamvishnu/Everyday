@@ -6,7 +6,6 @@ public class HabitPOJO {
     String description;
     String startDate;
     String endDate;
-    boolean isForever;
     int mStartDay, mStartMonth, mStartYear;
     int mEndDay, mEndMonth, mEndYear;
     int intervalType;
@@ -16,13 +15,12 @@ public class HabitPOJO {
     public HabitPOJO() {
     }
 
-    public HabitPOJO(String habitEntryKey, String title, String description, String startDate, String endDate, boolean isForever, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
+    public HabitPOJO(String habitEntryKey, String title, String description, String startDate, String endDate, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
         this.habitEntryKey = habitEntryKey;
         this.title = title;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.isForever = isForever;
         this.mStartDay = mStartDay;
         this.mStartMonth = mStartMonth;
         this.mStartYear = mStartYear;
@@ -80,14 +78,6 @@ public class HabitPOJO {
 
     public void setEndDate(String endDate) {
         this.endDate = endDate;
-    }
-
-    public boolean isForever() {
-        return isForever;
-    }
-
-    public void setForever(boolean forever) {
-        isForever = forever;
     }
 
     public int getmStartDay() {

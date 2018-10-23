@@ -80,11 +80,6 @@
                 android:layout_height="wrap_content"
                 android:text="start date"
                 android:id="@+id/habit_start_date_button"/>
-            <android.support.v7.widget.AppCompatCheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forever"
-                android:id="@+id/habit_forever_checkbox"/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

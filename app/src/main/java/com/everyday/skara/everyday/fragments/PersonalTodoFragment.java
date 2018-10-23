@@ -476,7 +476,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             mReminder = mTodoItemsDialog.findViewById(R.id.todo_set_reminder_textview);
 
             if (notificationHolderArrayList.containsKey(todoArrayList.get(position).getTodoKey())) {
-                String reminderText = "Reminder set at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getYear() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getMonth() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getDay() + ", at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getHours() + ":" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getMinutes();
+                String reminderText = "Reminder set at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndDay() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndMonth() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndDay() + ", at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmHour() + ":" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmMinute();
                 mReminder.setText(reminderText);
             }
             mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
@@ -700,6 +700,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         calendar.set(Calendar.HOUR_OF_DAY, hours);
         calendar.set(Calendar.MINUTE, minutes);
 
+        // TODO: update reminder
 //        Intent intent = new Intent(getActivity(), TodoReminderReceiver.class);
 //        PendingIntent alarmIntent = PendingIntent.getBroadcast(getActivity(), 0, intent, 0);
 //

@@ -9,9 +9,12 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -23,6 +26,7 @@ import android.widget.Toast;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.classes.NotificationHolder;
 import com.everyday.skara.everyday.classes.NotificationTypes;
 import com.everyday.skara.everyday.fragments.HabitsFragment;
 import com.everyday.skara.everyday.fragments.PersonalGratitudeEntriesFragment;
@@ -34,13 +38,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
+import com.philliphsu.bottomsheetpickers.time.BottomSheetTimePickerDialog;
+import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class PersonalHabitActivity extends AppCompatActivity implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
+public class PersonalHabitActivity extends AppCompatActivity implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener, BottomSheetTimePickerDialog.OnTimeSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
@@ -52,6 +58,8 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
     int mStartDay, mStartMonth, mStartYear;
     int mEndDay, mEndMonth, mEndYear;
     TextView mStartDateTextView, mEndDateTextView;
+    int mHours, mMinutes;
+    String mTime;
     public static FragmentManager persoanlHabitFragmentManager;
 
     @Override
@@ -75,11 +83,15 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         persoanlHabitFragmentManager = getSupportFragmentManager();
         mStartDateValue = new String("");
         mEndDateValue = new String("");
-        mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
-        mStartDay = mEndDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        mStartMonth = mEndMonth = Calendar.getInstance().get(Calendar.MONTH);
-        mStartYear = mEndYear = Calendar.getInstance().get(Calendar.YEAR);
+        mTime = new String("");
+        mHours = 0;
+        mMinutes = 0;
+        mStartYear = 0;
+        mStartMonth = 0;
+        mStartDay = 0;
+        mEndDay = 0;
+        mEndMonth = 0;
+        mEndYear = 0;
 
         mHabitEntriesButton = findViewById(R.id.habit_entry_option_icon);
         mHabitEntriesButton.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +170,6 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         ImageButton mClose;
         final EditText mTitle, mDescription;
         final Button mStartDate, mEndDate;
-        final CheckBox mForeverCheckbox;
         Button mDone;
 
         mTitle = mNewEntryDialog.findViewById(R.id.title_habit);
@@ -167,28 +178,10 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         mEndDateTextView = mNewEntryDialog.findViewById(R.id.habit_end_date_textview);
         mStartDate = mNewEntryDialog.findViewById(R.id.habit_start_date_button);
         mEndDate = mNewEntryDialog.findViewById(R.id.habit_end_date_button);
-        mForeverCheckbox = mNewEntryDialog.findViewById(R.id.habit_forever_checkbox);
         mClose = mNewEntryDialog.findViewById(R.id.close_habit_entry_dialog);
         mDone = mNewEntryDialog.findViewById(R.id.done_habit_entry_button);
 
-        mForeverCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    mEndDateValue = "";
-                    mEndDay = 0;
-                    mEndMonth = 0;
-                    mEndYear = 0;
-                    mEndDateTextView.setText("00/00/0000 at 00:00");
-                }else{
-                    mEndDateValue = "";
-                    mEndDay = 0;
-                    mEndMonth = 0;
-                    mEndYear = 0;
-                    mEndDateTextView.setText(null);
-                }
-            }
-        });
+
         mStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,34 +213,21 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
                 if (desc.isEmpty()) {
                     desc = "";
                 }
-                if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
-                    if (mForeverCheckbox.isChecked()) {
-                        mEndDateValue = "";
-                        mEndDay = 0;
-                        mEndMonth = 0;
-                        mEndYear = 0;
-                        DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
-                        databaseReference.keepSynced(true);
-                        final DatabaseReference entryDatabaseReference = databaseReference.push();
-                        entryDatabaseReference.keepSynced(true);
-                        //String habitEntryKey, String title, String description, String startDate, String endDate, boolean isForever, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO
-                        HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
-                        entryDatabaseReference.setValue(habitPOJO);
-                        mNewEntryDialog.dismiss();
-                    } else {
-                        if (!(mEndDateValue.isEmpty() || mEndDateValue.equals(""))) {
-                            DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
-                            databaseReference.keepSynced(true);
-                            final DatabaseReference entryDatabaseReference = databaseReference.push();
-                            entryDatabaseReference.keepSynced(true);
-                            //String habitEntryKey, String title, String description, String startDate, String endDate, boolean isForever, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO
-                            HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mForeverCheckbox.isSelected(), mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
-                            entryDatabaseReference.setValue(habitPOJO);
-                            mNewEntryDialog.dismiss();
-                        } else {
-                            Toast.makeText(PersonalHabitActivity.this, "End Date Missing", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals("") || mEndDateValue.isEmpty() || mEndDateValue.equals("") || mTime.isEmpty() || mTitle.equals(""))) {
+
+                    DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
+                    databaseReference.keepSynced(true);
+                    final DatabaseReference entryDatabaseReference = databaseReference.push();
+                    entryDatabaseReference.keepSynced(true);
+                    HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                    entryDatabaseReference.setValue(habitPOJO);
+
+                    DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
+                    reminderReference.keepSynced(true);
+                    NotificationHolder notificationHolder = new NotificationHolder(entryDatabaseReference.getKey(), "Reminder", "Habits Reminder", entryDatabaseReference.getKey(), mStartDateValue, mEndDateValue, mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, mTime, mHours, mMinutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
+                    reminderReference.child(entryDatabaseReference.getKey()).setValue(notificationHolder);
+
+                    mNewEntryDialog.dismiss();
                 } else {
                     Toast.makeText(PersonalHabitActivity.this, "Cannot be blank", Toast.LENGTH_SHORT).show();
                 }
@@ -270,6 +250,44 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
      */
 
     @Override
+    public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
+        Calendar cal = new java.util.GregorianCalendar();
+        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        cal.set(Calendar.MINUTE, minute);
+        mTime = DateFormat.getTimeFormat(this).format(cal.getTime());
+        if (!(mTime.isEmpty() || mTime.equals(""))) {
+
+            mHours = hourOfDay;
+            mMinutes = minute;
+
+            // mReminder.setText("Reminder set at " + time + " on " + date);
+
+        }
+    }
+
+    private DialogFragment createTimeDialog() {
+        return createTimeDialogWithSetters();
+    }
+
+    private DialogFragment createTimeDialogWithSetters() {
+        BottomSheetPickerDialog dialog = null;
+        boolean custom = false;
+        boolean customDark = false;
+        boolean themeDark = true;
+
+        Calendar now = Calendar.getInstance();
+        dialog = GridTimePickerDialog.newInstance(
+                PersonalHabitActivity.this,
+                now.get(Calendar.HOUR_OF_DAY),
+                now.get(Calendar.MINUTE),
+                DateFormat.is24HourFormat(PersonalHabitActivity.this));
+        GridTimePickerDialog gridDialog = (GridTimePickerDialog) dialog;
+        dialog.setThemeDark(themeDark);
+
+        return dialog;
+    }
+
+    @Override
     public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
         Calendar cal = new java.util.GregorianCalendar();
         cal.set(Calendar.YEAR, year);
@@ -278,17 +296,21 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
         if (isStartSelected) {
             mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                this.mStartYear = year;
-                this.mStartMonth = monthOfYear;
-                this.mStartDay = dayOfMonth;
-                mStartDateTextView.setText(mStartDateValue);
+            this.mStartYear = year;
+            this.mStartMonth = monthOfYear;
+            this.mStartDay = dayOfMonth;
+            mStartDateTextView.setText(mStartDateValue);
+
+            DialogFragment dialog1 = createTimeDialog();
+            dialog1.show(getSupportFragmentManager(), "time");
+
         } else {
             mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                this.mEndYear = year;
-                this.mEndMonth = monthOfYear;
-                this.mEndDay = dayOfMonth;
-                mEndDateTextView.setText(mEndDateValue);
-            }
+            this.mEndYear = year;
+            this.mEndMonth = monthOfYear;
+            this.mEndDay = dayOfMonth;
+            mEndDateTextView.setText(mEndDateValue);
+        }
     }
 
     @Override
@@ -312,7 +334,7 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
                 now.get(Calendar.DAY_OF_MONTH));
 
         com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
-        dateDialog.setYearRange(1900, 3000);
+        dateDialog.setYearRange(Calendar.YEAR, 3000);
         dialog.setThemeDark(themeDark);
 
         return dialog;
