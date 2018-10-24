@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
 
-    TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle;
+    TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle, mPersonalLsTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mPersoanlProdTitle = findViewById(R.id.personal_prod_cardview_title);
         mPersonalGratitudeTitle = findViewById(R.id.personal_gratitude_cardview_title);
         mPersonalHabitTitle = findViewById(R.id.personal_habits_cardview_title);
+        mPersonalLsTitle = findViewById(R.id.personal_ls_cardview_title);
 
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
@@ -141,6 +142,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toPersonalHabitActivity();
             }
         });
+        mPersonalLsTitle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalLsActivity();
+            }
+        });
         initRecyclerView();
     }
 
@@ -151,28 +158,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
-    void toPersonalProducitivityActivity(){
+    void toPersonalProducitivityActivity() {
         Intent intent = new Intent(MainActivity.this, PersonalProductivityBoard.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
-    void toPersonalGratitudeActivity(){
+    void toPersonalGratitudeActivity() {
         Intent intent = new Intent(MainActivity.this, PersonalGratitudeBoardActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
-    void toPersonalHabitActivity(){
+    void toPersonalHabitActivity() {
         Intent intent = new Intent(MainActivity.this, PersonalHabitActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
-
+    void toPersonalLsActivity() {
+        Intent intent = new Intent(MainActivity.this, PersonalStopwatchActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -449,12 +461,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
-    void toSettingsActivity(){
+
+    void toSettingsActivity() {
         Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+
     void toAddMembers(BoardPOJO boardPOJO) {
         Intent intent = new Intent(MainActivity.this, AddBoardMembersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
