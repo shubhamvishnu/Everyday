@@ -5,10 +5,9 @@ public class NotificationHolder {
     String title;
     String message;
     String holderKey;
-    String mStartDateValue, mEndDateValue;
-    int mStartDay, mStartMonth, mStartYear;
-    int mEndDay, mEndMonth, mEndYear;
+    String mDate;
     String mTime;
+    int mDay, mMonth, mYear;
     int mHour;
     int mMinute;
     int intervalType;
@@ -20,27 +19,54 @@ public class NotificationHolder {
     public NotificationHolder() {
     }
 
-
-    public NotificationHolder(String itemKey, String title, String message, String holderKey, String mStartDateValue, String mEndDateValue, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, String mTime, int mHour, int mMinute, int intervalType, int notificationType, boolean isActive) {
+    public NotificationHolder(String itemKey, String title, String message, String holderKey, String mDate, String mTime, int mDay, int mMonth, int mYear, int mHour, int mMinute, int intervalType, int notificationType, boolean isActive) {
         this.itemKey = itemKey;
         this.title = title;
         this.message = message;
         this.holderKey = holderKey;
-        this.mStartDateValue = mStartDateValue;
-        this.mEndDateValue = mEndDateValue;
-        this.mStartDay = mStartDay;
-        this.mStartMonth = mStartMonth;
-        this.mStartYear = mStartYear;
-        this.mEndDay = mEndDay;
-        this.mEndMonth = mEndMonth;
-        this.mEndYear = mEndYear;
+        this.mDate = mDate;
         this.mTime = mTime;
+        this.mDay = mDay;
+        this.mMonth = mMonth;
+        this.mYear = mYear;
         this.mHour = mHour;
         this.mMinute = mMinute;
         this.intervalType = intervalType;
         this.notificationType = notificationType;
         this.isActive = isActive;
         setIds();
+    }
+
+    public String getmDate() {
+        return mDate;
+    }
+
+    public void setmDate(String mDate) {
+        this.mDate = mDate;
+    }
+
+    public int getmDay() {
+        return mDay;
+    }
+
+    public void setmDay(int mDay) {
+        this.mDay = mDay;
+    }
+
+    public int getmMonth() {
+        return mMonth;
+    }
+
+    public void setmMonth(int mMonth) {
+        this.mMonth = mMonth;
+    }
+
+    public int getmYear() {
+        return mYear;
+    }
+
+    public void setmYear(int mYear) {
+        this.mYear = mYear;
     }
 
     public int getmHour() {
@@ -75,69 +101,6 @@ public class NotificationHolder {
         isActive = active;
     }
 
-    public String getmStartDateValue() {
-        return mStartDateValue;
-    }
-
-    public void setmStartDateValue(String mStartDateValue) {
-        this.mStartDateValue = mStartDateValue;
-    }
-
-    public String getmEndDateValue() {
-        return mEndDateValue;
-    }
-
-    public void setmEndDateValue(String mEndDateValue) {
-        this.mEndDateValue = mEndDateValue;
-    }
-
-    public int getmStartDay() {
-        return mStartDay;
-    }
-
-    public void setmStartDay(int mStartDay) {
-        this.mStartDay = mStartDay;
-    }
-
-    public int getmStartMonth() {
-        return mStartMonth;
-    }
-
-    public void setmStartMonth(int mStartMonth) {
-        this.mStartMonth = mStartMonth;
-    }
-
-    public int getmStartYear() {
-        return mStartYear;
-    }
-
-    public void setmStartYear(int mStartYear) {
-        this.mStartYear = mStartYear;
-    }
-
-    public int getmEndDay() {
-        return mEndDay;
-    }
-
-    public void setmEndDay(int mEndDay) {
-        this.mEndDay = mEndDay;
-    }
-
-    public int getmEndMonth() {
-        return mEndMonth;
-    }
-
-    public void setmEndMonth(int mEndMonth) {
-        this.mEndMonth = mEndMonth;
-    }
-
-    public int getmEndYear() {
-        return mEndYear;
-    }
-
-    public void setmEndYear(int mEndYear) {
-        this.mEndYear = mEndYear;
-    }
 
     public int getNotificationType() {
         return notificationType;

@@ -53,11 +53,9 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
     BottomSheetDialog mNewEntryDialog;
     public static int optionType;
     ImageButton mHabitEntriesButton;
-    boolean isStartSelected = true;
-    String mStartDateValue, mEndDateValue;
-    int mStartDay, mStartMonth, mStartYear;
-    int mEndDay, mEndMonth, mEndYear;
-    TextView mStartDateTextView, mEndDateTextView;
+    String mDate;
+    int mDay, mMonth, mYear;
+    TextView mEndDateTextView;
     int mHours, mMinutes;
     String mTime;
     public static FragmentManager persoanlHabitFragmentManager;
@@ -81,17 +79,13 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         optionType = NewOptionTypes.TYPE_PERSONAL_HABIT_ENTRIES;
 
         persoanlHabitFragmentManager = getSupportFragmentManager();
-        mStartDateValue = new String("");
-        mEndDateValue = new String("");
+        mDate = new String("");
         mTime = new String("");
         mHours = 0;
         mMinutes = 0;
-        mStartYear = 0;
-        mStartMonth = 0;
-        mStartDay = 0;
-        mEndDay = 0;
-        mEndMonth = 0;
-        mEndYear = 0;
+        mDay = 0;
+        mMonth = 0;
+        mYear = 0;
 
         mHabitEntriesButton = findViewById(R.id.habit_entry_option_icon);
         mHabitEntriesButton.setOnClickListener(new View.OnClickListener() {
@@ -155,45 +149,28 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
     }
 
     void showNewHabitDailog() {
-        mStartDateValue = "";
-        mStartYear = 0;
-        mStartMonth = 0;
-        mStartDay = 0;
-
-        mEndDateValue = "";
-        mEndDay = 0;
-        mEndMonth = 0;
-        mEndYear = 0;
+        mDate = new String("");
+        mDay = 0;
+        mMonth = 0;
+        mYear = 0;
 
         mNewEntryDialog = new BottomSheetDialog(this);
         mNewEntryDialog.setContentView(R.layout.dialog_new_habit_layout);
         ImageButton mClose;
         final EditText mTitle, mDescription;
-        final Button mStartDate, mEndDate;
+        final Button mEndDate;
         Button mDone;
 
         mTitle = mNewEntryDialog.findViewById(R.id.title_habit);
         mDescription = mNewEntryDialog.findViewById(R.id.desc_habit);
-        mStartDateTextView = mNewEntryDialog.findViewById(R.id.habit_start_date_textview);
         mEndDateTextView = mNewEntryDialog.findViewById(R.id.habit_end_date_textview);
-        mStartDate = mNewEntryDialog.findViewById(R.id.habit_start_date_button);
         mEndDate = mNewEntryDialog.findViewById(R.id.habit_end_date_button);
         mClose = mNewEntryDialog.findViewById(R.id.close_habit_entry_dialog);
         mDone = mNewEntryDialog.findViewById(R.id.done_habit_entry_button);
 
-
-        mStartDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isStartSelected = true;
-                DialogFragment dialog = createDialog();
-                dialog.show(getSupportFragmentManager(), "date");
-            }
-        });
         mEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isStartSelected = false;
                 DialogFragment dialog = createDialog();
                 dialog.show(getSupportFragmentManager(), "date");
             }
@@ -213,18 +190,18 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
                 if (desc.isEmpty()) {
                     desc = "";
                 }
-                if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals("") || mEndDateValue.isEmpty() || mEndDateValue.equals("") || mTime.isEmpty() || mTitle.equals(""))) {
+                if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals("") || mTime.isEmpty() || mTitle.equals(""))) {
 
                     DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
                     databaseReference.keepSynced(true);
                     final DatabaseReference entryDatabaseReference = databaseReference.push();
                     entryDatabaseReference.keepSynced(true);
-                    HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mStartDateValue, mEndDateValue, mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                    HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mDate, mTime, mDay, mMonth, mYear, mHours, mMinutes, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                     entryDatabaseReference.setValue(habitPOJO);
 
                     DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
                     reminderReference.keepSynced(true);
-                    NotificationHolder notificationHolder = new NotificationHolder(entryDatabaseReference.getKey(), "Reminder", "Habits Reminder", entryDatabaseReference.getKey(), mStartDateValue, mEndDateValue, mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, mTime, mHours, mMinutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
+                    NotificationHolder notificationHolder = new NotificationHolder(entryDatabaseReference.getKey(), "Reminder", "Habits Reminder", entryDatabaseReference.getKey(), mDate, mTime, mDay, mMonth, mYear, mHours, mMinutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
                     reminderReference.child(entryDatabaseReference.getKey()).setValue(notificationHolder);
 
                     mNewEntryDialog.dismiss();
@@ -294,23 +271,15 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
         cal.set(Calendar.MONTH, monthOfYear);
         cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
-        if (isStartSelected) {
-            mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-            this.mStartYear = year;
-            this.mStartMonth = monthOfYear;
-            this.mStartDay = dayOfMonth;
-            mStartDateTextView.setText(mStartDateValue);
+        mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
+        this.mYear = year;
+        this.mMonth = monthOfYear;
+        this.mDay = dayOfMonth;
+        mEndDateTextView.setText(mDate);
 
-            DialogFragment dialog1 = createTimeDialog();
-            dialog1.show(getSupportFragmentManager(), "time");
+        DialogFragment dialog1 = createTimeDialog();
+        dialog1.show(getSupportFragmentManager(), "time");
 
-        } else {
-            mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-            this.mEndYear = year;
-            this.mEndMonth = monthOfYear;
-            this.mEndDay = dayOfMonth;
-            mEndDateTextView.setText(mEndDateValue);
-        }
     }
 
     @Override

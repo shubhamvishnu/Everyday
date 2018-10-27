@@ -74,16 +74,6 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="start date "
-                android:id="@+id/habit_start_date_textview"/>
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="start date"
-                android:id="@+id/habit_start_date_button"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:text="end date "
                 android:id="@+id/habit_end_date_textview"/>
             <Button

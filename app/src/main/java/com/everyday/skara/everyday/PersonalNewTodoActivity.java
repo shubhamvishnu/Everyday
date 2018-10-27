@@ -310,7 +310,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
             // String itemKey, String title, String message, String holderKey, int day, int month, int year, int hours, int minutes, int intervalType, int notificationType
             DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
             reminderReference.keepSynced(true);
-            NotificationHolder notificationHolder = new NotificationHolder(todoDatabaseReference.getKey(), "Reminder", "Todo Reminder", todoDatabaseReference.getKey(), date, date, day, month, year,day, month, year, time, hours,minutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
+            NotificationHolder notificationHolder = new NotificationHolder(todoDatabaseReference.getKey(), "Reminder", "Todo Reminder", todoDatabaseReference.getKey(), date, time, day, month, year, hours,minutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
             reminderReference.child(todoDatabaseReference.getKey()).setValue(notificationHolder);
    /*
             Intent intent = new Intent(this, TodoReminderReceiver.class);

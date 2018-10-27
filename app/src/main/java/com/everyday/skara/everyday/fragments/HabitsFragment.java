@@ -52,10 +52,8 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     ArrayList<HabitPOJO> mHabitsPojoArrayList;
 
     BottomSheetDialog mEditEntryDialog;
-    boolean isStartSelected = true;
-    String mStartDateValue, mEndDateValue;
-    int mStartDay, mStartMonth, mStartYear;
-    int mEndDay, mEndMonth, mEndYear;
+    String mDate;
+    int mDay, mMonth,mYear;
     TextView mStartDateTextView, mEndDateTextView;
     Calendar datePickerCalender = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener datePicker;
@@ -102,19 +100,12 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 cal.set(Calendar.MONTH, monthOfYear);
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
-                if (isStartSelected) {
-                    mStartDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                    mStartYear = year;
-                    mStartMonth = monthOfYear;
-                    mStartDay = dayOfMonth;
-                    mStartDateTextView.setText(mStartDateValue);
-                } else {
-                    mEndDateValue = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                    mEndYear = year;
-                    mEndMonth = monthOfYear;
-                    mEndDay = dayOfMonth;
-                    mEndDateTextView.setText(mEndDateValue);
-                }
+                    mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
+                    mYear = year;
+                    mMonth = monthOfYear;
+                    mDay = dayOfMonth;
+                    mEndDateTextView.setText(mDate);
+
             }
 
         };
@@ -225,40 +216,28 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             mEditEntryDialog.setContentView(R.layout.dialog_edit_habit_entry_layout);
             ImageButton mClose;
             final EditText mTitle, mDescription;
-            final Button mStartDate, mEndDate;
+            final Button mEndDate;
             Button mDone;
 
             mTitle = mEditEntryDialog.findViewById(R.id.title_habit);
             mDescription = mEditEntryDialog.findViewById(R.id.desc_habit);
             mStartDateTextView = mEditEntryDialog.findViewById(R.id.habit_start_date_textview);
             mEndDateTextView = mEditEntryDialog.findViewById(R.id.habit_end_date_textview);
-            mStartDate = mEditEntryDialog.findViewById(R.id.habit_start_date_button);
             mEndDate = mEditEntryDialog.findViewById(R.id.habit_end_date_button);
             mClose = mEditEntryDialog.findViewById(R.id.close_habit_entry_dialog);
             mDone = mEditEntryDialog.findViewById(R.id.done_habit_entry_button);
 
-            mStartDateValue = habitPOJO1.getStartDate();
-            mEndDateValue = habitPOJO1.getEndDate();
+            mDate = habitPOJO1.getDate();
 
             mTitle.setText(habitPOJO1.getTitle());
             mDescription.setText(habitPOJO1.getDescription());
 
-            mStartDateTextView.setText(habitPOJO1.getStartDate());
-            mEndDateTextView.setText(habitPOJO1.getEndDate());
+            mEndDateTextView.setText(habitPOJO1.getDate());
 
-            mStartDate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    isStartSelected = true;
-                    new DatePickerDialog(getActivity(), datePicker, datePickerCalender
-                            .get(Calendar.YEAR), datePickerCalender.get(Calendar.MONTH),
-                            datePickerCalender.get(Calendar.DAY_OF_MONTH)).show();
-                }
-            });
+
             mEndDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    isStartSelected = false;
                     new DatePickerDialog(getActivity(), datePicker, datePickerCalender
                             .get(Calendar.YEAR), datePickerCalender.get(Calendar.MONTH),
                             datePickerCalender.get(Calendar.DAY_OF_MONTH)).show();
@@ -279,9 +258,9 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                     if (desc.isEmpty()) {
                         desc = "";
                     }
-                    if (!(title.isEmpty() || mStartDateValue.isEmpty() || mStartDateValue.equals(""))) {
+                    if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals(""))) {
                         Map<String, Object> habitMap = new HashMap<>();
-                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mStartDateValue, mEndDateValue, mStartDay, mStartMonth, mStartYear, mEndDay, mEndMonth, mEndYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mDate, habitPOJO1.getmTime(), mDay, mMonth, mYear, habitPOJO1.getmHours(), habitPOJO1.getmMinutes(),NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                         habitMap.put(habitPOJO1.getHabitEntryKey(), habitPOJO2);
                         firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").updateChildren(habitMap);
                         mHabitsPojoArrayList.set(position, habitPOJO2);

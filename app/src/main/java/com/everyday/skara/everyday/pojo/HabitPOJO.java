@@ -4,32 +4,87 @@ public class HabitPOJO {
     String habitEntryKey;
     String title;
     String description;
-    String startDate;
-    String endDate;
-    int mStartDay, mStartMonth, mStartYear;
-    int mEndDay, mEndMonth, mEndYear;
+    String mDate;
+    String mTime;
+    int mDay, mMonth, mYear;
     int intervalType;
+    int mHours, mMinutes;
     String date;
     UserInfoPOJO userInfoPOJO;
 
     public HabitPOJO() {
     }
 
-    public HabitPOJO(String habitEntryKey, String title, String description, String startDate, String endDate, int mStartDay, int mStartMonth, int mStartYear, int mEndDay, int mEndMonth, int mEndYear, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
+    public HabitPOJO(String habitEntryKey, String title, String description, String mDate, String mTime, int mDay, int mMonth, int mYear, int mHours, int mMinutes, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
         this.habitEntryKey = habitEntryKey;
         this.title = title;
         this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.mStartDay = mStartDay;
-        this.mStartMonth = mStartMonth;
-        this.mStartYear = mStartYear;
-        this.mEndDay = mEndDay;
-        this.mEndMonth = mEndMonth;
-        this.mEndYear = mEndYear;
+        this.mDate = mDate;
+        this.mTime = mTime;
+        this.mDay = mDay;
+        this.mMonth = mMonth;
+        this.mYear = mYear;
+        this.mHours = mHours;
+        this.mMinutes = mMinutes;
         this.intervalType = intervalType;
         this.date = date;
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public String getmDate() {
+        return mDate;
+    }
+
+    public void setmDate(String mDate) {
+        this.mDate = mDate;
+    }
+
+    public String getmTime() {
+        return mTime;
+    }
+
+    public void setmTime(String mTime) {
+        this.mTime = mTime;
+    }
+
+    public int getmDay() {
+        return mDay;
+    }
+
+    public void setmDay(int mDay) {
+        this.mDay = mDay;
+    }
+
+    public int getmMonth() {
+        return mMonth;
+    }
+
+    public void setmMonth(int mMonth) {
+        this.mMonth = mMonth;
+    }
+
+    public int getmYear() {
+        return mYear;
+    }
+
+    public void setmYear(int mYear) {
+        this.mYear = mYear;
+    }
+
+    public int getmHours() {
+        return mHours;
+    }
+
+    public void setmHours(int mHours) {
+        this.mHours = mHours;
+    }
+
+    public int getmMinutes() {
+        return mMinutes;
+    }
+
+    public void setmMinutes(int mMinutes) {
+        this.mMinutes = mMinutes;
     }
 
     public String getDate() {
@@ -62,70 +117,6 @@ public class HabitPOJO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
-    }
-
-    public int getmStartDay() {
-        return mStartDay;
-    }
-
-    public void setmStartDay(int mStartDay) {
-        this.mStartDay = mStartDay;
-    }
-
-    public int getmStartMonth() {
-        return mStartMonth;
-    }
-
-    public void setmStartMonth(int mStartMonth) {
-        this.mStartMonth = mStartMonth;
-    }
-
-    public int getmStartYear() {
-        return mStartYear;
-    }
-
-    public void setmStartYear(int mStartYear) {
-        this.mStartYear = mStartYear;
-    }
-
-    public int getmEndDay() {
-        return mEndDay;
-    }
-
-    public void setmEndDay(int mEndDay) {
-        this.mEndDay = mEndDay;
-    }
-
-    public int getmEndMonth() {
-        return mEndMonth;
-    }
-
-    public void setmEndMonth(int mEndMonth) {
-        this.mEndMonth = mEndMonth;
-    }
-
-    public int getmEndYear() {
-        return mEndYear;
-    }
-
-    public void setmEndYear(int mEndYear) {
-        this.mEndYear = mEndYear;
     }
 
     public int getIntervalType() {
