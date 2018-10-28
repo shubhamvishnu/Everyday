@@ -45,6 +45,7 @@ import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 
 public class PersonalNewTodoActivity extends AppCompatActivity implements View.OnClickListener, BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
@@ -400,20 +401,21 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     private DialogFragment createDialogWithSetters() {
         BottomSheetPickerDialog dialog = null;
         boolean themeDark = true;
-
+        Calendar refCal  =new GregorianCalendar();
         Calendar now = Calendar.getInstance();
         dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
                 PersonalNewTodoActivity.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH));
+                now.get(refCal.YEAR),
+                now.get(refCal.MONTH),
+                now.get(refCal.DAY_OF_MONTH));
 
         com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
         Calendar minCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2018");
         Calendar maxCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2025");
         dateDialog.setMinDate(minCalendar);
         dateDialog.setMaxDate(maxCalendar);
-        dateDialog.setYearRange(1920, 2050);
+        dateDialog.setYearRange(refCal.YEAR, 2050);
+        dateDialog.setMinDate(refCal);
         dialog.setThemeDark(themeDark);
 
         return dialog;

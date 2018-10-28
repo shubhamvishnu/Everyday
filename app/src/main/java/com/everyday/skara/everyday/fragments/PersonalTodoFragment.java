@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -476,7 +477,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             mReminder = mTodoItemsDialog.findViewById(R.id.todo_set_reminder_textview);
 
             if (notificationHolderArrayList.containsKey(todoArrayList.get(position).getTodoKey())) {
-                String reminderText = "Reminder set at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndDay() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndMonth() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmEndDay() + ", at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmHour() + ":" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmMinute();
+                String reminderText = "Reminder set at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmDay() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmMonth() + "/" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmYear() + ", at " + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmHour() + ":" + notificationHolderArrayList.get(todoArrayList.get(position).getTodoKey()).getmMinute();
                 mReminder.setText(reminderText);
             }
             mTodoItemsRecyclerView = mTodoItemsDialog.findViewById(R.id.recyclerview_todo_view_items);
@@ -744,12 +745,12 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         boolean custom = false;
         boolean customDark = false;
         boolean themeDark = true;
-
+        Calendar refCal = new GregorianCalendar();
         Calendar now = Calendar.getInstance();
         dialog = GridTimePickerDialog.newInstance(
                 PersonalTodoFragment.this,
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
+                now.get(refCal.HOUR_OF_DAY),
+                now.get(refCal.MINUTE),
                 android.text.format.DateFormat.is24HourFormat(getActivity()));
         GridTimePickerDialog gridDialog = (GridTimePickerDialog) dialog;
         dialog.setThemeDark(themeDark);
@@ -760,20 +761,22 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
     private android.support.v4.app.DialogFragment createDialogWithSetters() {
         BottomSheetPickerDialog dialog = null;
         boolean themeDark = true;
+        Calendar refCal = new GregorianCalendar();
 
         Calendar now = Calendar.getInstance();
         dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
                 PersonalTodoFragment.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH));
+                now.get(refCal.YEAR),
+                now.get(refCal.MONTH),
+                now.get(refCal.DAY_OF_MONTH));
 
         com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
         Calendar minCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2018");
         Calendar maxCalendar = TimeDateStamp.getCalendar("dd/MM/yyyy", "29/07/2025");
         dateDialog.setMinDate(minCalendar);
         dateDialog.setMaxDate(maxCalendar);
-        dateDialog.setYearRange(1920, 2050);
+        dateDialog.setYearRange(refCal.YEAR, 2050);
+        dateDialog.setMinDate(refCal);
         dialog.setThemeDark(themeDark);
 
         return dialog;

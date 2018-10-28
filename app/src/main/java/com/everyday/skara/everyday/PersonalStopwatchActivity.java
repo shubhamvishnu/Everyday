@@ -85,6 +85,7 @@ public class PersonalStopwatchActivity extends AppCompatActivity {
         m5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // TODO: Add the number of seconds (or milliseconds);
                 mNewLsArrayList.add("5");
                 mNewLsAdapter.notifyDataSetChanged();
             }

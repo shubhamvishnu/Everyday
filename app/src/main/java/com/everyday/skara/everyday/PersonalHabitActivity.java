@@ -30,6 +30,7 @@ import com.everyday.skara.everyday.classes.NotificationHolder;
 import com.everyday.skara.everyday.classes.NotificationTypes;
 import com.everyday.skara.everyday.fragments.HabitsFragment;
 import com.everyday.skara.everyday.fragments.PersonalGratitudeEntriesFragment;
+import com.everyday.skara.everyday.fragments.PersonalTodoFragment;
 import com.everyday.skara.everyday.pojo.GratitudePOJO;
 import com.everyday.skara.everyday.pojo.HabitPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -44,6 +45,7 @@ import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 public class PersonalHabitActivity extends AppCompatActivity implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener, BottomSheetTimePickerDialog.OnTimeSetListener {
@@ -294,16 +296,18 @@ public class PersonalHabitActivity extends AppCompatActivity implements com.phil
     private DialogFragment createDialogWithSetters() {
         BottomSheetPickerDialog dialog = null;
         boolean themeDark = true;
+        Calendar refCal = new GregorianCalendar();
 
         Calendar now = Calendar.getInstance();
         dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
                 PersonalHabitActivity.this,
-                now.get(Calendar.YEAR),
-                now.get(Calendar.MONTH),
-                now.get(Calendar.DAY_OF_MONTH));
+                now.get(refCal.YEAR),
+                now.get(refCal.MONTH),
+                now.get(refCal.DAY_OF_MONTH));
 
         com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
-        dateDialog.setYearRange(Calendar.YEAR, 3000);
+        dateDialog.setYearRange(refCal.YEAR, 2050);
+        dateDialog.setMinDate(refCal);
         dialog.setThemeDark(themeDark);
 
         return dialog;

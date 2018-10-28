@@ -52,9 +52,10 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     ArrayList<HabitPOJO> mHabitsPojoArrayList;
 
     BottomSheetDialog mEditEntryDialog;
+    BottomSheetDialog mShowHabitDialog;
     String mDate;
     int mDay, mMonth,mYear;
-    TextView mStartDateTextView, mEndDateTextView;
+    TextView  mEndDateTextView;
     Calendar datePickerCalender = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener datePicker;
 
@@ -204,6 +205,41 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             return mHabitsPojoArrayList.size();
         }
 
+        void showHabitDialog(int position){
+            final HabitPOJO habitPOJO1 = mHabitsPojoArrayList.get(position);
+
+            ImageButton mClose;
+            final TextView mTitle, mDescription;
+            final TextView mEndDate, mCreatedDate;
+
+            mShowHabitDialog = new BottomSheetDialog(getActivity());
+            mShowHabitDialog.setContentView(R.layout.dialog_show_habit_entry_dialog);
+            mTitle = mShowHabitDialog.findViewById(R.id.title_show_habit_dialog);
+            mDescription = mShowHabitDialog.findViewById(R.id.desc_show_habit_dialog);
+            mCreatedDate = mShowHabitDialog.findViewById(R.id.created_date_habit_dialog);
+            mEndDate = mShowHabitDialog.findViewById(R.id.end_date_habit_dialog);
+            mClose = mShowHabitDialog.findViewById(R.id.close_show_habit_dialog);
+
+
+            mTitle.setText(habitPOJO1.getTitle());
+            mDescription.setText(habitPOJO1.getDescription());
+            mCreatedDate.setText(habitPOJO1.getDate());
+            mEndDate.setText(habitPOJO1.getmDate());
+
+
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mShowHabitDialog.dismiss();
+                }
+            });
+
+
+            mEndDateTextView.setText(habitPOJO1.getDate());
+            mShowHabitDialog.setCanceledOnTouchOutside(false);
+            mShowHabitDialog.show();
+        }
+
         void deleteEntry(int position) {
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").child(mHabitsPojoArrayList.get(position).getHabitEntryKey()).removeValue();
             mHabitsPojoArrayList.remove(position);
@@ -221,7 +257,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
 
             mTitle = mEditEntryDialog.findViewById(R.id.title_habit);
             mDescription = mEditEntryDialog.findViewById(R.id.desc_habit);
-            mStartDateTextView = mEditEntryDialog.findViewById(R.id.habit_start_date_textview);
             mEndDateTextView = mEditEntryDialog.findViewById(R.id.habit_end_date_textview);
             mEndDate = mEditEntryDialog.findViewById(R.id.habit_end_date_button);
             mClose = mEditEntryDialog.findViewById(R.id.close_habit_entry_dialog);
@@ -294,6 +329,12 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 edit = itemView.findViewById(R.id.habit_edit_recyclerview);
                 delete = itemView.findViewById(R.id.delete_habit_entry_button);
 
+                mTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showHabitDialog(getPosition());
+                    }
+                });
                 edit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
