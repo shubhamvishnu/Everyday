@@ -102,7 +102,6 @@ public class PersonalStopwatchActivity extends AppCompatActivity {
                 mNewLapSequenceDialog.dismiss();
             }
         });
-
         mNewLapSequenceDialog.setCanceledOnTouchOutside(false);
         mNewLapSequenceDialog.show();
     }

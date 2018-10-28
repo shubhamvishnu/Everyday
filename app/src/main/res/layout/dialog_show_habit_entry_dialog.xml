@@ -77,6 +77,9 @@
                 android:text="end date "
                 android:id="@+id/end_date_habit_dialog"/>
 
-
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/duration_snapshot_recyclerview"/>
         </LinearLayout>
 </LinearLayout>

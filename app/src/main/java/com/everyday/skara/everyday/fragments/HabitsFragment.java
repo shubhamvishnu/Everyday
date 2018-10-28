@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,10 +55,14 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     BottomSheetDialog mEditEntryDialog;
     BottomSheetDialog mShowHabitDialog;
     String mDate;
-    int mDay, mMonth,mYear;
-    TextView  mEndDateTextView;
+    int mDay, mMonth, mYear;
+    TextView mEndDateTextView;
     Calendar datePickerCalender = Calendar.getInstance();
     DatePickerDialog.OnDateSetListener datePicker;
+
+    RecyclerView mDurationRecyclerview;
+    DurationAdapter mDurationAdapter;
+    MonthDatesAdapter mMonthDatesAdapter;
 
     @Nullable
     @Override
@@ -101,11 +106,11 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 cal.set(Calendar.MONTH, monthOfYear);
                 cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
-                    mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                    mYear = year;
-                    mMonth = monthOfYear;
-                    mDay = dayOfMonth;
-                    mEndDateTextView.setText(mDate);
+                mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
+                mYear = year;
+                mMonth = monthOfYear;
+                mDay = dayOfMonth;
+                mEndDateTextView.setText(mDate);
 
             }
 
@@ -205,7 +210,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             return mHabitsPojoArrayList.size();
         }
 
-        void showHabitDialog(int position){
+        void showHabitDialog(int position) {
             final HabitPOJO habitPOJO1 = mHabitsPojoArrayList.get(position);
 
             ImageButton mClose;
@@ -219,6 +224,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             mCreatedDate = mShowHabitDialog.findViewById(R.id.created_date_habit_dialog);
             mEndDate = mShowHabitDialog.findViewById(R.id.end_date_habit_dialog);
             mClose = mShowHabitDialog.findViewById(R.id.close_show_habit_dialog);
+            mDurationRecyclerview = mShowHabitDialog.findViewById(R.id.duration_snapshot_recyclerview);
 
 
             mTitle.setText(habitPOJO1.getTitle());
@@ -234,11 +240,19 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 }
             });
 
+            mDurationRecyclerview.invalidate();
+            mDurationRecyclerview.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mShowHabitDialog.getContext());
+            mDurationRecyclerview.setLayoutManager(linearLayoutManager);
+            mDurationAdapter = new DurationAdapter();
+            mDurationRecyclerview.setAdapter(mEntriesAdapter);
+
 
             mEndDateTextView.setText(habitPOJO1.getDate());
             mShowHabitDialog.setCanceledOnTouchOutside(false);
             mShowHabitDialog.show();
         }
+
 
         void deleteEntry(int position) {
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").child(mHabitsPojoArrayList.get(position).getHabitEntryKey()).removeValue();
@@ -295,7 +309,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                     }
                     if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals(""))) {
                         Map<String, Object> habitMap = new HashMap<>();
-                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mDate, habitPOJO1.getmTime(), mDay, mMonth, mYear, habitPOJO1.getmHours(), habitPOJO1.getmMinutes(),NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mDate, habitPOJO1.getmTime(), mDay, mMonth, mYear, habitPOJO1.getmHours(), habitPOJO1.getmMinutes(), NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                         habitMap.put(habitPOJO1.getHabitEntryKey(), habitPOJO2);
                         firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").updateChildren(habitMap);
                         mHabitsPojoArrayList.set(position, habitPOJO2);
@@ -353,6 +367,89 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         }
 
     }
+    /*------------------------------------------------------------------------------ */
+
+
+    /**
+     * Adapter for Duration Recyclerview
+     */
+    public class DurationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
+        // Viewholder for Duration Recyclerview
+        public class DurationViewHolder extends RecyclerView.ViewHolder {
+            public TextView mMonthTitle;
+            public RecyclerView mMonthDatesRecyclerview;
+
+
+            public DurationViewHolder(View itemView) {
+                super(itemView);
+                mMonthTitle = itemView.findViewById(R.id.month_title_textview);
+
+                mMonthDatesRecyclerview = itemView.findViewById(R.id.month_dates_snapshot_recyclerview);
+
+                mMonthDatesRecyclerview.invalidate();
+                mMonthDatesRecyclerview.setHasFixedSize(true);
+                mMonthDatesRecyclerview.setLayoutManager(new GridLayoutManager(mShowHabitDialog.getContext(), 10));
+                // TODO set adapters for the month dates.
+            }
+        }
+    }
+
+    /*------------------------------------------------------------------------------ */
+
+    /**
+     * Adapter for Month dates Recyclerview
+     */
+    public class MonthDatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return 0;
+        }
+
+        // Viewholder for Month dates Recyclerview
+        public class MonthDatesViewHolder extends RecyclerView.ViewHolder {
+            public TextView mDateValue;
+
+
+            public MonthDatesViewHolder(View itemView) {
+                super(itemView);
+                mDateValue = itemView.findViewById(R.id.date_value_textview);
+            }
+        }
+    }
+
+
+    /*------------------------------------------------------------------------------ */
 
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
