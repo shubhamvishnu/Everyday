@@ -98,6 +98,11 @@
                         android:textSize="12dp" />
 
                 </LinearLayout>
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/done_today_checkbox"
+                    android:text="done today"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
