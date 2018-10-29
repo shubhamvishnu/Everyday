@@ -476,8 +476,8 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             RecyclerView recyclerView = ((HabitDurationViewHolder) holder).mHabitDatesDurationRecyclerview;
             recyclerView.invalidate();
             recyclerView.setHasFixedSize(true);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-            recyclerView.setLayoutManager(linearLayoutManager);
+            //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 10));
             HabitDurationDatesAdapter habitDurationAdapter = new HabitDurationDatesAdapter(monthDates);
             recyclerView.setAdapter(habitDurationAdapter);
 
@@ -530,7 +530,11 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ((HabitDurationDatesViewHolder) holder).mDateValue.setText(String.valueOf(monthDates.getDates().get(position).getTime()));
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(monthDates.getDates().get(position));
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            String format = formatter.format(calendar.getTime());
+            ((HabitDurationDatesViewHolder) holder).mDateValue.setText(format);
         }
 
         @Override
