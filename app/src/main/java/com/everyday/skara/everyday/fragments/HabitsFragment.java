@@ -3,12 +3,14 @@ package com.everyday.skara.everyday.fragments;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.LongDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.MonthDates;
 import com.everyday.skara.everyday.classes.NotificationTypes;
 import com.everyday.skara.everyday.pojo.HabitPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -34,10 +37,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -61,8 +70,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     DatePickerDialog.OnDateSetListener datePicker;
 
     RecyclerView mDurationRecyclerview;
-    DurationAdapter mDurationAdapter;
-    MonthDatesAdapter mMonthDatesAdapter;
 
     @Nullable
     @Override
@@ -226,7 +233,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             mClose = mShowHabitDialog.findViewById(R.id.close_show_habit_dialog);
             mDurationRecyclerview = mShowHabitDialog.findViewById(R.id.duration_snapshot_recyclerview);
 
-
             mTitle.setText(habitPOJO1.getTitle());
             mDescription.setText(habitPOJO1.getDescription());
             mCreatedDate.setText(habitPOJO1.getDate());
@@ -240,15 +246,29 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 }
             });
 
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            Date date = null;
+            try {
+                date = sdf.parse(habitPOJO1.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+
+            Calendar endCalender = new GregorianCalendar();
+            endCalender.set(Calendar.DAY_OF_MONTH, habitPOJO1.getmDay());
+            endCalender.set(Calendar.MONTH, habitPOJO1.getmMonth());
+            endCalender.set(Calendar.YEAR, habitPOJO1.getmYear());
+
             mDurationRecyclerview.invalidate();
             mDurationRecyclerview.setHasFixedSize(true);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mShowHabitDialog.getContext());
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
             mDurationRecyclerview.setLayoutManager(linearLayoutManager);
-            mDurationAdapter = new DurationAdapter();
-            mDurationRecyclerview.setAdapter(mEntriesAdapter);
+            HabitDurationAdapter habitDurationAdapter = new HabitDurationAdapter(getDaysBetweenDates(cal, endCalender));
+            mDurationRecyclerview.setAdapter(habitDurationAdapter);
 
-
-            mEndDateTextView.setText(habitPOJO1.getDate());
             mShowHabitDialog.setCanceledOnTouchOutside(false);
             mShowHabitDialog.show();
         }
@@ -367,49 +387,120 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         }
 
     }
+
+
+    public static HashMap<Integer, MonthDates> getDaysBetweenDates(Calendar startdate, Calendar enddate) {
+        HashMap<Integer, MonthDates> monthDatesHashMap = new HashMap<>();
+
+        while (startdate.before(enddate)) {
+            int key = startdate.get(Calendar.MONTH) + startdate.get(Calendar.YEAR);
+            if (monthDatesHashMap.containsKey(key)) {
+                Date result = startdate.getTime();
+                monthDatesHashMap.get(key).getDates().add(result);
+                startdate.add(Calendar.DATE, 1);
+            } else {
+                Date result = startdate.getTime();
+                ArrayList<Date> dateList = new ArrayList<>();
+                dateList.add(result);
+                MonthDates monthDates = new MonthDates(key, startdate.get(Calendar.YEAR), startdate.get(Calendar.MONTH), dateList);
+                monthDatesHashMap.put(key, monthDates);
+                startdate.add(Calendar.DATE, 1);
+            }
+        }
+        return monthDatesHashMap;
+
+    }
+
+    public static void printMap(HashMap<Integer, MonthDates> mp) {
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            MonthDates monthDates = (MonthDates) pair.getValue();
+            Log.d("month_dates_hash_map", "key: - " + String.valueOf(pair.getKey()));
+            Log.d("month_dates_hash_map", "value: Year - " + monthDates.getYear());
+            Log.d("month_dates_hash_map", "value: month - " + monthDates.getMonth());
+            for (int i = 0; i < monthDates.getDates().size(); i++) {
+                Log.d("month_dates_hash_map", "----" + monthDates.getDates().get(i));
+            }
+            Log.d("month_dates_hash_map", "==========================================");
+
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+    }
+
+    public static ArrayList<Integer> getKeysList(HashMap<Integer, MonthDates> mp) {
+        ArrayList<Integer> keysArrayList = new ArrayList<>();
+        Iterator it = mp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            keysArrayList.add((int) pair.getKey());
+        }
+        return keysArrayList;
+    }
+
     /*------------------------------------------------------------------------------ */
 
 
     /**
      * Adapter for Duration Recyclerview
      */
-    public class DurationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    public class HabitDurationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private LayoutInflater inflator;
+        HashMap<Integer, MonthDates> datesHashMap;
+        ArrayList<Integer> keysArrayList;
+
+        public HabitDurationAdapter(HashMap<Integer, MonthDates> datesHashMap) {
+            try {
+                this.inflator = LayoutInflater.from(getActivity());
+                this.datesHashMap = datesHashMap;
+                keysArrayList = getKeysList(datesHashMap);
+            } catch (NullPointerException e) {
+
+            }
+        }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return null;
+            View view = inflator.inflate(R.layout.recyclerview_duration_snapshot_layout, parent, false);
+            return new HabitDurationViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            MonthDates monthDates = datesHashMap.get(keysArrayList.get(position));
+            ((HabitDurationViewHolder) holder).mMonthTitle.setText("" +monthDates.getMonth());
+
+
+            RecyclerView recyclerView = ((HabitDurationViewHolder) holder).mHabitDatesDurationRecyclerview;
+            recyclerView.invalidate();
+            recyclerView.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            recyclerView.setLayoutManager(linearLayoutManager);
+            HabitDurationDatesAdapter habitDurationAdapter = new HabitDurationDatesAdapter(monthDates);
+            recyclerView.setAdapter(habitDurationAdapter);
+
 
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return datesHashMap.size();
         }
 
-        // Viewholder for Duration Recyclerview
-        public class DurationViewHolder extends RecyclerView.ViewHolder {
+
+        public class HabitDurationViewHolder extends RecyclerView.ViewHolder {
             public TextView mMonthTitle;
-            public RecyclerView mMonthDatesRecyclerview;
-
-
-            public DurationViewHolder(View itemView) {
+            public RecyclerView mHabitDatesDurationRecyclerview;
+            public HabitDurationViewHolder(View itemView) {
                 super(itemView);
                 mMonthTitle = itemView.findViewById(R.id.month_title_textview);
+                mHabitDatesDurationRecyclerview = itemView.findViewById(R.id.habits_duration_dates_recyclerview);
 
-                mMonthDatesRecyclerview = itemView.findViewById(R.id.month_dates_snapshot_recyclerview);
-
-                mMonthDatesRecyclerview.invalidate();
-                mMonthDatesRecyclerview.setHasFixedSize(true);
-                mMonthDatesRecyclerview.setLayoutManager(new GridLayoutManager(mShowHabitDialog.getContext(), 10));
-                // TODO set adapters for the month dates.
             }
         }
+
     }
 
     /*------------------------------------------------------------------------------ */
@@ -417,35 +508,48 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     /**
      * Adapter for Month dates Recyclerview
      */
-    public class MonthDatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public class HabitDurationDatesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private LayoutInflater inflator;
+        MonthDates monthDates;
 
+        public HabitDurationDatesAdapter(MonthDates monthDates) {
+            try {
+                this.inflator = LayoutInflater.from(getActivity());
+                this.monthDates = monthDates;
+            } catch (NullPointerException e) {
+
+            }
+        }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            return null;
+            View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
+            return new HabitDurationDatesViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-
+            ((HabitDurationDatesViewHolder) holder).mDateValue.setText(String.valueOf(monthDates.getDates().get(position).getTime()));
         }
 
         @Override
         public int getItemCount() {
-            return 0;
+            return monthDates.getDates().size();
         }
 
-        // Viewholder for Month dates Recyclerview
-        public class MonthDatesViewHolder extends RecyclerView.ViewHolder {
+
+        public class HabitDurationDatesViewHolder extends RecyclerView.ViewHolder {
             public TextView mDateValue;
 
-
-            public MonthDatesViewHolder(View itemView) {
+            public HabitDurationDatesViewHolder(View itemView) {
                 super(itemView);
+
                 mDateValue = itemView.findViewById(R.id.date_value_textview);
+
             }
         }
+
     }
 
 
