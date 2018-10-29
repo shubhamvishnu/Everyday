@@ -532,7 +532,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(monthDates.getDates().get(position));
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+            SimpleDateFormat formatter = new SimpleDateFormat("d");
             String format = formatter.format(calendar.getTime());
             ((HabitDurationDatesViewHolder) holder).mDateValue.setText(format);
         }
