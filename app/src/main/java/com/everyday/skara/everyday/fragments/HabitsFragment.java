@@ -3,7 +3,6 @@ package com.everyday.skara.everyday.fragments;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.LongDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -251,33 +250,157 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             HabitPOJO habitPOJO = mHabitsPojoArrayList.get(position);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
             ((HabitsViewHolder) holder).date.setText(habitPOJO.getDate());
             ((HabitsViewHolder) holder).mTitle.setText(habitPOJO.getTitle());
             ((HabitsViewHolder) holder).mDesc.setText(habitPOJO.getDescription());
 
+            // created date calender
+
+
+            // end date calender
             Calendar endCalender = new GregorianCalendar();
             endCalender.set(Calendar.DAY_OF_MONTH, habitPOJO.getmDay());
             endCalender.set(Calendar.MONTH, habitPOJO.getmMonth());
             endCalender.set(Calendar.YEAR, habitPOJO.getmYear());
+
+            // today's date calender
             Calendar todaysCalendar = new GregorianCalendar();
+
+
             if (!(todaysCalendar.before(endCalender) || todaysCalendar.equals(endCalender))) {
                 ((HabitsViewHolder) holder).mDoneCheckbox.setEnabled(false);
+            }
+            if (mHabitCheckedPOJOHashMap.containsKey(habitPOJO.getHabitEntryKey())) {
+                ArrayList<HabitCheckedPOJO> tempHabitCheckedPOJOArrayList = mHabitCheckedPOJOHashMap.get(habitPOJO.getHabitEntryKey());
 
-                if(mHabitCheckedPOJOHashMap.containsKey(habitPOJO.getHabitEntryKey())){
-                    ArrayList<HabitCheckedPOJO> tempHabitCheckedPOJOArrayList = mHabitCheckedPOJOHashMap.get(habitPOJO.getHabitEntryKey());
+                Calendar calendar = new GregorianCalendar();
+                String todaysDateCheck = formatter.format(calendar.getTime());
 
-                    Calendar calendar = new GregorianCalendar();
-                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                    String todaysDateCheck = formatter.format(calendar.getTime());
+                for (int i = 0; i < tempHabitCheckedPOJOArrayList.size(); i++) {
+                    if (tempHabitCheckedPOJOArrayList.get(i).getDate().equals(todaysDateCheck)) {
+                        ((HabitsViewHolder) holder).mDoneCheckbox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                    }
+                }
+            }
 
-                    for(int i = 0; i < tempHabitCheckedPOJOArrayList.size(); i++){
-                        if(tempHabitCheckedPOJOArrayList.get(i).getDate().equals(todaysDateCheck)){
-                            ((HabitsViewHolder)holder).mDoneCheckbox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+
+            // created date Calendar
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = null;
+            try {
+                date = sdf.parse(habitPOJO.getDate());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Calendar createdCalender = Calendar.getInstance();
+            createdCalender.setTime(date);
+            Log.d("createdTimeForHabit", formatter.format(createdCalender.getTime()));
+
+            Calendar prev1 = Calendar.getInstance();
+            prev1.add(Calendar.DATE, -1);
+            ((HabitsViewHolder) holder).mPrev1.setText(formatter.format(prev1.getTime()));
+
+            Calendar prev2 = Calendar.getInstance();
+            prev2.add(Calendar.DATE, -2);
+            ((HabitsViewHolder) holder).mPrev2.setText(formatter.format(prev2.getTime()));
+
+
+            Calendar prev3 = Calendar.getInstance();
+            prev3.add(Calendar.DATE, -3);
+            ((HabitsViewHolder) holder).mPrev3.setText(formatter.format(prev3.getTime()));
+
+
+            Calendar prev4 = Calendar.getInstance();
+            prev4.add(Calendar.DATE, -4);
+            ((HabitsViewHolder) holder).mPrev4.setText(formatter.format(prev4.getTime()));
+
+
+            Calendar prev5 = Calendar.getInstance();
+            prev5.add(Calendar.DATE, -5);
+            ((HabitsViewHolder) holder).mPrev5.setText(formatter.format(prev5.getTime()));
+
+
+            Calendar prev6 = Calendar.getInstance();
+            prev6.add(Calendar.DATE, -6);
+            ((HabitsViewHolder) holder).mPrev6.setText(formatter.format(prev6.getTime()));
+
+            // Log.d("previous1", formatter.format(prev1.getTime()) + "-After or equal-" + formatter.format(createdCalender.getTime()));
+
+
+            if (prev1.after(createdCalender) || prev1.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev1CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev1.getTime()), 1);
+            } else {
+                ((HabitsViewHolder) holder).mPrev1CheckBox.setEnabled(false);
+            }
+
+            if (prev2.after(createdCalender) || prev2.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev2CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev2.getTime()), 2);
+
+            } else {
+                ((HabitsViewHolder) holder).mPrev2CheckBox.setEnabled(false);
+            }
+
+            if (prev3.after(createdCalender) || prev3.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev3CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev3.getTime()), 3);
+            } else {
+                ((HabitsViewHolder) holder).mPrev3CheckBox.setEnabled(false);
+            }
+
+            if (prev4.after(createdCalender) || prev4.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev4CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev4.getTime()), 4);
+            } else {
+                ((HabitsViewHolder) holder).mPrev4CheckBox.setEnabled(false);
+            }
+
+            if (prev5.after(createdCalender) || prev5.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev5CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev5.getTime()), 5);
+            } else {
+                ((HabitsViewHolder) holder).mPrev5CheckBox.setEnabled(false);
+            }
+
+            if (prev6.after(createdCalender) || prev6.equals(createdCalender)) {
+                ((HabitsViewHolder) holder).mPrev6CheckBox.setEnabled(true);
+                updateStateForCheckedBox(holder, habitPOJO, formatter.format(prev6.getTime()), 6);
+            } else {
+                ((HabitsViewHolder) holder).mPrev6CheckBox.setEnabled(false);
+            }
+        }
+
+        void updateStateForCheckedBox(RecyclerView.ViewHolder holder, HabitPOJO habitPOJO, String date, int prevCount) {
+            if (mHabitCheckedPOJOHashMap.containsKey(habitPOJO.getHabitEntryKey())) {
+                ArrayList<HabitCheckedPOJO> tempHabitCheckedPOJOArrayList = mHabitCheckedPOJOHashMap.get(habitPOJO.getHabitEntryKey());
+
+                for (int i = 0; i < tempHabitCheckedPOJOArrayList.size(); i++) {
+                    if (tempHabitCheckedPOJOArrayList.get(i).getDate().equals(date)) {
+                        switch (prevCount) {
+                            case 1:
+                                ((HabitsViewHolder) holder).mPrev1CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
+                            case 2:
+                                ((HabitsViewHolder) holder).mPrev2CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
+                            case 3:
+                                ((HabitsViewHolder) holder).mPrev3CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
+                            case 4:
+                                ((HabitsViewHolder) holder).mPrev4CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
+                            case 5:
+                                ((HabitsViewHolder) holder).mPrev5CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
+                            case 6:
+                                ((HabitsViewHolder) holder).mPrev6CheckBox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                                break;
                         }
                     }
                 }
-
-
             }
         }
 
@@ -341,7 +464,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             mShowHabitDialog.setCanceledOnTouchOutside(false);
             mShowHabitDialog.show();
         }
-
 
         void deleteEntry(int position) {
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").child(mHabitsPojoArrayList.get(position).getHabitEntryKey()).removeValue();
@@ -448,7 +570,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                     }
 
                 }
-                if(!updated){
+                if (!updated) {
                     DatabaseReference checkedReference = databaseReference.push();
                     Calendar calendar = new GregorianCalendar();
                     SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -471,13 +593,97 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             }
 
 
+        }
 
+        void updatePrevCheck(int position, boolean state, int prevCount) {
+            HabitPOJO habitPOJO = mHabitsPojoArrayList.get(position);
+            switch (prevCount) {
+                case -1:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+                case -2:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+                case -3:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+                case -4:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+                case -5:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+                case -6:
+                    updatePrevHabitCheck(habitPOJO, state, prevCount);
+                    break;
+
+            }
+        }
+
+        void updatePrevHabitCheck(HabitPOJO habitPOJO1, boolean state, int prevCount) {
+            boolean updated = false;
+
+            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habitsChecked").child(habitPOJO1.getHabitEntryKey());
+            databaseReference.keepSynced(true);
+
+
+            // check if the checked array list has the habit
+            if (mHabitCheckedPOJOHashMap.containsKey(habitPOJO1.getHabitEntryKey())) {
+
+                // get the list of all the checked dates for that habit
+                ArrayList<HabitCheckedPOJO> habitCheckedPOJOArrayList = mHabitCheckedPOJOHashMap.get(habitPOJO1.getHabitEntryKey());
+
+                // check if the ticked date is available in the list
+                for (int i = 0; i < habitCheckedPOJOArrayList.size(); i++) {
+
+                    HabitCheckedPOJO habitCheckedPOJO = habitCheckedPOJOArrayList.get(i);
+
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.add(Calendar.DATE, prevCount);
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String todaysDateCheck = formatter.format(calendar.getTime());
+
+                    if (habitCheckedPOJO.getDate().equals(todaysDateCheck)) {
+                        habitCheckedPOJO.setState(state);
+                        Map<String, Object> checkMap = new HashMap<>();
+                        checkMap.put(habitCheckedPOJO.getDateCheckedKey(), habitCheckedPOJO);
+                        databaseReference.updateChildren(checkMap);
+                        updated = true;
+                        break;
+                    }
+
+                }
+                if (!updated) {
+                    DatabaseReference checkedReference = databaseReference.push();
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.add(Calendar.DATE, prevCount);
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String format = formatter.format(calendar.getTime());
+                    checkedReference.setValue(new HabitCheckedPOJO(checkedReference.getKey(), format, state));
+                    ArrayList<HabitCheckedPOJO> habitCheckedPOJOArrayList1 = new ArrayList<>();
+                    habitCheckedPOJOArrayList1.add(new HabitCheckedPOJO(checkedReference.getKey(), format, state));
+                    mHabitCheckedPOJOHashMap.put(habitPOJO1.getHabitEntryKey(), habitCheckedPOJOArrayList1);
+                }
+            } else {
+                DatabaseReference checkedReference = databaseReference.push();
+                Calendar calendar = new GregorianCalendar();
+                calendar.add(Calendar.DATE, prevCount);
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                String format = formatter.format(calendar.getTime());
+                checkedReference.setValue(new HabitCheckedPOJO(checkedReference.getKey(), format, state));
+                ArrayList<HabitCheckedPOJO> habitCheckedPOJOArrayList1 = new ArrayList<>();
+                habitCheckedPOJOArrayList1.add(new HabitCheckedPOJO(checkedReference.getKey(), format, state));
+                mHabitCheckedPOJOHashMap.put(habitPOJO1.getHabitEntryKey(), habitCheckedPOJOArrayList1);
+
+            }
         }
 
         public class HabitsViewHolder extends RecyclerView.ViewHolder {
             public TextView date, mTitle, mDesc;
             public ImageButton edit;
             public ImageButton delete;
+            public TextView mPrev1, mPrev2, mPrev3, mPrev4, mPrev5, mPrev6;
+            public CheckBox mPrev1CheckBox, mPrev2CheckBox, mPrev3CheckBox, mPrev4CheckBox, mPrev5CheckBox, mPrev6CheckBox;
             public CheckBox mDoneCheckbox;
 
 
@@ -488,6 +694,61 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                 mDesc = itemView.findViewById(R.id.desc_textview_recyclerview);
                 mTitle = itemView.findViewById(R.id.title_habit_recyclerview);
                 mDoneCheckbox = itemView.findViewById(R.id.done_today_checkbox);
+
+                mPrev1 = itemView.findViewById(R.id.prev_date_1_textview);
+                mPrev2 = itemView.findViewById(R.id.prev_date_2_textview);
+                mPrev3 = itemView.findViewById(R.id.prev_date_3_textview);
+                mPrev4 = itemView.findViewById(R.id.prev_date_4_textview);
+                mPrev5 = itemView.findViewById(R.id.prev_date_5_textview);
+                mPrev6 = itemView.findViewById(R.id.prev_date_6_textview);
+
+                mPrev1CheckBox = itemView.findViewById(R.id.prev_date_1_checkbox);
+                mPrev2CheckBox = itemView.findViewById(R.id.prev_date_2_checkbox);
+                mPrev3CheckBox = itemView.findViewById(R.id.prev_date_3_checkbox);
+                mPrev4CheckBox = itemView.findViewById(R.id.prev_date_4_checkbox);
+                mPrev5CheckBox = itemView.findViewById(R.id.prev_date_5_checkbox);
+                mPrev6CheckBox = itemView.findViewById(R.id.prev_date_6_checkbox);
+
+
+                mPrev1CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -1);
+                    }
+                });
+                mPrev2CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -2);
+                    }
+                });
+                mPrev3CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -3);
+
+                    }
+                });
+                mPrev4CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -4);
+
+                    }
+                });
+                mPrev5CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -5);
+
+                    }
+                });
+                mPrev6CheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        updatePrevCheck(getPosition(), b, -6);
+                    }
+                });
 
                 edit = itemView.findViewById(R.id.habit_edit_recyclerview);
                 delete = itemView.findViewById(R.id.delete_habit_entry_button);
