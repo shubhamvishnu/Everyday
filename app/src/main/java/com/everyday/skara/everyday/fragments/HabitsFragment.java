@@ -262,6 +262,22 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             Calendar todaysCalendar = new GregorianCalendar();
             if (!(todaysCalendar.before(endCalender) || todaysCalendar.equals(endCalender))) {
                 ((HabitsViewHolder) holder).mDoneCheckbox.setEnabled(false);
+
+                if(mHabitCheckedPOJOHashMap.containsKey(habitPOJO.getHabitEntryKey())){
+                    ArrayList<HabitCheckedPOJO> tempHabitCheckedPOJOArrayList = mHabitCheckedPOJOHashMap.get(habitPOJO.getHabitEntryKey());
+
+                    Calendar calendar = new GregorianCalendar();
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String todaysDateCheck = formatter.format(calendar.getTime());
+
+                    for(int i = 0; i < tempHabitCheckedPOJOArrayList.size(); i++){
+                        if(tempHabitCheckedPOJOArrayList.get(i).getDate().equals(todaysDateCheck)){
+                            ((HabitsViewHolder)holder).mDoneCheckbox.setChecked(tempHabitCheckedPOJOArrayList.get(i).isState());
+                        }
+                    }
+                }
+
+
             }
         }
 
