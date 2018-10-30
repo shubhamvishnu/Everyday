@@ -248,6 +248,152 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 case 2006:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
                     break;
+                case 2007:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                    break;
+
+                case 2008:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                    break;
+
+                case 2009:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                    break;
+
+                case 2010:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                    break;
+
+                case 2011:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                    break;
+
+                case 2012:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                    break;
+
+                case 2013:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                    break;
+
+                case 2014:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                    break;
+
+                case 2015:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                    break;
+
+                case 2016:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                    break;
+
+                case 2017:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                    break;
+
+                case 2018:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                    break;
+
+                case 2019:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                    break;
+
+                case 2020:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                    break;
+
+                case 2021:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                    break;
+
+                case 2022:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                    break;
+
+                case 2023:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                    break;
+
+                case 2024:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                    break;
+
+                case 2025:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                    break;
+
+                case 2026:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                    break;
+
+                case 2027:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                    break;
+
+                case 2028:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                    break;
+
+                case 2029:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                    break;
+
+                case 2030:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                    break;
+                case 2031:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                    break;
+                case 2032:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                    break;
+                case 2033:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                    break;
+                case 2034:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                    break;
+                case 2035:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                    break;
+                case 2036:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                    break;
+                case 2037:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                    break;
+                case 2038:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                    break;
+                case 2039:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                    break;
+                case 2040:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                    break;
+                case 2041:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                    break;
+                case 2042:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                    break;
+                case 2043:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                    break;
+                case 2044:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                    break;
+                case 2045:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                    break;
+                case 2046:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                    break;
+                case 2047:
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                    break;
                 default:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
                     break;

@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".CategoriesActivity">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/categories_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="@color/blue"
+        android:elevation="4dp"
+        android:theme="@style/AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Categories"
+        app:titleTextColor="@color/white" />
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_categories"
         android:layout_width="match_parent"

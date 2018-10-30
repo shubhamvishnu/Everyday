@@ -458,6 +458,152 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                 case 2006:
                     ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
                     break;
+                case 2007:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                    break;
+
+                case 2008:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                    break;
+
+                case 2009:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                    break;
+
+                case 2010:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                    break;
+
+                case 2011:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                    break;
+
+                case 2012:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                    break;
+
+                case 2013:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                    break;
+
+                case 2014:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                    break;
+
+                case 2015:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                    break;
+
+                case 2016:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                    break;
+
+                case 2017:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                    break;
+
+                case 2018:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                    break;
+
+                case 2019:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                    break;
+
+                case 2020:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                    break;
+
+                case 2021:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                    break;
+
+                case 2022:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                    break;
+
+                case 2023:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                    break;
+
+                case 2024:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                    break;
+
+                case 2025:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                    break;
+
+                case 2026:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                    break;
+
+                case 2027:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                    break;
+
+                case 2028:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                    break;
+
+                case 2029:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                    break;
+
+                case 2030:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                    break;
+                case 2031:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                    break;
+                case 2032:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                    break;
+                case 2033:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                    break;
+                case 2034:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                    break;
+                case 2035:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                    break;
+                case 2036:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                    break;
+                case 2037:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                    break;
+                case 2038:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                    break;
+                case 2039:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                    break;
+                case 2040:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                    break;
+                case 2041:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                    break;
+                case 2042:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                    break;
+                case 2043:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                    break;
+                case 2044:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                    break;
+                case 2045:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                    break;
+                case 2046:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                    break;
+                case 2047:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                    break;
                 default:
                     ((PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
                     break;
