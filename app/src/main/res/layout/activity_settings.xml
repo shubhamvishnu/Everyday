@@ -6,20 +6,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
-<Button
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="choose symbol"
-    android:id="@+id/set_symbol_button"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/symbol_choice_textview"/>
+
     <Button
+        android:id="@+id/set_symbol_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="categories"
-        android:id="@+id/categories_setting"/>
+        android:text="choose symbol" />
+
+    <TextView
+        android:id="@+id/symbol_choice_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/categories_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="categories" />
 
     <Switch
         android:id="@+id/theme_switch"

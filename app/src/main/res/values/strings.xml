@@ -2,4 +2,11 @@
     <string name="app_name">Everyday</string>
 
     <string name="inr">\u20B9</string>
+    <string name="dollar">\u0024</string>
+    <string name="yen">\u00A5</string>
+    <string name="euro">\u20AC</string>
+    <string name="pound">\u00A3</string>
+    <string name="bitcoin">\u20BF</string>
+
+
 </resources>

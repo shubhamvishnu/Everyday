@@ -318,7 +318,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
     void initBasicSettings() {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("curreny", getResources().getString(R.string.inr));
+        editor.putString("currency", getResources().getString(R.string.inr));
         editor.putBoolean("theme", BasicSettings.DEFAULT_THEME);
         editor.apply();
         toMainActivity();

@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.BottomSheetDialog;
@@ -30,6 +31,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     BottomSheetDialog mSymbolDialog;
     UserInfoPOJO userInfoPOJO;
     Switch mThemeSwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mCategoriesButton = findViewById(R.id.categories_setting);
         mThemeSwitch = findViewById(R.id.theme_switch);
 
+        mSetSymbolButton.setText(defaultSettingsPreference.getString("currency", getResources().getString(R.string.inr)));
+
+
         mSetSymbolButton.setOnClickListener(this);
         mCategoriesButton.setOnClickListener(this);
         setThemeState(defaultSettingsPreference.getBoolean("theme", BasicSettings.DEFAULT_THEME));
@@ -70,7 +75,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
     }
-    void setThemeState(boolean isEnabled){
+
+    void setThemeState(boolean isEnabled) {
         if (isEnabled) {
             mThemeSwitch.setEnabled(true);
         } else {
@@ -91,10 +97,79 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     }
 
     void showSymbolsDialog() {
+        Button mCur1, mCur2, mCur3, mCur4, mCur5, mCur6;
         mSymbolDialog = new BottomSheetDialog(SettingsActivity.this);
         mSymbolDialog.setContentView(R.layout.dialog_symbols_dialog);
         ImageButton mClose = mSymbolDialog.findViewById(R.id.close_symbols_dialog);
-        // todo: complete the dialog
+
+        mCur1 = mSymbolDialog.findViewById(R.id.cur1_button);
+        mCur2 = mSymbolDialog.findViewById(R.id.cur2_button);
+        mCur3 = mSymbolDialog.findViewById(R.id.cur3_button);
+        mCur4 = mSymbolDialog.findViewById(R.id.cur4_button);
+        mCur5 = mSymbolDialog.findViewById(R.id.cur5_button);
+        mCur6 = mSymbolDialog.findViewById(R.id.cur6_button);
+
+        mCur1.setText(getResources().getString(R.string.inr));
+        mCur2.setText(getResources().getString(R.string.dollar));
+        mCur3.setText(getResources().getString(R.string.pound));
+        mCur4.setText(getResources().getString(R.string.euro));
+        mCur5.setText(getResources().getString(R.string.yen));
+        mCur6.setText(getResources().getString(R.string.bitcoin));
+
+
+        mCur1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(1);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+
+        mCur2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(2);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+
+        mCur3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(3);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+
+        mCur4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(4);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+        mCur5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(5);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+        mCur6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setSymbol(6);
+                mSymbolDialog.dismiss();
+            }
+        });
+
+
+
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,12 +180,48 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mSymbolDialog.setCanceledOnTouchOutside(false);
         mSymbolDialog.show();
     }
-    void toCategoriesActivity(){
+
+    void setSymbol(int currencyId) {
+        SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        switch (currencyId) {
+            case 1:
+                mSetSymbolButton.setText(getResources().getString(R.string.inr));
+                editor.putString("currency", getResources().getString(R.string.inr));
+                break;
+            case 2:
+                mSetSymbolButton.setText(getResources().getString(R.string.dollar));
+                editor.putString("currency", getResources().getString(R.string.dollar));
+                break;
+            case 3:
+
+                mSetSymbolButton.setText(getResources().getString(R.string.pound));
+                editor.putString("currency", getResources().getString(R.string.pound));
+                break;
+            case 4:
+                mSetSymbolButton.setText(getResources().getString(R.string.euro));
+                editor.putString("currency", getResources().getString(R.string.euro));
+                break;
+            case 5:
+                mSetSymbolButton.setText(getResources().getString(R.string.yen));
+                editor.putString("currency", getResources().getString(R.string.yen));
+                break;
+            case 6:
+                mSetSymbolButton.setText(getResources().getString(R.string.bitcoin));
+                editor.putString("currency", getResources().getString(R.string.bitcoin));
+                break;
+
+        }
+        editor.apply();
+    }
+
+    void toCategoriesActivity() {
         Intent intent = new Intent(SettingsActivity.this, CategoriesActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
