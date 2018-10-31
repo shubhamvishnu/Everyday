@@ -19,11 +19,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.Calendar;
+
 public class PersonalFinancialBoardActivity extends AppCompatActivity {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;
     public static int optionType;
+    public static int mViewCurrentYear, mViewCurrentMonth;
     ImageButton mExpenses, mCatExpenses, mDayExpenses;
 
     @Override
@@ -43,6 +46,9 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         Intent intent = getIntent();
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
         optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+
+        mViewCurrentYear = Calendar.getInstance().get(Calendar.YEAR);
+        mViewCurrentMonth = Calendar.getInstance().get(Calendar.MONTH);
 
         mExpenses = findViewById(R.id.expenses_option_icon);
         mCatExpenses = findViewById(R.id.category_expenses_icon);

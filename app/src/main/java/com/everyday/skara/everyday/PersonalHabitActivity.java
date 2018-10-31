@@ -132,15 +132,6 @@ public class PersonalHabitActivity extends AppCompatActivity {
 
         }
     }
-    @Override
-    public void onBackPressed() {
-        toBoardsActivity();
-    }
-    void toBoardsActivity() {
-        Intent intent = new Intent(PersonalHabitActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
     void toNewHabitActivity(){
         Intent intent = new Intent(PersonalHabitActivity.this, NewHabitActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -153,6 +144,14 @@ public class PersonalHabitActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
+    @Override
+    public void onBackPressed() {
+        toBoardActivity();
+    }
+    void toBoardActivity() {
+        Intent intent = new Intent(PersonalHabitActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
 }

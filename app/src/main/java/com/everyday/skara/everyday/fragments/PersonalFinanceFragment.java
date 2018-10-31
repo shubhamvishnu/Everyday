@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -60,6 +61,7 @@ public class PersonalFinanceFragment extends Fragment {
     TextView mTotalExpenseTextView;
     TextView mCurencyTextView;
     View view;
+
 
     int currentYear;
     int currentMonth;
@@ -103,8 +105,8 @@ public class PersonalFinanceFragment extends Fragment {
         dateExpenseArrayListHashMap = new HashMap<>();
         yearMonthExpenseArrayListHashMap = new HashMap<>();
 
-        currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+        currentYear = PersonalFinancialBoardActivity.mViewCurrentYear;
+        currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
 
@@ -404,6 +406,9 @@ public class PersonalFinanceFragment extends Fragment {
         if (mExpenseChildEventListener != null) {
             mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
         }
+        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+
     }
 
     @Override
@@ -412,6 +417,8 @@ public class PersonalFinanceFragment extends Fragment {
         if (mExpenseChildEventListener != null) {
             mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
         }
+        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
     }
 
 
