@@ -75,7 +75,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
     String mDate;
     int mDay, mMonth, mYear;
     TextView mEndDateTextView;
-
     RecyclerView mDurationRecyclerview;
 
     @Nullable
@@ -84,7 +83,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
         view = inflater.inflate(R.layout.fragment_habits_entries_layout, container, false);
         return view;
     }
-
 
     @Override
     public void onStart() {
@@ -208,6 +206,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
     }
 
     public class HabitsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
         private LayoutInflater inflator;
 
         public HabitsAdapter() {
@@ -772,7 +771,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
 
     }
 
-
     public static HashMap<Integer, MonthDates> getDaysBetweenDates(Calendar startdate, Calendar enddate) {
         HashMap<Integer, MonthDates> monthDatesHashMap = new HashMap<>();
 
@@ -823,7 +821,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
     }
 
     /*------------------------------------------------------------------------------ */
-
 
     /**
      * Adapter for Duration Recyclerview
@@ -941,7 +938,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
 
     }
 
-
     /*------------------------------------------------------------------------------ */
 
     void toLoginActivity() {
@@ -953,7 +949,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
      * Bottom sheet picker for date and time
      * [STARTS HERE]
      */
-
 
     @Override
     public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
@@ -993,5 +988,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
 
         return dialog;
     }
+
     //[ENDS HERE]
 }

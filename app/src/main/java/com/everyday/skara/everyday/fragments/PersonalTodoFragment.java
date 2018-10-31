@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.animation.ObjectAnimator;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
@@ -16,12 +17,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -434,6 +437,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         public void onBindViewHolder(@NonNull TodoAdapter.TodoViewHolder holder, int position) {
             try {
                 int counter = 0;
+                int percentage = 0;
                 Todo todo = todoArrayList.get(position);
                 if (todo.getTodoPOJOArrayList().size() > 0) {
                     for (int i = 0; i < todo.getTodoPOJOArrayList().size(); i++) {
@@ -441,10 +445,14 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                             ++counter;
                         }
                     }
-                    String stat = counter + "/" + (todo.getTodoPOJOArrayList().size());
+                    int size = todo.getTodoPOJOArrayList().size();
+                    percentage = counter * 100 / size;
+                    String stat = counter + "/" + size;
                     holder.mStats.setText(stat);
+                    setProgressAnimate(holder.mProgressBar, percentage);
                 } else {
                     holder.mStats.setText("0/0");
+                    holder.mProgressBar.setProgress(0);
                 }
 
 
@@ -458,6 +466,12 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             }
         }
 
+        private void setProgressAnimate(ProgressBar pb, int progressTo) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo);
+            animation.setDuration(500);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
+        }
 
         void showItems(final int position) {
             todoDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(position).getTodoKey());
@@ -582,6 +596,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             public TextView mTitle, mDate;
             public ImageButton mMore, mEdit, mDelete;
             public TextView mStats;
+            public ProgressBar mProgressBar;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
@@ -591,6 +606,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 mEdit = itemView.findViewById(R.id.edit_todo_button);
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
                 mStats = itemView.findViewById(R.id.todo_item_stats_textview);
+                mProgressBar = itemView.findViewById(R.id.todo_progress);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mTitle.setOnClickListener(new View.OnClickListener() {
