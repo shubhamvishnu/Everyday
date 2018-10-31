@@ -67,7 +67,8 @@
         <activity android:name=".CategoriesActivity" />
         <activity android:name=".PersonalGratitudeBoardActivity" />
         <activity android:name=".PersonalHabitActivity" />
-        <activity android:name=".PersonalStopwatchActivity"></activity>
+        <activity android:name=".PersonalStopwatchActivity" />
+        <activity android:name=".NewHabitActivity"></activity>
     </application>
 
 </manifest>
