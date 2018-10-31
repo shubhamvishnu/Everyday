@@ -37,7 +37,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-public class NewHabitActivity extends AppCompatActivity implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener, BottomSheetTimePickerDialog.OnTimeSetListener{
+public class NewHabitActivity extends AppCompatActivity implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener{
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
@@ -68,14 +68,6 @@ public class NewHabitActivity extends AppCompatActivity implements com.philliphs
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
         optionType = NewOptionTypes.TYPE_PERSONAL_HABIT_ENTRIES;
 
-        mDate = new String("");
-        mTime = new String("");
-        mHours = 0;
-        mMinutes = 0;
-        mDay = 0;
-        mMonth = 0;
-        mYear = 0;
-
 
 
         mTitle = findViewById(R.id.title_habit);
@@ -87,6 +79,14 @@ public class NewHabitActivity extends AppCompatActivity implements com.philliphs
         mEndDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mDate = new String("");
+                mTime = new String("");
+                mHours = 0;
+                mMinutes = 0;
+                mDay = 0;
+                mMonth = 0;
+                mYear = 0;
+
                 DialogFragment dialog = createDialog();
                 dialog.show(getSupportFragmentManager(), "date");
             }
@@ -100,13 +100,13 @@ public class NewHabitActivity extends AppCompatActivity implements com.philliphs
                 if (desc.isEmpty()) {
                     desc = "";
                 }
-                if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals("") || mTime.isEmpty() || mTitle.equals(""))) {
+                if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals(""))) {
 
                     DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/");
                     databaseReference.keepSynced(true);
                     final DatabaseReference entryDatabaseReference = databaseReference.push();
                     entryDatabaseReference.keepSynced(true);
-                    HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mDate, mTime, mDay, mMonth, mYear, mHours, mMinutes, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                    HabitPOJO habitPOJO = new HabitPOJO(entryDatabaseReference.getKey(), title, desc, mDate, mTime, mDay, mMonth, mYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                     entryDatabaseReference.setValue(habitPOJO);
 
                     DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
@@ -133,43 +133,6 @@ public class NewHabitActivity extends AppCompatActivity implements com.philliphs
      * [STARTS HERE]
      */
 
-    @Override
-    public void onTimeSet(ViewGroup viewGroup, int hourOfDay, int minute) {
-        Calendar cal = new java.util.GregorianCalendar();
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cal.set(Calendar.MINUTE, minute);
-        mTime = DateFormat.getTimeFormat(this).format(cal.getTime());
-        if (!(mTime.isEmpty() || mTime.equals(""))) {
-
-            mHours = hourOfDay;
-            mMinutes = minute;
-
-            // mReminder.setText("Reminder set at " + time + " on " + date);
-
-        }
-    }
-
-    private DialogFragment createTimeDialog() {
-        return createTimeDialogWithSetters();
-    }
-
-    private DialogFragment createTimeDialogWithSetters() {
-        BottomSheetPickerDialog dialog = null;
-        boolean custom = false;
-        boolean customDark = false;
-        boolean themeDark = true;
-
-        Calendar now = Calendar.getInstance();
-        dialog = GridTimePickerDialog.newInstance(
-                NewHabitActivity.this,
-                now.get(Calendar.HOUR_OF_DAY),
-                now.get(Calendar.MINUTE),
-                DateFormat.is24HourFormat(NewHabitActivity.this));
-        GridTimePickerDialog gridDialog = (GridTimePickerDialog) dialog;
-        dialog.setThemeDark(themeDark);
-
-        return dialog;
-    }
 
     @Override
     public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
@@ -183,9 +146,6 @@ public class NewHabitActivity extends AppCompatActivity implements com.philliphs
         this.mMonth = monthOfYear;
         this.mDay = dayOfMonth;
         mEndDateTextView.setText(mDate);
-
-        DialogFragment dialog1 = createTimeDialog();
-        dialog1.show(getSupportFragmentManager(), "time");
 
     }
 

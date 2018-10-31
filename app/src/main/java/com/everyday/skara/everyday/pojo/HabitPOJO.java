@@ -8,14 +8,13 @@ public class HabitPOJO {
     String mTime;
     int mDay, mMonth, mYear;
     int intervalType;
-    int mHours, mMinutes;
     String date;
     UserInfoPOJO userInfoPOJO;
 
     public HabitPOJO() {
     }
 
-    public HabitPOJO(String habitEntryKey, String title, String description, String mDate, String mTime, int mDay, int mMonth, int mYear, int mHours, int mMinutes, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
+    public HabitPOJO(String habitEntryKey, String title, String description, String mDate, String mTime, int mDay, int mMonth, int mYear, int intervalType, String date, UserInfoPOJO userInfoPOJO) {
         this.habitEntryKey = habitEntryKey;
         this.title = title;
         this.description = description;
@@ -24,8 +23,6 @@ public class HabitPOJO {
         this.mDay = mDay;
         this.mMonth = mMonth;
         this.mYear = mYear;
-        this.mHours = mHours;
-        this.mMinutes = mMinutes;
         this.intervalType = intervalType;
         this.date = date;
         this.userInfoPOJO = userInfoPOJO;
@@ -69,22 +66,6 @@ public class HabitPOJO {
 
     public void setmYear(int mYear) {
         this.mYear = mYear;
-    }
-
-    public int getmHours() {
-        return mHours;
-    }
-
-    public void setmHours(int mHours) {
-        this.mHours = mHours;
-    }
-
-    public int getmMinutes() {
-        return mMinutes;
-    }
-
-    public void setmMinutes(int mMinutes) {
-        this.mMinutes = mMinutes;
     }
 
     public String getDate() {

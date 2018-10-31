@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.NewHabitActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -40,6 +42,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
 
 import org.joda.time.DateTime;
 
@@ -56,7 +59,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class HabitsFragment extends android.support.v4.app.Fragment {
+public class HabitsFragment extends android.support.v4.app.Fragment implements com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener{
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     View view;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -72,8 +75,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
     String mDate;
     int mDay, mMonth, mYear;
     TextView mEndDateTextView;
-    Calendar datePickerCalender = Calendar.getInstance();
-    DatePickerDialog.OnDateSetListener datePicker;
 
     RecyclerView mDurationRecyclerview;
 
@@ -108,29 +109,6 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         mHabitsPojoArrayList = new ArrayList<>();
         mHabitCheckedPOJOHashMap = new HashMap<>();
 
-        datePicker = new DatePickerDialog.OnDateSetListener() {
-
-            @Override
-            public void onDateSet(DatePicker view, int year, int monthOfYear,
-                                  int dayOfMonth) {
-                Calendar cal = new java.util.GregorianCalendar();
-                datePickerCalender.set(Calendar.YEAR, year);
-                datePickerCalender.set(Calendar.MONTH, monthOfYear);
-                datePickerCalender.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-
-                cal.set(Calendar.YEAR, year);
-                cal.set(Calendar.MONTH, monthOfYear);
-                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
-                mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
-                mYear = year;
-                mMonth = monthOfYear;
-                mDay = dayOfMonth;
-                mEndDateTextView.setText(mDate);
-
-            }
-
-        };
         initEntriesRecyclerView();
     }
 
@@ -498,9 +476,13 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
             mEndDate.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    new DatePickerDialog(getActivity(), datePicker, datePickerCalender
-                            .get(Calendar.YEAR), datePickerCalender.get(Calendar.MONTH),
-                            datePickerCalender.get(Calendar.DAY_OF_MONTH)).show();
+                    mDate = new String("");
+                    mDay = 0;
+                    mMonth = 0;
+                    mYear = 0;
+
+                    DialogFragment dialog = createDialog();
+                    dialog.show(getActivity().getSupportFragmentManager(), "date");
                 }
             });
 
@@ -520,7 +502,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
                     }
                     if (!(title.isEmpty() || mDate.isEmpty() || mDate.equals(""))) {
                         Map<String, Object> habitMap = new HashMap<>();
-                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mDate, habitPOJO1.getmTime(), mDay, mMonth, mYear, habitPOJO1.getmHours(), habitPOJO1.getmMinutes(), NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
+                        HabitPOJO habitPOJO2 = new HabitPOJO(habitPOJO1.getHabitEntryKey(), title, desc, mDate, habitPOJO1.getmTime(), mDay, mMonth, mYear, NotificationTypes.INTERVAL_ONCE, DateTimeStamp.getDate(), userInfoPOJO);
                         habitMap.put(habitPOJO1.getHabitEntryKey(), habitPOJO2);
                         firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_HABITS + "/habits/").updateChildren(habitMap);
                         mHabitsPojoArrayList.set(position, habitPOJO2);
@@ -967,5 +949,49 @@ public class HabitsFragment extends android.support.v4.app.Fragment {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+    /**
+     * Bottom sheet picker for date and time
+     * [STARTS HERE]
+     */
 
+
+    @Override
+    public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        Calendar cal = new java.util.GregorianCalendar();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, monthOfYear);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        //   new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date())
+        mDate = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(cal.getTime());
+        this.mYear = year;
+        this.mMonth = monthOfYear;
+        this.mDay = dayOfMonth;
+        mEndDateTextView.setText(mDate);
+
+    }
+
+    private DialogFragment createDialog() {
+        return createDialogWithSetters();
+    }
+
+    private DialogFragment createDialogWithSetters() {
+        BottomSheetPickerDialog dialog = null;
+        boolean themeDark = true;
+        Calendar refCal = new GregorianCalendar();
+
+        Calendar now = Calendar.getInstance();
+        dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
+                this,
+                now.get(refCal.YEAR),
+                now.get(refCal.MONTH),
+                now.get(refCal.DAY_OF_MONTH));
+
+        com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
+        dateDialog.setYearRange(refCal.YEAR, 2050);
+        dateDialog.setMinDate(refCal);
+        dialog.setThemeDark(themeDark);
+
+        return dialog;
+    }
+    //[ENDS HERE]
 }
