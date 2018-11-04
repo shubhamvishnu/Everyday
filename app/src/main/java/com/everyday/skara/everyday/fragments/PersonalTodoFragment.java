@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -311,6 +312,11 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         startActivity(intent);
     }
 
+    /*-------------------------------------------------------------------------*/
+
+    /**
+     * TODO Items Adapter
+     */
     public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder> {
         private LayoutInflater inflator;
         int todoPosition;
@@ -369,6 +375,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             }
         }
     }
+    /*-------------------------------------------------------------------------*/
 
     void setState(final int todoPosition, final int position, final boolean isChecked) {
         final DatabaseReference todoReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoArrayList.get(todoPosition).getTodoKey() + "/todo_items/" + todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItemKey() + "/");
@@ -376,7 +383,8 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         stateMap.put("state", isChecked);
         todoReference.updateChildren(stateMap);
         todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
-        todoAdapter.notifyItemChanged(todoPosition);
+        //todoAdapter.notifyItemChanged(todoPosition);
+        todoAdapter.notifyDataSetChanged();
 
     }
 
@@ -414,6 +422,12 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 .setBackgroundColorRes(R.color.colorAccent)
                 .show();
     }
+
+    /*-------------------------------------------------------------------------*/
+
+    /**
+     * Main TODO adapter
+     */
 
     public class TodoAdapter extends RecyclerView.Adapter<TodoAdapter.TodoViewHolder> {
         private LayoutInflater inflator;
@@ -461,10 +475,19 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 holder.mTitle.setText(todoInfoPOJO.getTitle());
                 holder.mDate.setText(todoInfoPOJO.getDate());
 
+                RecyclerView recyclerView = holder.mTodoSnapshotRecyclerview;
+                recyclerView.invalidate();
+                recyclerView.setHasFixedSize(true);
+                LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+                recyclerView.setLayoutManager(linearLayoutManager);
+                TodoSnapshotAdapter todoSnapshotAdapter = new TodoSnapshotAdapter(position);
+                recyclerView.setAdapter(todoSnapshotAdapter);
+
             } catch (Exception e) {
 
             }
         }
+
 
         private void setProgressAnimate(ProgressBar pb, int progressTo) {
             ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo);
@@ -523,6 +546,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                         todoReference.setValue(todoPOJO);
                         todoArrayList.get(position).getTodoPOJOArrayList().add(todoPOJO);
                         todoItemAdapter.notifyDataSetChanged();
+                        todoAdapter.notifyDataSetChanged();
                         Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -573,7 +597,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                     DatabaseReference databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todoInfoPOJO.getTodoKey() + "/info/");
                     databaseReference.setValue(todoInfoPOJO);
                     todoArrayList.get(position).setTodoInfoPOJO(todoInfoPOJO);
-                    notifyItemChanged(position);
+                    notifyDataSetChanged();
                     mEditTodoDialog.dismiss();
                 }
             });
@@ -597,6 +621,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             public ImageButton mMore, mEdit, mDelete;
             public TextView mStats;
             public ProgressBar mProgressBar;
+            public RecyclerView mTodoSnapshotRecyclerview;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
@@ -607,6 +632,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
                 mStats = itemView.findViewById(R.id.todo_item_stats_textview);
                 mProgressBar = itemView.findViewById(R.id.todo_progress);
+                mTodoSnapshotRecyclerview = itemView.findViewById(R.id.todo_items_snapshot_recyclerview);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mTitle.setOnClickListener(new View.OnClickListener() {
@@ -645,13 +671,77 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
             }
         }
+
+
+        public class TodoSnapshotAdapter extends RecyclerView.Adapter<TodoSnapshotAdapter.TodoSnapshotViewHolder> {
+            private LayoutInflater inflator;
+            int todoPosition;
+
+            public TodoSnapshotAdapter(int todoPosition) {
+                try {
+                    this.inflator = LayoutInflater.from(getActivity());
+                    this.todoPosition = todoPosition;
+
+                } catch (NullPointerException e) {
+
+                }
+            }
+
+            @NonNull
+            @Override
+            public TodoSnapshotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
+                return new TodoSnapshotViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull TodoSnapshotViewHolder holder, int position) {
+                holder.mCheckbox.setChecked(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).isState());
+                holder.mItem.setText(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItem());
+            }
+
+            @Override
+            public int getItemCount() {
+                return todoArrayList.get(todoPosition).getTodoPOJOArrayList().size();
+            }
+
+
+            public class TodoSnapshotViewHolder extends RecyclerView.ViewHolder {
+                public TextView mItem;
+                public ImageButton mDelete;
+                public CheckBox mCheckbox;
+
+                public TodoSnapshotViewHolder(View itemView) {
+                    super(itemView);
+                    mItem = itemView.findViewById(R.id.todo_item_view);
+                    mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
+                    mCheckbox = itemView.findViewById(R.id.todo_checkbox_view);
+                    mDelete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showItems(todoPosition);
+                        }
+                    });
+                    mItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            showItems(todoPosition);
+                        }
+                    });
+                    mCheckbox.setEnabled(false);
+                }
+            }
+        }
     }
+    /*-------------------------------------------------------------------------*/
+
 
     void deleteTodo(int position) {
         Todo todo = todoArrayList.get(position);
         firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/todos/" + todo.getTodoInfoPOJO().getTodoKey()).removeValue();
         todoArrayList.remove(position);
-        todoAdapter.notifyItemRemoved(position);
+        //todoAdapter.notifyItemRemoved(position);
+        todoAdapter.notifyDataSetChanged();
     }
 
     void showDeleteTodoAlert(final int position) {
