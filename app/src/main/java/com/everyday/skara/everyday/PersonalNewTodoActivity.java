@@ -186,7 +186,8 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
 
 
     public class TodoListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        public final int VIEW_MAIN = 1;
+        public final int VIEW_NOT_COMPLETE = 1;
+        public final int VIEW_COMPLETE = 2;
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference databaseReference;
         private LayoutInflater inflator;
@@ -202,14 +203,23 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
 
         @Override
         public int getItemViewType(int position) {
-            return VIEW_MAIN;
+            TodoPOJO todoPOJO = todoPOJOArrayList.get(position);
+            if (todoPOJO.isState()) {
+                return VIEW_COMPLETE;
+            } else {
+                return VIEW_NOT_COMPLETE;
+            }
         }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == VIEW_MAIN) {
+            if (viewType == VIEW_NOT_COMPLETE) {
                 View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
+                TodoViewHolder viewHolder = new TodoViewHolder(view);
+                return viewHolder;
+            } else if (viewType == VIEW_COMPLETE) {
+                View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
                 TodoViewHolder viewHolder = new TodoViewHolder(view);
                 return viewHolder;
             }
@@ -243,7 +253,9 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
             mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    updateState(getPosition(), isChecked);
+                    if (mCheckBox.isPressed()) {
+                        updateState(getPosition(), isChecked);
+                    }
                 }
             });
         }
@@ -263,12 +275,10 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
             todoItemReference.keepSynced(true);
             HashMap<String, Object> stateMap = new HashMap<>();
             stateMap.put("state", isChecked);
-            todoItemReference.updateChildren(stateMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    todoPOJOArrayList.get(position).setState(isChecked);
-                }
-            });
+            todoItemReference.updateChildren(stateMap);
+            todoPOJOArrayList.get(position).setState(isChecked);
+            todoListAdapter.notifyDataSetChanged();
+
         }
 
         void deleteItem(final int position) {
@@ -311,7 +321,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
             // String itemKey, String title, String message, String holderKey, int day, int month, int year, int hours, int minutes, int intervalType, int notificationType
             DatabaseReference reminderReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/reminders");
             reminderReference.keepSynced(true);
-            NotificationHolder notificationHolder = new NotificationHolder(todoDatabaseReference.getKey(), "Reminder", "Todo Reminder", todoDatabaseReference.getKey(), date, time, day, month, year, hours,minutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
+            NotificationHolder notificationHolder = new NotificationHolder(todoDatabaseReference.getKey(), "Reminder", "Todo Reminder", todoDatabaseReference.getKey(), date, time, day, month, year, hours, minutes, NotificationTypes.INTERVAL_ONCE, NotificationTypes.TYPE_TODO, true);
             reminderReference.child(todoDatabaseReference.getKey()).setValue(notificationHolder);
    /*
             Intent intent = new Intent(this, TodoReminderReceiver.class);
@@ -401,7 +411,7 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     private DialogFragment createDialogWithSetters() {
         BottomSheetPickerDialog dialog = null;
         boolean themeDark = true;
-        Calendar refCal  =new GregorianCalendar();
+        Calendar refCal = new GregorianCalendar();
         Calendar now = Calendar.getInstance();
         dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
                 PersonalNewTodoActivity.this,

@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.PersonalNewTodoActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.TodoActivity;
 import com.everyday.skara.everyday.classes.Connectivity;
@@ -317,7 +319,9 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
     /**
      * TODO Items Adapter
      */
-    public class TodoItemAdapter extends RecyclerView.Adapter<TodoItemAdapter.TodoItemViewHolder> {
+    public class TodoItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        public final int VIEW_NOT_COMPLETE = 1;
+        public final int VIEW_COMPLETE = 2;
         private LayoutInflater inflator;
         int todoPosition;
 
@@ -330,17 +334,38 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             }
         }
 
+        @Override
+        public int getItemViewType(int position) {
+            TodoPOJO todoPOJO = todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position);
+            if (todoPOJO.isState()) {
+                Log.d("STATE------", "complete");
+                return VIEW_COMPLETE;
+            } else {
+                Log.d("STATE------", "not complete");
+
+                return VIEW_NOT_COMPLETE;
+            }
+        }
+
         @NonNull
         @Override
-        public TodoItemAdapter.TodoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
-            return new TodoItemViewHolder(view);
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if (viewType == VIEW_NOT_COMPLETE) {
+                View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
+                TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                return viewHolder;
+            } else if (viewType == VIEW_COMPLETE) {
+                View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
+                TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                return viewHolder;
+            }
+            return null;
         }
 
         @Override
-        public void onBindViewHolder(@NonNull TodoItemViewHolder holder, int position) {
-            holder.mCheckbox.setChecked(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).isState());
-            holder.mItem.setText(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItem());
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            ((TodoItemViewHolder) holder).mCheckbox.setChecked(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).isState());
+            ((TodoItemViewHolder) holder).mItem.setText(todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).getItem());
         }
 
         @Override
@@ -356,9 +381,9 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
             public TodoItemViewHolder(View itemView) {
                 super(itemView);
-                mItem = itemView.findViewById(R.id.todo_item_view);
-                mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
-                mCheckbox = itemView.findViewById(R.id.todo_checkbox_view);
+                mCheckbox = itemView.findViewById(R.id.todo_checkbox);
+                mItem = itemView.findViewById(R.id.todo_item);
+                mDelete = itemView.findViewById(R.id.delete_item);
                 mDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -369,7 +394,9 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        setState(todoPosition, getPosition(), isChecked);
+                        if (mCheckbox.isPressed()) {
+                            setState(todoPosition, getPosition(), isChecked);
+                        }
                     }
                 });
             }
@@ -383,7 +410,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         stateMap.put("state", isChecked);
         todoReference.updateChildren(stateMap);
         todoArrayList.get(todoPosition).getTodoPOJOArrayList().get(position).setState(isChecked);
-        //todoAdapter.notifyItemChanged(todoPosition);
+        todoItemAdapter.notifyDataSetChanged();
         todoAdapter.notifyDataSetChanged();
 
     }
@@ -475,6 +502,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 holder.mTitle.setText(todoInfoPOJO.getTitle());
                 holder.mDate.setText(todoInfoPOJO.getDate());
 
+                /*
                 RecyclerView recyclerView = holder.mTodoSnapshotRecyclerview;
                 recyclerView.invalidate();
                 recyclerView.setHasFixedSize(true);
@@ -483,6 +511,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 TodoSnapshotAdapter todoSnapshotAdapter = new TodoSnapshotAdapter(position);
                 recyclerView.setAdapter(todoSnapshotAdapter);
 
+*/
             } catch (Exception e) {
 
             }
@@ -621,7 +650,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             public ImageButton mMore, mEdit, mDelete;
             public TextView mStats;
             public ProgressBar mProgressBar;
-            public RecyclerView mTodoSnapshotRecyclerview;
+           // public RecyclerView mTodoSnapshotRecyclerview;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
@@ -632,7 +661,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
                 mStats = itemView.findViewById(R.id.todo_item_stats_textview);
                 mProgressBar = itemView.findViewById(R.id.todo_progress);
-                mTodoSnapshotRecyclerview = itemView.findViewById(R.id.todo_items_snapshot_recyclerview);
+               // mTodoSnapshotRecyclerview = itemView.findViewById(R.id.todo_items_snapshot_recyclerview);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mTitle.setOnClickListener(new View.OnClickListener() {
@@ -672,7 +701,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             }
         }
 
-
+/*
         public class TodoSnapshotAdapter extends RecyclerView.Adapter<TodoSnapshotAdapter.TodoSnapshotViewHolder> {
             private LayoutInflater inflator;
             int todoPosition;
@@ -690,7 +719,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             @NonNull
             @Override
             public TodoSnapshotViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-                View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
+                View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
                 return new TodoSnapshotViewHolder(view);
             }
 
@@ -713,9 +742,9 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
                 public TodoSnapshotViewHolder(View itemView) {
                     super(itemView);
-                    mItem = itemView.findViewById(R.id.todo_item_view);
-                    mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
-                    mCheckbox = itemView.findViewById(R.id.todo_checkbox_view);
+                    mCheckbox = itemView.findViewById(R.id.todo_checkbox);
+                    mItem = itemView.findViewById(R.id.todo_item);
+                    mDelete = itemView.findViewById(R.id.delete_item);
                     mDelete.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -732,6 +761,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 }
             }
         }
+        */
     }
     /*-------------------------------------------------------------------------*/
 

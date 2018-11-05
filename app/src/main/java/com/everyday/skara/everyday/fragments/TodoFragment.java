@@ -68,7 +68,7 @@ import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class TodoFragment extends Fragment implements BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener{
+public class TodoFragment extends Fragment implements BottomSheetTimePickerDialog.OnTimeSetListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference, todoDatabaseReference, todoInfoReference;
@@ -120,7 +120,6 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
     void init() {
         todoArrayList = new ArrayList<>();
         mFilterButton = getActivity().findViewById(R.id.filter_option_button);
-
 
         //Intent intent = getActivity().getIntent();
         boardPOJO = (BoardPOJO) getArguments().getSerializable("board_pojo");
@@ -301,7 +300,7 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
         @NonNull
         @Override
         public TodoItemAdapter.TodoItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_item_row_layout, parent, false);
+            View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
             return new TodoItemAdapter.TodoItemViewHolder(view);
         }
 
@@ -324,9 +323,9 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
 
             public TodoItemViewHolder(View itemView) {
                 super(itemView);
-                mItem = itemView.findViewById(R.id.todo_item_view);
-                mDelete = itemView.findViewById(R.id.dialog_delete_item_view);
-                mCheckbox = itemView.findViewById(R.id.todo_checkbox_view);
+                mCheckbox = itemView.findViewById(R.id.todo_checkbox);
+                mItem = itemView.findViewById(R.id.todo_item);
+                mDelete = itemView.findViewById(R.id.delete_item);
                 mDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -337,7 +336,9 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
                 mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        setState(todoPosition, getPosition(), isChecked);
+                        if (mCheckbox.isPressed()) {
+                            setState(todoPosition, getPosition(), isChecked);
+                        }
                     }
                 });
             }
@@ -641,6 +642,7 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
         // show it
         alertDialog.show();
     }
+
     /**
      * Bottom sheet picker for date and time
      * [STARTS HERE]
@@ -656,8 +658,8 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
             hours = hourOfDay;
             minutes = minute;
 
-            if(mReminder != null)
-            mReminder.setText("Reminder set at " + time + " on " + date);
+            if (mReminder != null)
+                mReminder.setText("Reminder set at " + time + " on " + date);
             //setReminder();
         }
     }
@@ -681,6 +683,7 @@ public class TodoFragment extends Fragment implements BottomSheetTimePickerDialo
         alarmMgr.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
+
     @Override
     public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
         Calendar cal = new java.util.GregorianCalendar();
