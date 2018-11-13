@@ -43,10 +43,11 @@ public class CategoriesActivity extends AppCompatActivity {
     UserInfoPOJO userInfoPOJO;
     RecyclerView mCategoriesRecyclerView;
     int choosenIcon = -2000;
+    int choosenColor = -1;
     Categories selectedCat;
     CatAdapter catAdapter;
     ImageButton mChosenIconImageButton;
-    BottomSheetDialog mAddNewCatDialog, mChooseIconDialog;
+    BottomSheetDialog mAddNewCatDialog, mChooseIconDialog, mChooseColorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -441,6 +442,7 @@ public class CategoriesActivity extends AppCompatActivity {
         mAddNewCatDialog = new BottomSheetDialog(this);
         mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout);
         choosenIcon = -1;
+        choosenColor = -1;
         final EditText mTitle;
         ImageButton mClose;
         Button mChooseIcon;
@@ -459,6 +461,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 showChoseIconDialog();
             }
         });
+
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -470,9 +473,12 @@ public class CategoriesActivity extends AppCompatActivity {
                     if (choosenIcon == -1) {
                         Toast.makeText(CategoriesActivity.this, "Choose an icon", Toast.LENGTH_SHORT).show();
                     } else {
+                        if(choosenColor == -1){
+                            choosenColor = 0;
+                        }
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
                         DatabaseReference catReference = databaseReference.child("categories").push();
-                        catReference.setValue(new Categories(title, catReference.getKey(), choosenIcon));
+                        catReference.setValue(new Categories(title, catReference.getKey(), choosenIcon, choosenColor));
                         mAddNewCatDialog.dismiss();
                     }
                 }

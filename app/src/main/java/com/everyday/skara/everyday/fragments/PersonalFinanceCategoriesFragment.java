@@ -435,10 +435,13 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             }
             ((PersonalFinanceViewHolder) holder).mCatName.setText(categories.getCategoryName());
             ((PersonalFinanceViewHolder) holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
+
+            ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
             showCatIcon(holder, categories);
             totalExpense += total;
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
         }
+
 
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getCategoryIconId()) {

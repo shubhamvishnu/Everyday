@@ -4,14 +4,16 @@ public class Categories {
     String categoryName;
     String categoryKey;
     int categoryIconId;
+    int colorId;
 
     public Categories(){
 
     }
-    public Categories(String categoryName, String categoryKey, int categoryIconId) {
+    public Categories(String categoryName, String categoryKey, int categoryIconId, int colorId) {
         this.categoryName = categoryName;
         this.categoryKey = categoryKey;
         this.categoryIconId = categoryIconId;
+        this.colorId = colorId;
     }
 
     public int getCategoryIconId() {
@@ -36,5 +38,13 @@ public class Categories {
 
     public void setCategoryKey(String categoryKey) {
         this.categoryKey = categoryKey;
+    }
+
+    public int getColorId() {
+        return colorId;
+    }
+
+    public void setColorId(int colorId) {
+        this.colorId = colorId;
     }
 }
