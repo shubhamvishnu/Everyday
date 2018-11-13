@@ -462,7 +462,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                     ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
                     break;
                 default:
-                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
                     break;
             }
         }
