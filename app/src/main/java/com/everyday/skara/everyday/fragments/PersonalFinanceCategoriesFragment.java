@@ -435,13 +435,37 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             }
             ((PersonalFinanceViewHolder) holder).mCatName.setText(categories.getCategoryName());
             ((PersonalFinanceViewHolder) holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
-
-            ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+            setCatIconBackground(holder, categories);
             showCatIcon(holder, categories);
             totalExpense += total;
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
         }
 
+        void setCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getColorId()) {
+                case 1:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    break;
+                case 2:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_yellow);
+                    break;
+                case 3:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+                case 4:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                    break;
+                case 5:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green_blue);
+                    break;
+                case 6:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
+                    break;
+                default:
+                    ((PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    break;
+            }
+        }
 
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getCategoryIconId()) {

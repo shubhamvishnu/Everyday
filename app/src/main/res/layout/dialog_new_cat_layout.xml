@@ -84,6 +84,51 @@
                 android:background="@drawable/circle_background_red"
                 android:scaleType="fitCenter"
                />
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/yellow"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:background="@drawable/circle_background_yellow"
+                android:scaleType="fitCenter"
+                />
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/blue"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:background="@drawable/circle_background_blue"
+                android:scaleType="fitCenter"
+                />
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/green"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:background="@drawable/circle_background_green"
+                android:scaleType="fitCenter"
+                />
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/green_blue"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:background="@drawable/circle_background_green_blue"
+                android:scaleType="fitCenter"
+                />
+            <android.support.v7.widget.AppCompatImageButton
+                android:id="@+id/pink"
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                android:adjustViewBounds="true"
+                android:padding="2dp"
+                android:background="@drawable/circle_background_pink"
+                android:scaleType="fitCenter"
+                />
 
         </LinearLayout>
     </HorizontalScrollView>

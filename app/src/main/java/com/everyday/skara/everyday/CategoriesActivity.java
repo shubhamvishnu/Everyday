@@ -1,6 +1,7 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -138,7 +139,7 @@ public class CategoriesActivity extends AppCompatActivity {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
-            if (categoriesArrayList.get(position).getCategoryIconId() > 2006) {
+            if (categoriesArrayList.get(position).getCategoryIconId() != 2005) { // 2005 - Default category; Others
                 View view = inflator.inflate(R.layout.recyclerview_expense_custom_categories_row_layout, parent, false);
                 return new CatViewHolder(view);
             } else {
@@ -153,7 +154,7 @@ public class CategoriesActivity extends AppCompatActivity {
 
             Categories categories = categoriesArrayList.get(position);
 
-            if (categoriesArrayList.get(position).getCategoryIconId() > 2006) {
+            if (categoriesArrayList.get(position).getCategoryIconId() != 2005) {
                 ((CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
             } else {
                 ((DefaultCatViewHolder) holder).mCatName.setText(categories.getCategoryName());
@@ -166,30 +167,29 @@ public class CategoriesActivity extends AppCompatActivity {
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getCategoryIconId()) {
                 case 2000:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
                     break;
                 case 2001:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
                     break;
                 case 2002:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
                     break;
                 case 2003:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
                     break;
                 case 2004:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
                     break;
                 case 2005:
                     ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
                     break;
                 case 2006:
-                    ((DefaultCatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
                     break;
                 case 2007:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
                     break;
-
                 case 2008:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
                     break;
@@ -340,18 +340,19 @@ public class CategoriesActivity extends AppCompatActivity {
         public int getItemCount() {
             return categoriesArrayList.size();
         }
-        void deleteIcon(final int position){
+
+        void deleteIcon(final int position) {
             final Categories categories = categoriesArrayList.get(position);
             DatabaseReference catReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses");
             catReference.keepSynced(true);
             catReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChildren()){
-                        for(DataSnapshot snapshot: dataSnapshot.getChildren()){
+                    if (dataSnapshot.hasChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                             ExpensePOJO expensePOJO = snapshot.getValue(ExpensePOJO.class);
                             Categories categories1 = expensePOJO.getCategories();
-                            if(categories1.getCategoryKey().equals(categories.getCategoryKey())){
+                            if (categories1.getCategoryKey().equals(categories.getCategoryKey())) {
 
                                 Categories categories2 = categoriesArrayList.get(0);
                                 expensePOJO.setCategories(categories2);
@@ -446,7 +447,7 @@ public class CategoriesActivity extends AppCompatActivity {
         final EditText mTitle;
         ImageButton mClose;
         Button mChooseIcon;
-
+        ImageButton mRed, mYellow, mBlue, mGreen, mBlueGreen, mPink;
         Button mDone;
 
         mTitle = mAddNewCatDialog.findViewById(R.id.new_category_title);
@@ -454,6 +455,56 @@ public class CategoriesActivity extends AppCompatActivity {
         mChooseIcon = mAddNewCatDialog.findViewById(R.id.choose_icon_button);
         mChosenIconImageButton = mAddNewCatDialog.findViewById(R.id.ic_icon_chosen);
         mDone = mAddNewCatDialog.findViewById(R.id.new_cat_dialog_done);
+
+        mRed = mAddNewCatDialog.findViewById(R.id.red);
+        mYellow = mAddNewCatDialog.findViewById(R.id.yellow);
+        mBlue = mAddNewCatDialog.findViewById(R.id.blue);
+        mGreen = mAddNewCatDialog.findViewById(R.id.green);
+        mBlueGreen = mAddNewCatDialog.findViewById(R.id.green_blue);
+        mPink = mAddNewCatDialog.findViewById(R.id.pink);
+
+        mRed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 1;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_red);
+            }
+        });
+        mYellow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 2;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_yellow);
+            }
+        });
+        mBlue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 3;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_blue);
+            }
+        });
+        mGreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 4;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_green);
+            }
+        });
+        mBlueGreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 5;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_green_blue);
+            }
+        });
+        mPink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choosenColor = 6;
+                mChosenIconImageButton.setBackgroundResource(R.drawable.circle_background_pink);
+            }
+        });
 
         mChooseIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -473,7 +524,7 @@ public class CategoriesActivity extends AppCompatActivity {
                     if (choosenIcon == -1) {
                         Toast.makeText(CategoriesActivity.this, "Choose an icon", Toast.LENGTH_SHORT).show();
                     } else {
-                        if(choosenColor == -1){
+                        if (choosenColor == -1) {
                             choosenColor = 0;
                         }
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
