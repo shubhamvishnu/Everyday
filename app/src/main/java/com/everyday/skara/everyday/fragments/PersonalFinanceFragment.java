@@ -444,9 +444,6 @@ public class PersonalFinanceFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            if(position == 0){
-                this.totalExpense = 0.0;
-            }
             ExpensePOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
             this.totalExpense += expensePOJO.getAmount();
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", this.totalExpense));
