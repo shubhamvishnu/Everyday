@@ -345,6 +345,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                 updateExpenses();
             }
 
+
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
