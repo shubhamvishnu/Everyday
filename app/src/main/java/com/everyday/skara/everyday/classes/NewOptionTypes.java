@@ -10,6 +10,7 @@ public class NewOptionTypes {
     public final static int TYPE_PERSONAL_GRATITUDE_ENTRIES = 7;
     public final static int TYPE_PERSONAL_GRATITUDE_MOODS = 8;
     public final static int TYPE_PERSONAL_HABIT_ENTRIES = 9;
+    public final static int TYPE_PERSONAL_ANALYTICS_= 10;
 
 
 

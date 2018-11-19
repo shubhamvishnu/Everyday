@@ -61,7 +61,18 @@
             app:floating_title="MONTH"
             app:floating_title_color="@android:color/white" />
     </LinearLayout>
-
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Maximum Expense Catgeory"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/max_expense_cat_name_textview"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/max_expense_cat_textview"/>
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/expense_pie_chart"
         android:layout_width="match_parent"

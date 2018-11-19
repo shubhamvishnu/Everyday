@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.fragments.PersonalFinanceAnalytics;
 import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceDayFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
@@ -27,7 +28,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     UserInfoPOJO userInfoPOJO;
     public static int optionType;
     public static int mViewCurrentYear, mViewCurrentMonth;
-    ImageButton mExpenses, mCatExpenses, mDayExpenses;
+    ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +54,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mExpenses = findViewById(R.id.expenses_option_icon);
         mCatExpenses = findViewById(R.id.category_expenses_icon);
         mDayExpenses = findViewById(R.id.day_wise_expense_option);
-
+        mExpenseAnalytics = findViewById(R.id.expense_analytics_item);
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -108,6 +109,24 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 transaction.commit();
             }
         });
+        mExpenseAnalytics.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
+                PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceAnalytics.setArguments(bundle);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.financial_fragment_container, personalFinanceAnalytics);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
         initFragment();
     }
 
@@ -133,6 +152,24 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.financial_fragment_container, personalFinanceCategoriesFragment).commit();
+            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE) {
+                PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceDayFragment.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.financial_fragment_container, personalFinanceDayFragment).commit();
+            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_ANALYTICS_) {
+                PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                personalFinanceAnalytics.setArguments(bundle);
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.financial_fragment_container, personalFinanceAnalytics).commit();
             }
 
         }
