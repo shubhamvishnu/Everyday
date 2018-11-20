@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
@@ -34,9 +35,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
@@ -51,6 +55,8 @@ public class PersonalFinanceAnalytics extends Fragment {
     BottomSheetDialog mMonthBottomSheetDialog;
 
     LinkedHashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>>> catYearMonthExpenseArrayListHashMap;
+    HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>>> yearMonthDateHashMap;
+
     ArrayList<Categories> categoriesArrayList;
 
     FloatingTextButton mMonthSelectionButton;
@@ -63,8 +69,12 @@ public class PersonalFinanceAnalytics extends Fragment {
     int currentMonth;
 
     ArrayList<CategoryExpensePOJO> mCategoryExpenseArrayList = new ArrayList<>();
+    HashMap<String, ArrayList<WeekDayWiseExpense>> weekWiseExpenseHashMap;
 
     TextView mMaxExpenseCat, mMaxExpenseCatName;
+    TextView mExpenseDateTextView, mExpenseDayAmount;
+    TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
+
     PieChart mPieChart;
 
     @Nullable
@@ -94,6 +104,10 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCurencyTextView = view.findViewById(R.id.currency_textview);
         mMaxExpenseCatName = view.findViewById(R.id.max_expense_cat_name_textview);
         mMaxExpenseCat = view.findViewById(R.id.max_expense_cat_textview);
+        mExpenseDateTextView = view.findViewById(R.id.max_expense_day_date_textview);
+        mExpenseDayAmount = view.findViewById(R.id.max_expense_day_textview);
+        mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
+        mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -117,6 +131,10 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         mMaxExpenseCatName.setText(null);
         mMaxExpenseCat.setText(null);
+        mExpenseDateTextView.setText(null);
+        mExpenseDayAmount.setText(null);
+        mExpensiveExpenseTextView.setText(null);
+        mExpensiveExpenseCatTextView.setText(null);
         initCategories();
     }
 
@@ -295,6 +313,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     void initExpenses() {
         expensePOJOArrayList = new ArrayList<>();
 
+        yearMonthDateHashMap = new HashMap<>();
         catYearMonthExpenseArrayListHashMap = new LinkedHashMap<>();
 
         mExpensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses");
@@ -302,11 +321,40 @@ public class PersonalFinanceAnalytics extends Fragment {
         mExpenseValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChildren()){
+                if (snapshot.hasChildren()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
                         expensePOJOArrayList.add(expensePOJO);
-
+                        /**----------------------------------------------------------------------*/
+                        // expense year and month wise
+                        if (yearMonthDateHashMap.containsKey(expensePOJO.getYear())) {
+                            if (yearMonthDateHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                if (yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).containsKey(expensePOJO.getDate())) {
+                                    ArrayList<ExpensePOJO> expensePOJOArrayList2 = yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).get(expensePOJO.getDate());
+                                    expensePOJOArrayList2.add(expensePOJO);
+                                    yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList2);
+                                } else {
+                                    ArrayList<ExpensePOJO> expensePOJOArrayList5 = new ArrayList<>();
+                                    expensePOJOArrayList5.add(expensePOJO);
+                                    yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList5);
+                                }
+                            } else {
+                                HashMap<String, ArrayList<ExpensePOJO>> dateExpenseHashMap = new HashMap<>();
+                                ArrayList<ExpensePOJO> expensePOJOArrayList2 = new ArrayList<>();
+                                expensePOJOArrayList2.add(expensePOJO);
+                                dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
+                                yearMonthDateHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), dateExpenseHashMap);
+                            }
+                        } else {
+                            HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>> monthDateExpenseHashMap = new HashMap<>();
+                            HashMap<String, ArrayList<ExpensePOJO>> dateExpenseHashMap = new HashMap<>();
+                            ArrayList<ExpensePOJO> expensePOJOArrayList2 = new ArrayList<>();
+                            expensePOJOArrayList2.add(expensePOJO);
+                            dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
+                            monthDateExpenseHashMap.put(expensePOJO.getMonth(), dateExpenseHashMap);
+                            yearMonthDateHashMap.put(expensePOJO.getYear(), monthDateExpenseHashMap);
+                        }
+                        /**----------------------------------------------------------------------*/
                         if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
                             if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
                                 if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
@@ -341,9 +389,14 @@ public class PersonalFinanceAnalytics extends Fragment {
                             yearMonthHashMap.put(expensePOJO.getYear(), monthHashMap);
                             catYearMonthExpenseArrayListHashMap.put(expensePOJO.getCategories().getCategoryKey(), yearMonthHashMap);
                         }
-                    }}
+                    }
+                }
+
+                /**----------------------------------------------------------------------*/
+
                 // reflect updated data
                 updateCategoryExpenses();
+                updateDayExpenses();
 
             }
 
@@ -354,6 +407,152 @@ public class PersonalFinanceAnalytics extends Fragment {
         };
 
         mExpensesDatabaseReference.addValueEventListener(mExpenseValueEventListener);
+    }
+
+    class DayExpensePOJO {
+        double maxDayExpenseAmount;
+        String dateOfMaxExpense;
+        ArrayList<ExpensePOJO> expensePOJOArrayList;
+
+        public DayExpensePOJO() {
+        }
+
+        public DayExpensePOJO(double maxDayExpenseAmount, String dateOfMaxExpense, ArrayList<ExpensePOJO> expensePOJOArrayList) {
+            this.maxDayExpenseAmount = maxDayExpenseAmount;
+            this.dateOfMaxExpense = dateOfMaxExpense;
+            this.expensePOJOArrayList = expensePOJOArrayList;
+        }
+
+
+        public double getMaxDayExpenseAmount() {
+            return maxDayExpenseAmount;
+        }
+
+        public void setMaxDayExpenseAmount(double maxDayExpenseAmount) {
+            this.maxDayExpenseAmount = maxDayExpenseAmount;
+        }
+
+        public String getDateOfMaxExpense() {
+            return dateOfMaxExpense;
+        }
+
+        public void setDateOfMaxExpense(String dateOfMaxExpense) {
+            this.dateOfMaxExpense = dateOfMaxExpense;
+        }
+
+        public ArrayList<ExpensePOJO> getExpensePOJOArrayList() {
+            return expensePOJOArrayList;
+        }
+
+        public void setExpensePOJOArrayList(ArrayList<ExpensePOJO> expensePOJOArrayList) {
+            this.expensePOJOArrayList = expensePOJOArrayList;
+        }
+    }
+
+    class WeekDayWiseExpense {
+        String weekDay;
+        ArrayList<ExpensePOJO> expensePOJOArrayList;
+        double totalWeekDayExpense;
+        String date;
+
+        public WeekDayWiseExpense(String weekDay, ArrayList<ExpensePOJO> expensePOJOArrayList, double totalWeekDayExpense, String date) {
+            this.weekDay = weekDay;
+            this.expensePOJOArrayList = expensePOJOArrayList;
+            this.totalWeekDayExpense = totalWeekDayExpense;
+            this.date = date;
+        }
+
+
+        public String getWeekDay() {
+            return weekDay;
+        }
+
+        public void setWeekDay(String weekDay) {
+            this.weekDay = weekDay;
+        }
+
+        public ArrayList<ExpensePOJO> getExpensePOJOArrayList() {
+            return expensePOJOArrayList;
+        }
+
+        public void setExpensePOJOArrayList(ArrayList<ExpensePOJO> expensePOJOArrayList) {
+            this.expensePOJOArrayList = expensePOJOArrayList;
+        }
+
+        public double getTotalWeekDayExpense() {
+            return totalWeekDayExpense;
+        }
+
+        public void setTotalWeekDayExpense(double totalWeekDayExpense) {
+            this.totalWeekDayExpense = totalWeekDayExpense;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+    }
+
+    void updateDayExpenses() {
+        DayExpensePOJO dayExpensePOJO = new DayExpensePOJO(0.0, "-", new ArrayList<ExpensePOJO>());
+        ExpensePOJO maxExpensePOJO = new ExpensePOJO();
+        maxExpensePOJO.setAmount(0.0);
+        ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
+        weekWiseExpenseHashMap = new HashMap<>();
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
+                HashMap<String, ArrayList<ExpensePOJO>> expensePOJOHashMapArrayList = yearMonthDateHashMap.get(currentYear).get(currentMonth);
+                dateExpenseHolderArrayList = new ArrayList<>();
+                for (Map.Entry<String, ArrayList<ExpensePOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
+                    dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));
+                }
+
+                for (int i = 0; i < dateExpenseHolderArrayList.size(); i++) {
+                    DateExpenseHolder dateExpenseHolder = dateExpenseHolderArrayList.get(i);
+                    ArrayList<ExpensePOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
+                    double dayAmount = 0.0;
+                    for (int j = 0; j < expensePOJOArrayList.size(); j++) {
+                        ExpensePOJO expensePOJO = expensePOJOArrayList.get(j);
+                        dayAmount += expensePOJO.getAmount();
+                        if (expensePOJO.getAmount() >= maxExpensePOJO.getAmount()) {
+                            maxExpensePOJO = expensePOJO;
+                        }
+                    }
+
+                    if (dayAmount >= dayExpensePOJO.getMaxDayExpenseAmount()) {
+                        dayExpensePOJO = new DayExpensePOJO(dayAmount, dateExpenseHolder.getDate(), expensePOJOArrayList);
+                    }
+
+                    /**---------------------------------------------------------------------------*/
+                    String dayOfWeek = new SimpleDateFormat("EE").format(new SimpleDateFormat("EE").format(dateExpenseHolder.getDate()));
+                    if (weekWiseExpenseHashMap.containsKey(dayOfWeek)) {
+                        WeekDayWiseExpense weekDayWiseExpense = new WeekDayWiseExpense(dayOfWeek, expensePOJOArrayList, dayAmount, dateExpenseHolder.getDate());
+                        ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = weekWiseExpenseHashMap.get(dayOfWeek);
+                        weekDayWiseExpensesArrayList.add(weekDayWiseExpense);
+                        weekWiseExpenseHashMap.put(dayOfWeek, weekDayWiseExpensesArrayList);
+                    }else{
+                        WeekDayWiseExpense weekDayWiseExpense = new WeekDayWiseExpense(dayOfWeek, expensePOJOArrayList, dayAmount, dateExpenseHolder.getDate());
+                        ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = new ArrayList<>();
+                        weekDayWiseExpensesArrayList.add(weekDayWiseExpense);
+                        weekWiseExpenseHashMap.put(dayOfWeek, weekDayWiseExpensesArrayList);
+                    }
+                    /**---------------------------------------------------------------------------*/
+
+                }
+
+                mExpenseDateTextView.setText(dayExpensePOJO.getDateOfMaxExpense());
+                mExpenseDayAmount.setText(String.format(Locale.getDefault(), "%.2f", dayExpensePOJO.maxDayExpenseAmount));
+                mExpensiveExpenseCatTextView.setText(maxExpensePOJO.getCategories().getCategoryName());
+                mExpensiveExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", maxExpensePOJO.getAmount()));
+            } else {
+                // no spendings this month
+
+            }
+
+        }
     }
 
     @Override

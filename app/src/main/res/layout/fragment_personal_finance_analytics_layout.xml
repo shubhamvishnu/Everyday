@@ -73,6 +73,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/max_expense_cat_textview"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Most expensive day of the month"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/max_expense_day_date_textview"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/max_expense_day_textview"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Most expensive spending"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/maximum_expense_cat"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/maximum_expense_amount"/>
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/expense_pie_chart"
         android:layout_width="match_parent"
