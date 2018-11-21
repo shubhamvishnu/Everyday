@@ -146,7 +146,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
     }
 
     void initMembers(){
-
+        boardMembersPOJOArrayList = new ArrayList<>();
         DatabaseReference memberDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
         memberDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
