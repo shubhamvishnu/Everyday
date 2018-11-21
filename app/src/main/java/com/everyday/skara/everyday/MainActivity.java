@@ -423,23 +423,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         boardReference.setValue(boardPOJO);
         // updating the user group information
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
+        DatabaseReference categoryDatabaseReferece  =  firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + boardKey);
         databaseReference.keepSynced(true);
         databaseReference.setValue(boardPOJO);
 
         if(boardType == BoardTypes.BOARD_TYPE_FINANCIAL){
-            DatabaseReference catReference = databaseReference.child("categories").push();
+            DatabaseReference catReference = categoryDatabaseReferece.child("categories").push();
             catReference.setValue(new Categories("Others", catReference.getKey(), 2005, 1));
 
-            DatabaseReference catReference2 = databaseReference.child("categories").push();
+            DatabaseReference catReference2 = categoryDatabaseReferece.child("categories").push();
             catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey(), 2002, 2));
 
-            DatabaseReference catReference3 = databaseReference.child("categories").push();
+            DatabaseReference catReference3 = categoryDatabaseReferece.child("categories").push();
             catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000, 3));
 
-            DatabaseReference catReference4 = databaseReference.child("categories").push();
+            DatabaseReference catReference4 = categoryDatabaseReferece.child("categories").push();
             catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4));
 
-            DatabaseReference catReference5 = databaseReference.child("categories").push();
+            DatabaseReference catReference5 = categoryDatabaseReferece.child("categories").push();
             catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006, 5));
 
         }
