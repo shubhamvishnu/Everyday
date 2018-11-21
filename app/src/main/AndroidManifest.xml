@@ -56,13 +56,14 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".PersonalProductivityBoard" />
         <activity android:name=".PersonalNewNoteActivity" />
-        <activity android:name=".PersonalNewLinkActivity"/>
+        <activity android:name=".PersonalNewLinkActivity" />
         <activity android:name=".PersonalNewTodoActivity" />
         <activity android:name=".CategoriesActivity" />
         <activity android:name=".PersonalGratitudeBoardActivity" />
         <activity android:name=".PersonalHabitActivity" />
         <activity android:name=".PersonalStopwatchActivity" />
-        <activity android:name=".NewHabitActivity"></activity>
+        <activity android:name=".NewHabitActivity" />
+        <activity android:name=".NewBoardExpenseActivity"></activity>
     </application>
 
 </manifest>

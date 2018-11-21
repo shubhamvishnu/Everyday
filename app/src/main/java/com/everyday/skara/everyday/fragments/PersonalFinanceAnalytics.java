@@ -577,8 +577,6 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void reflectLineChart(){
 
-
-
     }
 
 
@@ -590,6 +588,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         }
         PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
         PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+
     }
 
     @Override

@@ -52,7 +52,7 @@
                     android:rowCount="1">
 
                     <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                        android:id="@+id/personal_expense_option"
+                        android:id="@+id/finance_board_expenses"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
                         android:layout_marginLeft="6dp"
@@ -63,29 +63,6 @@
                         android:scaleType="fitCenter"
                         app:srcCompat="@drawable/ic_list_24dp" />
 
-                    <android.support.v7.widget.AppCompatImageButton
-                        android:id="@+id/owed_expense_option"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginRight="6dp"
-                        android:adjustViewBounds="true"
-                        android:background="@android:color/transparent"
-                        android:padding="6dp"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_note_24dp" />
-
-                    <android.support.v7.widget.AppCompatImageButton
-                        android:id="@+id/owe_expense_option"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="6dp"
-                        android:layout_marginRight="6dp"
-                        android:adjustViewBounds="true"
-                        android:background="@android:color/transparent"
-                        android:padding="6dp"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_link_24dp" />
 
                 </GridLayout>
             </LinearLayout>

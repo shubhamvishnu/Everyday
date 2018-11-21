@@ -32,6 +32,7 @@ import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
 import com.google.firebase.auth.FirebaseAuth;
@@ -200,9 +201,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return true;
 
             case R.id.action_new_board:
-                boardType = BoardTypes.BOARD_TYPE_PRODUCTIVITY;
-                showNewBoardDialog(boardType);
-                //showBoardTypesDialog();
+                showBoardTypesDialog();
                 return true;
 
             case R.id.action_other_board:
@@ -426,6 +425,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardKey);
         databaseReference.keepSynced(true);
         databaseReference.setValue(boardPOJO);
+
+        if(boardType == BoardTypes.BOARD_TYPE_FINANCIAL){
+            DatabaseReference catReference = databaseReference.child("categories").push();
+            catReference.setValue(new Categories("Others", catReference.getKey(), 2005, 1));
+
+            DatabaseReference catReference2 = databaseReference.child("categories").push();
+            catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey(), 2002, 2));
+
+            DatabaseReference catReference3 = databaseReference.child("categories").push();
+            catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000, 3));
+
+            DatabaseReference catReference4 = databaseReference.child("categories").push();
+            catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4));
+
+            DatabaseReference catReference5 = databaseReference.child("categories").push();
+            catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006, 5));
+
+        }
         // initializing ActivityPOJO class
         ActivityPOJO activityPOJO = new ActivityPOJO("New Board Created", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_CREATE_BOARD, userInfoPOJO);
 

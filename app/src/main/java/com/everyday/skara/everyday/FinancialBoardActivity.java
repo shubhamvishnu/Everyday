@@ -3,13 +3,18 @@ package com.everyday.skara.everyday;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.fragments.FinanceExpensesFragment;
+import com.everyday.skara.everyday.fragments.PersonalTodoFragment;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -28,11 +33,7 @@ public class FinancialBoardActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
-
-    ChildEventListener mExpenseChildEventListener;
-    DatabaseReference mExpensesDatabaseReference;
-
+    ImageButton mExpenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,56 +54,27 @@ public class FinancialBoardActivity extends AppCompatActivity {
         boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
         userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
 
+        mExpenses = findViewById(R.id.finance_board_expenses);
+        mExpenses.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FinanceExpensesFragment financeExpensesFragment = new FinanceExpensesFragment();
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("board_pojo", boardPOJO);
+                bundle.putSerializable("user_profile", userInfoPOJO);
+                financeExpensesFragment.setArguments(bundle);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.financial_fragment_container, financeExpensesFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+            }
+        });
     }
 
-    void initExpenses() {
-        mExpensesDatabaseReference = firebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses");
-        mExpenseChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
-                expensePOJOArrayList.add(expensePOJO);
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        };
-        mExpensesDatabaseReference.addChildEventListener(mExpenseChildEventListener);
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -113,6 +85,10 @@ public class FinancialBoardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.board_members_menu_item:
+                toBoardMembersActivity();
+                return true;
+
             case R.id.add_new_expense_menu_item:
                 toNewExpenseActivity();
                 return true;
@@ -124,8 +100,16 @@ public class FinancialBoardActivity extends AppCompatActivity {
         }
     }
 
+    void toBoardMembersActivity() {
+        Intent intent = new Intent(FinancialBoardActivity.this, BoardMembersActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("board_pojo", boardPOJO);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
     void toNewExpenseActivity() {
-        Intent intent = new Intent(FinancialBoardActivity.this, NewExpenseActivity.class);
+        Intent intent = new Intent(FinancialBoardActivity.this, NewBoardExpenseActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("board_pojo", boardPOJO);
         intent.putExtra("user_profile", userInfoPOJO);
