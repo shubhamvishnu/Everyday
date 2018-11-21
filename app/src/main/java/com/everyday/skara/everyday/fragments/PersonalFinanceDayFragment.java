@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -413,11 +416,18 @@ public class PersonalFinanceDayFragment extends Fragment {
                 ExpensePOJO expensePOJO = expensePOJOArrayList.get(i);
                 dayAmount += expensePOJO.getAmount();
                 totalExpense += expensePOJO.getAmount();
-
             }
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
             ((PersonalFinanceViewHolder)holder).mDate.setText(dateExpenseHolder.getDate());
             ((PersonalFinanceViewHolder)holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f", dayAmount));
+          //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
+            setProgressAnimate(((PersonalFinanceViewHolder)holder).mProgressBar, 50);
+        }
+        private void setProgressAnimate(ProgressBar pb, int progressTo) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo);
+            animation.setDuration(500);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
         }
 
         @Override
@@ -427,11 +437,13 @@ public class PersonalFinanceDayFragment extends Fragment {
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
             public TextView mDate, mAmount;
+            public ProgressBar mProgressBar;
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 mAmount = itemView.findViewById(R.id.date_expense_amount_textview);
                 mDate = itemView.findViewById(R.id.date_expense_textview);
+                mProgressBar = itemView.findViewById(R.id.expense_percentage);
             }
         }
 

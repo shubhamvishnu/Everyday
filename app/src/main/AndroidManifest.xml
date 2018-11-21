@@ -56,13 +56,7 @@
         <activity android:name=".SettingsActivity" />
         <activity android:name=".PersonalProductivityBoard" />
         <activity android:name=".PersonalNewNoteActivity" />
-        <activity android:name=".PersonalNewLinkActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".PersonalNewLinkActivity"/>
         <activity android:name=".PersonalNewTodoActivity" />
         <activity android:name=".CategoriesActivity" />
         <activity android:name=".PersonalGratitudeBoardActivity" />

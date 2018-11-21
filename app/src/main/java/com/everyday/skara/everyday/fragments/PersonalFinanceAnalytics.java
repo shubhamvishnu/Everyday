@@ -2,6 +2,7 @@ package com.everyday.skara.everyday.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,8 +25,16 @@ import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.ExpensePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -35,10 +44,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -76,6 +87,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
 
     PieChart mPieChart;
+    LineChart mExpensesLineChart;
 
     @Nullable
     @Override
@@ -108,6 +120,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mExpenseDayAmount = view.findViewById(R.id.max_expense_day_textview);
         mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
+        mExpensesLineChart = view.findViewById(R.id.expenses_line_chart);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -527,13 +540,18 @@ public class PersonalFinanceAnalytics extends Fragment {
                     }
 
                     /**---------------------------------------------------------------------------*/
-                    String dayOfWeek = new SimpleDateFormat("EE").format(new SimpleDateFormat("EE").format(dateExpenseHolder.getDate()));
+                    String dayOfWeek = null;
+                    try {
+                        dayOfWeek = new SimpleDateFormat("EE").format(new SimpleDateFormat("dd/MM/yyyy").parse(dateExpenseHolder.getDate()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     if (weekWiseExpenseHashMap.containsKey(dayOfWeek)) {
                         WeekDayWiseExpense weekDayWiseExpense = new WeekDayWiseExpense(dayOfWeek, expensePOJOArrayList, dayAmount, dateExpenseHolder.getDate());
                         ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = weekWiseExpenseHashMap.get(dayOfWeek);
                         weekDayWiseExpensesArrayList.add(weekDayWiseExpense);
                         weekWiseExpenseHashMap.put(dayOfWeek, weekDayWiseExpensesArrayList);
-                    }else{
+                    } else {
                         WeekDayWiseExpense weekDayWiseExpense = new WeekDayWiseExpense(dayOfWeek, expensePOJOArrayList, dayAmount, dateExpenseHolder.getDate());
                         ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = new ArrayList<>();
                         weekDayWiseExpensesArrayList.add(weekDayWiseExpense);
@@ -553,7 +571,16 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
 
         }
+
+        reflectLineChart();
     }
+
+    void reflectLineChart(){
+
+
+
+    }
+
 
     @Override
     public void onStop() {
@@ -625,7 +652,7 @@ public class PersonalFinanceAnalytics extends Fragment {
             overallExpense += total;
             mCategoryExpenseArrayList.add(new CategoryExpensePOJO(categories, total));
         }
-
+        reflectPieChartData(overallExpense);
         logExpenses();
         analyzeCategories();
     }
@@ -684,10 +711,32 @@ public class PersonalFinanceAnalytics extends Fragment {
         mMaxExpenseCatName.setText(categoricalAnalysis.getMaxCategory().getCategoryName());
         mMaxExpenseCat.setText(categoricalAnalysis.getMax() + "");
         //TODO: show maximum expenditure category
-        // TODO: reflectPieChartData();
     }
 
-    void reflectPieChartData() {
+    void reflectPieChartData(double overallExpense) {
+        List<PieEntry> entries = new ArrayList<>();
+        for (int i = 0; i < mCategoryExpenseArrayList.size(); i++) {
+            if (mCategoryExpenseArrayList.get(i).getTotalExpense() != 0.0) {
+                double catPercentage = ((mCategoryExpenseArrayList.get(i).getTotalExpense()) / overallExpense) * 100;
+                Log.d("qwerty", "reflectPieChartData: " + (float) catPercentage + " -- Category name :" + mCategoryExpenseArrayList.get(i).getCategory().getCategoryName());
+                Log.d("qwerty", "--expense" + mCategoryExpenseArrayList.get(i).getTotalExpense());
+                Log.d("qwerty", "-----------------------------------");
+
+                entries.add(new PieEntry((float) (catPercentage), mCategoryExpenseArrayList.get(i).getCategory().getCategoryName()));
+            }
+
+        }
+        PieDataSet set = new PieDataSet(entries, "Expense Breakdown");
+        set.setColors(ColorTemplate.MATERIAL_COLORS);
+        PieData data = new PieData(set);
+        Legend legend = mPieChart.getLegend();
+        legend.setPosition(Legend.LegendPosition.BELOW_CHART_LEFT);
+        legend.setWordWrapEnabled(true);
+        mPieChart.setData(data);
+        mPieChart.setDrawEntryLabels(false);
+
+
+
         mPieChart.setUsePercentValues(true);
         Description description = mPieChart.getDescription();
         description.setText("Category wise expenses for the month");
@@ -697,6 +746,8 @@ public class PersonalFinanceAnalytics extends Fragment {
         mPieChart.setTransparentCircleRadius(10);
         mPieChart.setRotationEnabled(true);
         mPieChart.setRotationAngle(0);
+
+        mPieChart.invalidate();
 
     }
 
