@@ -13,13 +13,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.FinanceBoardExpense;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.fragments.PersonalNotesFragment;
 import com.everyday.skara.everyday.pojo.BoardExpensePOJO;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -41,6 +45,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class NewBoardExpenseActivity extends AppCompatActivity implements View.OnClickListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabas = FirebaseDatabase.getInstance();
@@ -55,8 +61,8 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
     EditText mNote;
     Button expenseTypePersonal, expenseTypeEveryone, expenseTypeSpecific;
     Button mDoneExpenseEntry;
-
-
+    BottomSheetDialog mSpecificMembersSelectionDialog;
+    boolean isMemberSelected = false;
     String date;
     int day, month, year;
     int expenseType = FinanceBoardExpense.EXPENSE_TYPE_EVERYONE;
@@ -69,8 +75,6 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
 
     Categories selectedCat;
     ArrayList<ExpenseMembersInfoPOJO> expenseMembersInfoPOJOS;
-
-
 
 
     @Override
@@ -123,7 +127,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
 
     }
 
-    void initMembers(){
+    void initMembers() {
         boardMembersPOJOArrayList = new ArrayList<>();
         DatabaseReference memberDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
         memberDatabaseReference.keepSynced(true);
@@ -135,7 +139,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
                         boardMembersPOJOArrayList.add(snapshot.getValue(BoardMembersPOJO.class));
                     }
                     initCategories();
-                }else{
+                } else {
                     initCategories();
                 }
             }
@@ -146,6 +150,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
             }
         });
     }
+
     void initCategories() {
         categoriesArrayList = new ArrayList<>();
         DatabaseReference databaseReference = firebaseDatabas.getReference(FirebaseReferences.FIREBASE_BOARDS + "/" + boardPOJO.getBoardKey() + "/categories");
@@ -169,6 +174,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
 
 
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(NewBoardExpenseActivity.this, LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -199,10 +205,119 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
                 expenseType = FinanceBoardExpense.EXPENSE_TYPE_EVERYONE;
                 break;
             case R.id.board_expense_specific:
-                expenseType = FinanceBoardExpense.EXPENSE_TYPE_SPECIFIC;
+                // expenseType = FinanceBoardExpense.EXPENSE_TYPE_SPECIFIC;
+                showBoardMembers();
                 break;
         }
 
+    }
+
+    void showBoardMembers() {
+        expenseMembersInfoPOJOS = new ArrayList<>();
+        mSpecificMembersSelectionDialog = new BottomSheetDialog(this);
+        mSpecificMembersSelectionDialog.setContentView(R.layout.dialog_specific_members_selection_layout);
+        ImageButton mClose = mSpecificMembersSelectionDialog.findViewById(R.id.close_member_selection_dialog);
+        RecyclerView mSpecificMembersRecyclerview = mSpecificMembersSelectionDialog.findViewById(R.id.recyclerview_choose_specific_members);
+
+        isMemberSelected = false;
+        mSpecificMembersRecyclerview.invalidate();
+        mSpecificMembersRecyclerview.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        mSpecificMembersRecyclerview.setLayoutManager(linearLayoutManager);
+        SpecificMemberAdapter specificMemberAdapter = new SpecificMemberAdapter();
+        mSpecificMembersRecyclerview.setAdapter(specificMemberAdapter);
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSpecificMembersSelectionDialog.dismiss();
+            }
+        });
+
+
+        mSpecificMembersSelectionDialog.setCanceledOnTouchOutside(false);
+        mSpecificMembersSelectionDialog.show();
+
+    }
+
+    public class SpecificMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private LayoutInflater inflator;
+
+        public SpecificMemberAdapter() {
+            try {
+                this.inflator = LayoutInflater.from(mSpecificMembersSelectionDialog.getContext());
+                isMemberSelected = false;
+                expenseMembersInfoPOJOS = new ArrayList<>();
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_specific_member_row_layout, parent, false);
+            return new SpecificMemberViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            BoardMembersPOJO boardMembersPOJO = boardMembersPOJOArrayList.get(position);
+            UserInfoPOJO userInfoPOJO = boardMembersPOJO.getUserInfoPOJO();
+
+            ((SpecificMemberViewHolder) holder).mName.setText(userInfoPOJO.getName());
+            ((SpecificMemberViewHolder) holder).mEmail.setText(userInfoPOJO.getName());
+            Glide.with(NewBoardExpenseActivity.this).load(userInfoPOJO.getProfile_url()).into(((SpecificMemberViewHolder) holder).mProfile);
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return boardMembersPOJOArrayList.size();
+        }
+
+        public class SpecificMemberViewHolder extends RecyclerView.ViewHolder {
+            public TextView mName, mEmail;
+            public CircleImageView mProfile;
+            public CheckBox mCheckbox;
+
+            public SpecificMemberViewHolder(View itemView) {
+                super(itemView);
+                mName = itemView.findViewById(R.id.name_board_members_view_textview);
+                mEmail = itemView.findViewById(R.id.email_board_members_view_textview);
+                mProfile = itemView.findViewById(R.id.profile_image_board_members_view);
+                mCheckbox = itemView.findViewById(R.id.member_checkbox);
+                mCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (mCheckbox.isPressed()) {
+                            selectMember(getPosition(), isChecked);
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    void selectMember(int position, boolean state) {
+        ExpenseMembersInfoPOJO expenseMembersInfoPOJO = new ExpenseMembersInfoPOJO(boardMembersPOJOArrayList.get(position), false);
+        if (state) {
+            if (!expenseMembersInfoPOJOS.contains(expenseMembersInfoPOJO)) {
+                expenseMembersInfoPOJOS.add(expenseMembersInfoPOJO);
+            }
+        } else {
+            if (expenseMembersInfoPOJOS.contains(expenseMembersInfoPOJO)) {
+                expenseMembersInfoPOJOS.remove(position);
+            }
+        }
+        if (expenseMembersInfoPOJOS.size() > 0) {
+            isMemberSelected = true;
+            expenseType = FinanceBoardExpense.EXPENSE_TYPE_SPECIFIC;
+        } else {
+            isMemberSelected = false;
+            expenseType = FinanceBoardExpense.EXPENSE_TYPE_PERSONAL;
+
+        }
     }
 
     void showCategoryChoiceDialog() {
@@ -485,14 +600,14 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
                 DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + "/" + boardPOJO.getBoardKey() + "/expenses").push();
                 newExpenseDatabaseReference.keepSynced(true);
 
-                if(expenseType == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE){
+                if (expenseType == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE) {
                     expenseMembersInfoPOJOS = new ArrayList<>();
-                    for(int i = 0; i < boardMembersPOJOArrayList.size(); i++){
+                    for (int i = 0; i < boardMembersPOJOArrayList.size(); i++) {
                         expenseMembersInfoPOJOS.add(new ExpenseMembersInfoPOJO(boardMembersPOJOArrayList.get(i), false));
                     }
                 }
                 //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
-                BoardExpensePOJO boardExpensePOJO = new BoardExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, selectedCat, userInfoPOJO,expenseMembersInfoPOJOS, expenseType);
+                BoardExpensePOJO boardExpensePOJO = new BoardExpensePOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, selectedCat, userInfoPOJO, expenseMembersInfoPOJOS, expenseType);
                 newExpenseDatabaseReference.setValue(boardExpensePOJO);
                 toFinancialActivity();
             }
