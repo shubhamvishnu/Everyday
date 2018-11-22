@@ -115,7 +115,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         totalAmountSpent = 0.0;
         totalAmountOwed = 0.0;
         boardExpensePOJOArrayList = new ArrayList<>();
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey() + "/expenses");
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses");
         databaseReference.keepSynced(true);
         valueEventListener = new ValueEventListener() {
             @Override

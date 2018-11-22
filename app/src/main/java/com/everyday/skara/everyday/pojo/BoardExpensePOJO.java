@@ -20,6 +20,9 @@ public class BoardExpensePOJO implements Serializable {
     int splitType; // 1000 - personal; 1001 - Everyone; 1002 - specific
     int splitCount;
 
+    public BoardExpensePOJO() {
+    }
+
     public BoardExpensePOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, Categories categories, UserInfoPOJO userInfoPOJO, ArrayList<ExpenseMembersInfoPOJO> memberInfoPojoList, int splitType) {
         this.entryKey = entryKey;
         this.amount = amount;

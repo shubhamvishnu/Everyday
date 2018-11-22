@@ -70,29 +70,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
     Categories selectedCat;
     ArrayList<ExpenseMembersInfoPOJO> expenseMembersInfoPOJOS;
 
-    void initCategories() {
-        categoriesArrayList = new ArrayList<>();
-        final DatabaseReference databaseReference = firebaseDatabas.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey() + "/categories");
-        databaseReference.keepSynced(true);
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Categories categories = snapshot.getValue(Categories.class);
-                    categoriesArrayList.add(categories);
-                }
-                selectedCat = categoriesArrayList.get(0);
-                mCategoryChoiceOption.setText(selectedCat.getCategoryName());
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-
-
-    }
 
 
     @Override
@@ -148,6 +126,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
     void initMembers(){
         boardMembersPOJOArrayList = new ArrayList<>();
         DatabaseReference memberDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+        memberDatabaseReference.keepSynced(true);
         memberDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -166,6 +145,29 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
 
             }
         });
+    }
+    void initCategories() {
+        categoriesArrayList = new ArrayList<>();
+        DatabaseReference databaseReference = firebaseDatabas.getReference(FirebaseReferences.FIREBASE_BOARDS + "/" + boardPOJO.getBoardKey() + "/categories");
+        databaseReference.keepSynced(true);
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Categories categories = snapshot.getValue(Categories.class);
+                    categoriesArrayList.add(categories);
+                }
+                selectedCat = categoriesArrayList.get(0);
+                mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
     void toLoginActivity() {
         Intent intent = new Intent(NewBoardExpenseActivity.this, LoginActivity.class);
@@ -257,7 +259,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Categories categories = categoriesArrayList.get(position);
-            ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
+            ((CatAdapter.CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
             showCatIcon(holder, categories);
         }
 
@@ -265,174 +267,174 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getCategoryIconId()) {
                 case 2000:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
                     break;
                 case 2001:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
                     break;
                 case 2002:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
                     break;
                 case 2003:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
                     break;
                 case 2004:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
                     break;
                 case 2005:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
                     break;
                 case 2006:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
                     break;
                 case 2007:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
                     break;
 
                 case 2008:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
                     break;
 
                 case 2009:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
                     break;
 
                 case 2010:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
                     break;
 
                 case 2011:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
                     break;
 
                 case 2012:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
                     break;
 
                 case 2013:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
                     break;
 
                 case 2014:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
                     break;
 
                 case 2015:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
                     break;
 
                 case 2016:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
                     break;
 
                 case 2017:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
                     break;
 
                 case 2018:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
                     break;
 
                 case 2019:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
                     break;
 
                 case 2020:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
                     break;
 
                 case 2021:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
                     break;
 
                 case 2022:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
                     break;
 
                 case 2023:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
                     break;
 
                 case 2024:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
                     break;
 
                 case 2025:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
                     break;
 
                 case 2026:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
                     break;
 
                 case 2027:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
                     break;
 
                 case 2028:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
                     break;
 
                 case 2029:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
                     break;
 
                 case 2030:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
                     break;
                 case 2031:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
                     break;
                 case 2032:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
                     break;
                 case 2033:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
                     break;
                 case 2034:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
                     break;
                 case 2035:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
                     break;
                 case 2036:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
                     break;
                 case 2037:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
                     break;
                 case 2038:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
                     break;
                 case 2039:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
                     break;
                 case 2040:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
                     break;
                 case 2041:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
                     break;
                 case 2042:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
                     break;
                 case 2043:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
                     break;
                 case 2044:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
                     break;
                 case 2045:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
                     break;
                 case 2046:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
                     break;
                 case 2047:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
                     break;
                 default:
-                    ((NewExpenseActivity.CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
                     break;
             }
         }
@@ -480,8 +482,8 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
                     notes = " ";
                 }
 
-                DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey() + "expenses").push();
-
+                DatabaseReference newExpenseDatabaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + "/" + boardPOJO.getBoardKey() + "/expenses").push();
+                newExpenseDatabaseReference.keepSynced(true);
 
                 if(expenseType == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE){
                     expenseMembersInfoPOJOS = new ArrayList<>();
