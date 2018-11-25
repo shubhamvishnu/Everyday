@@ -41,6 +41,20 @@
             android:textSize="18sp"
             android:textStyle="bold" />
         <TextView
+            android:id="@+id/total_amount_owing_finance_board_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="22dp"
+            android:text="Amount"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
             android:id="@+id/currency_fiance_board_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -55,5 +69,9 @@
             android:textSize="18sp" />
     </LinearLayout>
 
-
+    <FrameLayout
+        android:id="@+id/expenses_detail_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 </LinearLayout>

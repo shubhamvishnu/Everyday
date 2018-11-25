@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FinanceBoardExpense;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -42,10 +46,11 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     ValueEventListener valueEventListener;
 
 
-    TextView mTotalAmountSpent, mTotalAmountOwed, mCurencyTextView;
-    double totalAmountSpent, totalAmountOwed;
+    TextView mTotalAmountSpent, mTotalAmountOwed, mTotalAmountOwing, mCurencyTextView;
+    double totalAmountSpent, totalAmountOwed, totalAmountOwing;
     ArrayList<BoardExpensePOJO> boardExpensePOJOArrayList;
     ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
+    public static ArrayList<BoardExpensePOJO> mPersonalExpensesArrayList, mSharedExpensesArrayList, mOtherExpensesArrayList;
 
     View view;
 
@@ -76,21 +81,29 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
         mTotalAmountSpent = view.findViewById(R.id.total_amount_spent_finance_board_textview);
         mTotalAmountOwed = view.findViewById(R.id.total_amount_owed_finance_board_textview);
+        mTotalAmountOwing = view.findViewById(R.id.total_amount_owing_finance_board_textview);
 
         mCurencyTextView = view.findViewById(R.id.currency_fiance_board_textview);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
 
-        mTotalAmountSpent.setText(null);
-        mTotalAmountOwed.setText(null);
+        mTotalAmountSpent.setText("-");
+        mTotalAmountOwed.setText("-");
+        mTotalAmountOwing.setText("-");
 
         initBoardMembers();
     }
 
     void initBoardMembers() {
         boardMembersPOJOArrayList = new ArrayList<>();
+
+        mPersonalExpensesArrayList = new ArrayList<>();
+        mSharedExpensesArrayList = new ArrayList<>();
+        mOtherExpensesArrayList = new ArrayList<>();
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference memberDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+        memberDatabaseReference.keepSynced(true);
         memberDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -114,6 +127,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     void initExpenses() {
         totalAmountSpent = 0.0;
         totalAmountOwed = 0.0;
+        totalAmountOwing = 0.0;
         boardExpensePOJOArrayList = new ArrayList<>();
         databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses");
         databaseReference.keepSynced(true);
@@ -131,9 +145,14 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
                                 totalAmountSpent += boardExpensePOJO.getAmount();
                                 mTotalAmountSpent.setText(totalAmountSpent + "");
 
+                                mPersonalExpensesArrayList.add(boardExpensePOJO);
+
                             } else if ((boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_SPECIFIC) || (boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE)) {
                                 double tempExpense = 0.0;
                                 ArrayList<ExpenseMembersInfoPOJO> membersInfoPOJOS = boardExpensePOJO.getMemberInfoPojoList();
+                                if(membersInfoPOJOS == null){
+                                    membersInfoPOJOS = new ArrayList<>();
+                                }
                                 tempExpense = boardExpensePOJO.getAmount() / (membersInfoPOJOS.size() + 1);
                                 for (int i = 0; i < membersInfoPOJOS.size(); i++) {
                                     if (!membersInfoPOJOS.get(i).isHasPaid()) {
@@ -143,10 +162,35 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
                                 }
                                 totalAmountSpent += tempExpense;
                                 mTotalAmountSpent.setText(totalAmountSpent + "");
+
+                                mSharedExpensesArrayList.add(boardExpensePOJO);
                             }
+                        } else {
+                            ArrayList<ExpenseMembersInfoPOJO> expenseMembersInfoPOJOArrayList = boardExpensePOJO.getMemberInfoPojoList();
+                            if(expenseMembersInfoPOJOArrayList == null){
+                                expenseMembersInfoPOJOArrayList = new ArrayList<>();
+                            }
+                            if (expenseMembersInfoPOJOArrayList.size() > 0) {
+
+                                for (int i = 0; i < expenseMembersInfoPOJOArrayList.size(); i++) {
+                                    if (expenseMembersInfoPOJOArrayList.get(i).getUserInfoPOJO().getUserInfoPOJO().getUser_key().equals(userInfoPOJO.getUser_key())) {
+                                        if (!expenseMembersInfoPOJOArrayList.get(i).isHasPaid()) {
+                                            double tempExpense = 0.0;
+                                            tempExpense = boardExpensePOJO.getAmount() / (expenseMembersInfoPOJOArrayList.size() + 1);
+                                            totalAmountOwing += tempExpense;
+                                            mTotalAmountOwing.setText(totalAmountOwing + "");
+                                            mOtherExpensesArrayList.add(boardExpensePOJO);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
                         }
+
                     }
                 }
+                initChildExpensesFragment();
             }
 
             @Override
@@ -155,6 +199,23 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
             }
         };
         databaseReference.addValueEventListener(valueEventListener);
+
+    }
+
+    void initChildExpensesFragment() {
+        ExpensesChildFragement expensesChildFragement = new ExpensesChildFragement();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("board_pojo", boardPOJO);
+        bundle.putSerializable("user_profile", userInfoPOJO);
+        expensesChildFragement.setArguments(bundle);
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.expenses_detail_fragment_container, expensesChildFragement);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
     }
 
     @Override
@@ -183,6 +244,78 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
 
+        }
+    }
+
+
+    public static class ExpensesChildFragement extends Fragment {
+        RecyclerView mExpensesChildRecyclerview;
+        View expenseFragmentView;
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            expenseFragmentView = inflater.inflate(R.layout.expenses_view_child_fragment_layout, container, false);
+            return expenseFragmentView;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            initExpensesChildFragment();
+        }
+
+        void initExpensesChildFragment() {
+            mExpensesChildRecyclerview = expenseFragmentView.findViewById(R.id.expenses_view_recyclerview);
+
+            mExpensesChildRecyclerview.invalidate();
+            mExpensesChildRecyclerview.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            mExpensesChildRecyclerview.setLayoutManager(linearLayoutManager);
+            ExpensesChildAdapter expensesChildAdapter = new ExpensesChildAdapter();
+            mExpensesChildRecyclerview.setAdapter(expensesChildAdapter);
+        }
+
+        public class ExpensesChildAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+            private LayoutInflater inflator;
+
+            public ExpensesChildAdapter() {
+                try {
+                    this.inflator = LayoutInflater.from(getActivity());
+                } catch (NullPointerException e) {
+
+                }
+            }
+
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = inflator.inflate(R.layout.recyclerview_expenses_view_child_fragment, parent, false);
+                return new ExpensesChildViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+                BoardExpensePOJO boardExpensePOJO = mPersonalExpensesArrayList.get(position);
+                ((ExpensesChildViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
+                ((ExpensesChildViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+            }
+
+            @Override
+            public int getItemCount() {
+                return mPersonalExpensesArrayList.size();
+            }
+
+
+            public class ExpensesChildViewHolder extends RecyclerView.ViewHolder {
+                public TextView mAmount, mDescription;
+
+                public ExpensesChildViewHolder(View itemView) {
+                    super(itemView);
+                    mDescription = itemView.findViewById(R.id.expenses_view_desc);
+                    mAmount = itemView.findViewById(R.id.expenses_view_amount);
+                }
+            }
         }
     }
 }

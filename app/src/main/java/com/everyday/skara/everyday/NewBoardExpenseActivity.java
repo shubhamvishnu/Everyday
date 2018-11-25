@@ -65,7 +65,7 @@ public class NewBoardExpenseActivity extends AppCompatActivity implements View.O
     boolean isMemberSelected = false;
     String date;
     int day, month, year;
-    int expenseType = FinanceBoardExpense.EXPENSE_TYPE_EVERYONE;
+    int expenseType = FinanceBoardExpense.EXPENSE_TYPE_PERSONAL;
 
     Button mCategoryChoiceOption;
     BottomSheetDialog mCategoriesDialog;

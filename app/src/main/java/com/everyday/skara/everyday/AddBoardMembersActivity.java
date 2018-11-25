@@ -110,7 +110,7 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        boardMembersPOJOArrayList.add(dataSnapshot.getValue(BoardMembersPOJO.class));
+                        boardMembersPOJOArrayList.add(snapshot.getValue(BoardMembersPOJO.class));
                     }
                 } else {
                     if (!input.equalsIgnoreCase("")) {
