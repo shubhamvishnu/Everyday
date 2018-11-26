@@ -68,7 +68,27 @@
             android:textColor="@color/black"
             android:textSize="18sp" />
     </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/personal_expenses_view_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="personal"/>
+        <Button
+            android:id="@+id/everyone_expenses_view_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Everyone"/>
+        <Button
+            android:id="@+id/specific_expenses_view_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Speicifc"/>
 
+    </LinearLayout>
     <FrameLayout
         android:id="@+id/expenses_detail_fragment_container"
         android:layout_width="match_parent"

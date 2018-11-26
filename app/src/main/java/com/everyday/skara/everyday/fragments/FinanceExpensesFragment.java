@@ -9,11 +9,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -52,6 +51,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
     public static ArrayList<BoardExpensePOJO> mPersonalExpensesArrayList, mSharedExpensesArrayList, mOtherExpensesArrayList;
 
+    Button mPersonalViewButton, mEveryoneViewButton, mSpeicifViewButton;
     View view;
 
 
@@ -83,9 +83,18 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         mTotalAmountOwed = view.findViewById(R.id.total_amount_owed_finance_board_textview);
         mTotalAmountOwing = view.findViewById(R.id.total_amount_owing_finance_board_textview);
 
+        mPersonalViewButton = view.findViewById(R.id.personal_expenses_view_button);
+        mEveryoneViewButton = view.findViewById(R.id.everyone_expenses_view_button);
+        mSpeicifViewButton = view.findViewById(R.id.specific_expenses_view_button);
+
         mCurencyTextView = view.findViewById(R.id.currency_fiance_board_textview);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
+
+
+        mPersonalViewButton.setOnClickListener(this);
+        mEveryoneViewButton.setOnClickListener(this);
+        mSpeicifViewButton.setOnClickListener(this);
 
         mTotalAmountSpent.setText("-");
         mTotalAmountOwed.setText("-");
@@ -243,11 +252,21 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.personal_expenses_view_button:
+                break;
+            case R.id.everyone_expenses_view_button:
+                break;
+            case R.id.specific_expenses_view_button:
+                break;
 
         }
     }
 
 
+    /**-----------------------------------------------------------------------
+     * Personal expenses view
+     * -----------------------------------------------------------------------
+     */
     public static class ExpensesChildFragement extends Fragment {
         RecyclerView mExpensesChildRecyclerview;
         View expenseFragmentView;
@@ -314,6 +333,158 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
                     super(itemView);
                     mDescription = itemView.findViewById(R.id.expenses_view_desc);
                     mAmount = itemView.findViewById(R.id.expenses_view_amount);
+                }
+            }
+        }
+    }
+
+
+    /**-----------------------------------------------------------------------
+     * Shared expenses view
+     * -----------------------------------------------------------------------
+     */
+
+    public static class ExpensesSharedChildFragement extends Fragment {
+        RecyclerView mExpensesChildRecyclerview;
+        View expenseFragmentView;
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            expenseFragmentView = inflater.inflate(R.layout.expenses_shared_child_fragment_layout, container, false);
+            return expenseFragmentView;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            initExpensesChildFragment();
+        }
+
+        void initExpensesChildFragment() {
+            mExpensesChildRecyclerview = expenseFragmentView.findViewById(R.id.expenses_shared_view_recyclerview);
+
+            mExpensesChildRecyclerview.invalidate();
+            mExpensesChildRecyclerview.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            mExpensesChildRecyclerview.setLayoutManager(linearLayoutManager);
+            ExpensesSharedAdapter expensesChildAdapter = new ExpensesSharedAdapter();
+            mExpensesChildRecyclerview.setAdapter(expensesChildAdapter);
+        }
+
+        public class ExpensesSharedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+            private LayoutInflater inflator;
+
+            public ExpensesSharedAdapter() {
+                try {
+                    this.inflator = LayoutInflater.from(getActivity());
+                } catch (NullPointerException e) {
+
+                }
+            }
+
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = inflator.inflate(R.layout.recyclerview_expenses_shared_view_child_row_layout, parent, false);
+                return new ExpensesSharedViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+                BoardExpensePOJO boardExpensePOJO = mSharedExpensesArrayList.get(position);
+                ((ExpensesSharedViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
+                ((ExpensesSharedViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+            }
+
+            @Override
+            public int getItemCount() {
+                return mSharedExpensesArrayList.size();
+            }
+
+
+            public class ExpensesSharedViewHolder extends RecyclerView.ViewHolder {
+                public TextView mAmount, mDescription;
+
+                public ExpensesSharedViewHolder(View itemView) {
+                    super(itemView);
+                    mDescription = itemView.findViewById(R.id.expenses_shared_view_desc);
+                    mAmount = itemView.findViewById(R.id.expenses_shared_view_amount);
+                }
+            }
+        }
+    }
+
+    /**-----------------------------------------------------------------------
+     * Other expenses view
+     * -----------------------------------------------------------------------
+     */
+    public static class ExpensesOtherFragement extends Fragment {
+        RecyclerView mExpensesChildRecyclerview;
+        View expenseFragmentView;
+
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+            expenseFragmentView = inflater.inflate(R.layout.expenses_other_view_child_fragment_layout, container, false);
+            return expenseFragmentView;
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            initExpensesChildFragment();
+        }
+
+        void initExpensesChildFragment() {
+            mExpensesChildRecyclerview = expenseFragmentView.findViewById(R.id.expenses_others_view_recyclerview);
+
+            mExpensesChildRecyclerview.invalidate();
+            mExpensesChildRecyclerview.setHasFixedSize(true);
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+            mExpensesChildRecyclerview.setLayoutManager(linearLayoutManager);
+            ExpensesOthersChildAdapter expensesChildAdapter = new ExpensesOthersChildAdapter();
+            mExpensesChildRecyclerview.setAdapter(expensesChildAdapter);
+        }
+
+        public class ExpensesOthersChildAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+            private LayoutInflater inflator;
+
+            public ExpensesOthersChildAdapter() {
+                try {
+                    this.inflator = LayoutInflater.from(getActivity());
+                } catch (NullPointerException e) {
+
+                }
+            }
+
+            @NonNull
+            @Override
+            public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = inflator.inflate(R.layout.recyclerview_expenses_others_child_fragment, parent, false);
+                return new ExpensesChildViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+                BoardExpensePOJO boardExpensePOJO = mOtherExpensesArrayList.get(position);
+                ((ExpensesChildViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
+                ((ExpensesChildViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+            }
+
+            @Override
+            public int getItemCount() {
+                return mOtherExpensesArrayList.size();
+            }
+
+
+            public class ExpensesChildViewHolder extends RecyclerView.ViewHolder {
+                public TextView mAmount, mDescription;
+
+                public ExpensesChildViewHolder(View itemView) {
+                    super(itemView);
+                    mDescription = itemView.findViewById(R.id.expenses_others_view_desc);
+                    mAmount = itemView.findViewById(R.id.expenses_others_view_amount);
                 }
             }
         }
