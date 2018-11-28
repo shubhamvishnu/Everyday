@@ -34,6 +34,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class FinanceExpensesFragment extends Fragment implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -152,31 +153,31 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
                             if (boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_PERSONAL) {
                                 boardExpensePOJOArrayList.add(boardExpensePOJO);
                                 totalAmountSpent += boardExpensePOJO.getAmount();
-                                mTotalAmountSpent.setText(totalAmountSpent + "");
+                                mTotalAmountSpent.setText(String.format(Locale.getDefault(), "%.2f", totalAmountSpent));
 
                                 mPersonalExpensesArrayList.add(boardExpensePOJO);
 
                             } else if ((boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_SPECIFIC) || (boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE)) {
                                 double tempExpense = 0.0;
                                 ArrayList<ExpenseMembersInfoPOJO> membersInfoPOJOS = boardExpensePOJO.getMemberInfoPojoList();
-                                if(membersInfoPOJOS == null){
+                                if (membersInfoPOJOS == null) {
                                     membersInfoPOJOS = new ArrayList<>();
                                 }
                                 tempExpense = boardExpensePOJO.getAmount() / (membersInfoPOJOS.size() + 1);
                                 for (int i = 0; i < membersInfoPOJOS.size(); i++) {
                                     if (!membersInfoPOJOS.get(i).isHasPaid()) {
                                         totalAmountOwed += tempExpense;
-                                        mTotalAmountOwed.setText(totalAmountOwed + "");
+                                        mTotalAmountOwed.setText(String.format(Locale.getDefault(), "%.2f", totalAmountOwed));
                                     }
                                 }
                                 totalAmountSpent += tempExpense;
-                                mTotalAmountSpent.setText(totalAmountSpent + "");
+                                mTotalAmountSpent.setText(String.format(Locale.getDefault(), "%.2f", totalAmountSpent));
 
                                 mSharedExpensesArrayList.add(boardExpensePOJO);
                             }
                         } else {
                             ArrayList<ExpenseMembersInfoPOJO> expenseMembersInfoPOJOArrayList = boardExpensePOJO.getMemberInfoPojoList();
-                            if(expenseMembersInfoPOJOArrayList == null){
+                            if (expenseMembersInfoPOJOArrayList == null) {
                                 expenseMembersInfoPOJOArrayList = new ArrayList<>();
                             }
                             if (expenseMembersInfoPOJOArrayList.size() > 0) {
@@ -265,7 +266,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    void initSharedExpenses(){
+    void initSharedExpenses() {
         ExpensesSharedChildFragement expensesChildFragement = new ExpensesSharedChildFragement();
 
         Bundle bundle = new Bundle();
@@ -280,7 +281,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
         transaction.commit();
     }
-    void initOtherExpenses(){
+
+    void initOtherExpenses() {
         ExpensesOtherFragement expensesChildFragement = new ExpensesOtherFragement();
 
         Bundle bundle = new Bundle();
@@ -296,7 +298,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         transaction.commit();
     }
 
-    /**-----------------------------------------------------------------------
+    /**
+     * -----------------------------------------------------------------------
      * Personal expenses view
      * -----------------------------------------------------------------------
      */
@@ -372,7 +375,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     }
 
 
-    /**-----------------------------------------------------------------------
+    /**
+     * -----------------------------------------------------------------------
      * Shared expenses view
      * -----------------------------------------------------------------------
      */
@@ -448,7 +452,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         }
     }
 
-    /**-----------------------------------------------------------------------
+    /**
+     * -----------------------------------------------------------------------
      * Other expenses view
      * -----------------------------------------------------------------------
      */
