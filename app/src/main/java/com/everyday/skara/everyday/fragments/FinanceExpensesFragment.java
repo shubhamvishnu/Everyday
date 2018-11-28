@@ -188,7 +188,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
                                             double tempExpense = 0.0;
                                             tempExpense = boardExpensePOJO.getAmount() / (expenseMembersInfoPOJOArrayList.size() + 1);
                                             totalAmountOwing += tempExpense;
-                                            mTotalAmountOwing.setText(totalAmountOwing + "");
+                                            mTotalAmountOwing.setText(String.format(Locale.getDefault(), "%.2f",totalAmountOwing));
                                             mOtherExpensesArrayList.add(boardExpensePOJO);
                                             break;
                                         }
@@ -322,7 +322,6 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
         void initExpensesChildFragment() {
             mExpensesChildRecyclerview = expenseFragmentView.findViewById(R.id.expenses_view_recyclerview);
-
             mExpensesChildRecyclerview.invalidate();
             mExpensesChildRecyclerview.setHasFixedSize(true);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
@@ -353,7 +352,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                 BoardExpensePOJO boardExpensePOJO = mPersonalExpensesArrayList.get(position);
                 ((ExpensesChildViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
-                ((ExpensesChildViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+                ((ExpensesChildViewHolder) holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f",boardExpensePOJO.getAmount()));
+                ((ExpensesChildViewHolder) holder).mDate.setText(boardExpensePOJO.getDate());
             }
 
             @Override
@@ -363,12 +363,13 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
 
             public class ExpensesChildViewHolder extends RecyclerView.ViewHolder {
-                public TextView mAmount, mDescription;
+                public TextView mAmount, mDescription, mDate;
 
                 public ExpensesChildViewHolder(View itemView) {
                     super(itemView);
                     mDescription = itemView.findViewById(R.id.expenses_view_desc);
                     mAmount = itemView.findViewById(R.id.expenses_view_amount);
+                    mDate = itemView.findViewById(R.id.expense_view_date);
                 }
             }
         }
@@ -431,7 +432,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                 BoardExpensePOJO boardExpensePOJO = mSharedExpensesArrayList.get(position);
                 ((ExpensesSharedViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
-                ((ExpensesSharedViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+                ((ExpensesSharedViewHolder) holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f",boardExpensePOJO.getAmount()));
             }
 
             @Override
@@ -507,7 +508,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
             public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                 BoardExpensePOJO boardExpensePOJO = mOtherExpensesArrayList.get(position);
                 ((ExpensesChildViewHolder) holder).mDescription.setText(boardExpensePOJO.getDescription());
-                ((ExpensesChildViewHolder) holder).mAmount.setText(boardExpensePOJO.getAmount() + "");
+                ((ExpensesChildViewHolder) holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f",boardExpensePOJO.getAmount()));
             }
 
             @Override
