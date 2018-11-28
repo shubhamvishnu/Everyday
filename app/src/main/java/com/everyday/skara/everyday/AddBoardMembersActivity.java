@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,15 +20,17 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.BoardMembersType;
 import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
+import com.everyday.skara.everyday.classes.FinanceBoardExpense;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.pojo.BoardExpensePOJO;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
+import com.everyday.skara.everyday.pojo.ExpenseMembersInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -47,13 +51,15 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     RecyclerView mMemberSearchRecyclerView;
     Button mDoneButton;
     FirebaseDatabase firebaseDatabase;
-    DatabaseReference childDatabaseReference;
-    ChildEventListener memberChildEventListener;
+    DatabaseReference userDetailsDatabaseReference;
+    ValueEventListener userDetailsValueEventListener;
     SearchAdapter searchAdapter;
     BoardPOJO boardPOJO;
     UserInfoPOJO userInfoPOJO;
     ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
     ArrayList<UserInfoPOJO> userInfoPOJOArrayList;
+    ValueEventListener existingMemberValueEventListener;
+    DatabaseReference existingMemberDatabaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,31 +97,26 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     }
 
     void initRecyclerView() {
-        userInfoPOJOArrayList.clear();
+        userInfoPOJOArrayList = new ArrayList<>();
         mMemberSearchRecyclerView.invalidate();
         mMemberSearchRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mMemberSearchRecyclerView.setLayoutManager(linearLayoutManager);
         searchAdapter = new SearchAdapter();
         mMemberSearchRecyclerView.setAdapter(searchAdapter);
+        initExistingBoardMembers();
     }
-
-    void checkExistingBoardMembers(final String input) {
+    void initExistingBoardMembers(){
         boardMembersPOJOArrayList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        final DatabaseReference databaseReference1 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
-        databaseReference1.keepSynced(true);
-        databaseReference1.addListenerForSingleValueEvent(new ValueEventListener() {
+        existingMemberDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+        existingMemberDatabaseReference.keepSynced(true);
+        existingMemberValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if (dataSnapshot.hasChildren()) {
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        boardMembersPOJOArrayList.add(snapshot.getValue(BoardMembersPOJO.class));
-                    }
-                } else {
-                    if (!input.equalsIgnoreCase("")) {
-                        fetchFromFirebase(input);
-                    }
+                boardMembersPOJOArrayList = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    boardMembersPOJOArrayList.add(snapshot.getValue(BoardMembersPOJO.class));
                 }
             }
 
@@ -123,8 +124,8 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        });
-
+        };
+        existingMemberDatabaseReference.addValueEventListener(existingMemberValueEventListener);
     }
 
     public class SearchAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -189,59 +190,77 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
 
     void addMembersToBoard(int position) {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference databaseReference1 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
+        final DatabaseReference databaseReference1 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/members/");
 
-        UserInfoPOJO userInfoPOJO = userInfoPOJOArrayList.get(position);
+        UserInfoPOJO userInfoPOJOSelected = userInfoPOJOArrayList.get(position);
         DatabaseReference memberDatabaseReference = databaseReference1.push();
-        BoardMembersPOJO boardMembersPOJO = new BoardMembersPOJO(memberDatabaseReference.getKey(), DateTimeStamp.getDate(), userInfoPOJO, BoardMembersType.TYPE_MEMBER);
+        final BoardMembersPOJO boardMembersPOJO = new BoardMembersPOJO(memberDatabaseReference.getKey(), DateTimeStamp.getDate(), userInfoPOJOSelected, BoardMembersType.TYPE_MEMBER);
         memberDatabaseReference.setValue(boardMembersPOJO);
 
         // other board info
-        DatabaseReference databaseReference2 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_OTHER_BOARDS_INFO + userInfoPOJO.getUser_key() + "/" + boardPOJO.getBoardKey());
+        DatabaseReference databaseReference2 = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_OTHER_BOARDS_INFO + userInfoPOJOSelected.getUser_key() + "/" + boardPOJO.getBoardKey());
         databaseReference2.setValue(boardPOJO);
+
+        if (boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL) {
+            DatabaseReference expensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses/");
+            expensesDatabaseReference.keepSynced(true);
+            final DatabaseReference everyoneExpensesUpdateReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_BOARDS + boardPOJO.getBoardKey() + "/expenses/");
+            everyoneExpensesUpdateReference.keepSynced(true);
+            expensesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            BoardExpensePOJO boardExpensePOJO = snapshot.getValue(BoardExpensePOJO.class);
+                            if (boardExpensePOJO.getSplitType() == FinanceBoardExpense.EXPENSE_TYPE_EVERYONE) {
+                                ArrayList<ExpenseMembersInfoPOJO> membersInfoPOJOS = boardExpensePOJO.getMemberInfoPojoList();
+                                if (membersInfoPOJOS == null) {
+                                    membersInfoPOJOS = new ArrayList<>();
+                                }
+                                membersInfoPOJOS.add(new ExpenseMembersInfoPOJO(boardMembersPOJO, false));
+                                boardExpensePOJO.setMemberInfoPojoList(membersInfoPOJOS);
+                                HashMap<String, Object> expenseMemberHashMap = new HashMap<>();
+                                expenseMemberHashMap.put(boardExpensePOJO.getEntryKey(), boardExpensePOJO);
+                                everyoneExpensesUpdateReference.updateChildren(expenseMemberHashMap);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         userInfoPOJOArrayList.remove(position);
         searchAdapter.notifyItemRemoved(position);
     }
 
     void fetchFromFirebase(final String input) {
-        userInfoPOJOArrayList = new ArrayList<>();
         firebaseDatabase = FirebaseDatabase.getInstance();
-        childDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS);
-        childDatabaseReference.keepSynced(true);
-        memberChildEventListener = new ChildEventListener() {
+        userDetailsDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS);
+        userDetailsDatabaseReference.keepSynced(true);
+        userDetailsValueEventListener = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
                 try {
+                    userInfoPOJOArrayList = new ArrayList<>();
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        UserInfoPOJO userInfoPOJO1 = dataSnapshot.getValue(UserInfoPOJO.class);
+                        if (!userInfoPOJO1.getUser_key().equals(userInfoPOJO.getUser_key())) {
+                            if (!checkForExistenceFromList(userInfoPOJO1)) {
+                                if (userInfoPOJO1.getName().contains(input) || userInfoPOJO1.getEmail().contains(input)) {
+                                    userInfoPOJOArrayList.add(userInfoPOJO1);
+                                }
 
-                    UserInfoPOJO userInfoPOJO1 = dataSnapshot.getValue(UserInfoPOJO.class);
-                    if (!userInfoPOJO1.getUser_key().equals(userInfoPOJO.getUser_key())) {
-
-                        if (!checkForExistenceFromList(userInfoPOJO1)) {
-                            if (userInfoPOJO1.getName().contains(input) || userInfoPOJO1.getEmail().contains(input)) {
-                                userInfoPOJOArrayList.add(userInfoPOJO1);
-                                searchAdapter.notifyDataSetChanged();
                             }
-
                         }
                     }
+                    searchAdapter.notifyDataSetChanged();
                 } catch (NullPointerException e) {
                 }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
@@ -249,18 +268,17 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
 
             }
         };
-        childDatabaseReference.addChildEventListener(memberChildEventListener);
+        userDetailsDatabaseReference.addValueEventListener(userDetailsValueEventListener);
     }
 
-    boolean checkForExistenceFromList(UserInfoPOJO userInfoPOJO) {
-        if ((boardMembersPOJOArrayList.size() > 0)) {
+    boolean checkForExistenceFromList(UserInfoPOJO userInfoPOJO2) {
+        boolean found = false;
             for (int i = 0; i < boardMembersPOJOArrayList.size(); i++) {
-                if (boardMembersPOJOArrayList.get(i).getUserInfoPOJO().getUser_key().equals(userInfoPOJO)) {
-                    return true;
+                if (boardMembersPOJOArrayList.get(i).getUserInfoPOJO().getUser_key().equals(userInfoPOJO2.getUser_key())) {
+                    found = true;
                 }
             }
-        }
-        return false;
+        return found;
     }
 
     @Override
@@ -270,8 +288,11 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     }
 
     void removeChildEventListener() {
-        if (memberChildEventListener != null) {
-            childDatabaseReference.removeEventListener(memberChildEventListener);
+        if (userDetailsValueEventListener != null) {
+            userDetailsDatabaseReference.removeEventListener(userDetailsValueEventListener);
+        }
+        if (existingMemberValueEventListener != null) {
+            existingMemberDatabaseReference.removeEventListener(existingMemberValueEventListener);
         }
     }
 
@@ -286,7 +307,6 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.done_adding_members_button:
-                removeChildEventListener();
                 toBoardsActivity();
                 break;
         }
@@ -294,9 +314,9 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
 
     void toBoardsActivity() {
         Intent intent = null;
-        if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
+        if (boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_PRODUCTIVITY) {
             intent = new Intent(AddBoardMembersActivity.this, BoardActivity.class);
-        }else if(boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL){
+        } else if (boardPOJO.getBoardType() == BoardTypes.BOARD_TYPE_FINANCIAL) {
             intent = new Intent(AddBoardMembersActivity.this, FinancialBoardActivity.class);
         }
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -324,8 +344,9 @@ public class AddBoardMembersActivity extends AppCompatActivity implements View.O
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                removeChildEventListener();
-                checkExistingBoardMembers(newText);
+                if (!newText.equalsIgnoreCase("")) {
+                    fetchFromFirebase(newText);
+                }
                 return false;
             }
         });

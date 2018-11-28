@@ -388,12 +388,18 @@ public class PersonalFinanceFragment extends Fragment {
     }
 
     void updateExpenses() {
-
         mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
         if(yearMonthExpenseArrayListHashMap.containsKey(currentYear)){
             if(yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)){
                 if(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0){
                     mTotalExpenseTextView.setText("0.00");
+                }else{
+                    ArrayList<ExpensePOJO> tempExpensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
+                    double tempTotal = 0.0;
+                    for(int i = 0; i < tempExpensePOJO.size(); i++){
+                        tempTotal += tempExpensePOJO.get(i).getAmount();
+                    }
+                    mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", tempTotal));
                 }
             }
         }
@@ -424,12 +430,9 @@ public class PersonalFinanceFragment extends Fragment {
 
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
-        double totalExpense = 0.0;
         public PersonalFinanceAdapter() {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
-                this.totalExpense = 0.0;
-                mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", this.totalExpense));
             } catch (NullPointerException e) {
 
             }
@@ -445,8 +448,6 @@ public class PersonalFinanceFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ExpensePOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
-            this.totalExpense += expensePOJO.getAmount();
-            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", this.totalExpense));
             ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
             ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
             ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());

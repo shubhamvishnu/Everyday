@@ -78,15 +78,15 @@
             android:layout_height="wrap_content"
             android:text="personal"/>
         <Button
-            android:id="@+id/everyone_expenses_view_button"
+            android:id="@+id/shared_expenses_view_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Everyone"/>
+            android:text="Shared"/>
         <Button
-            android:id="@+id/specific_expenses_view_button"
+            android:id="@+id/other_expenses_view_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Speicifc"/>
+            android:text="Others"/>
 
     </LinearLayout>
     <FrameLayout

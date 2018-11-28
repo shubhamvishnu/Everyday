@@ -2,7 +2,6 @@ package com.everyday.skara.everyday.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,15 +28,12 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -65,7 +61,7 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     BottomSheetDialog mMonthBottomSheetDialog;
 
-    LinkedHashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>>> catYearMonthExpenseArrayListHashMap;
+    HashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>>> catYearMonthExpenseArrayListHashMap;
     HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>>> yearMonthDateHashMap;
 
     ArrayList<Categories> categoriesArrayList;
@@ -78,7 +74,7 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     int currentYear;
     int currentMonth;
-
+    HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>> yearMonthExpenseArrayListHashMap;
     ArrayList<CategoryExpensePOJO> mCategoryExpenseArrayList = new ArrayList<>();
     HashMap<String, ArrayList<WeekDayWiseExpense>> weekWiseExpenseHashMap;
 
@@ -187,6 +183,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 0;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
                 mMonthBottomSheetDialog.dismiss();
             }
@@ -195,6 +193,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 1;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -204,6 +204,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 2;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -213,6 +215,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 3;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -222,6 +226,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 4;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -231,6 +237,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 5;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -240,6 +248,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 6;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -249,6 +259,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 7;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -258,6 +270,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 8;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -267,6 +281,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 9;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -276,6 +292,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 10;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -285,6 +303,8 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 currentMonth = 11;
+                updateTotalExpense();
+                updateDayExpenses();
                 updateCategoryExpenses();
 
                 mMonthBottomSheetDialog.dismiss();
@@ -294,10 +314,6 @@ public class PersonalFinanceAnalytics extends Fragment {
         mMonthBottomSheetDialog.show();
     }
 
-    void initFinanceRecyclerView() {
-        // TODO init Pie chart
-        initExpenses();
-    }
 
     void initCategories() {
         categoriesArrayList = new ArrayList<>();
@@ -318,7 +334,7 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
         });
 
-        initFinanceRecyclerView();
+        initExpenses();
 
 
     }
@@ -326,8 +342,9 @@ public class PersonalFinanceAnalytics extends Fragment {
     void initExpenses() {
         expensePOJOArrayList = new ArrayList<>();
 
+        yearMonthExpenseArrayListHashMap = new HashMap<>();
         yearMonthDateHashMap = new HashMap<>();
-        catYearMonthExpenseArrayListHashMap = new LinkedHashMap<>();
+        catYearMonthExpenseArrayListHashMap = new HashMap<>();
 
         mExpensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses");
         mExpensesDatabaseReference.keepSynced(true);
@@ -338,8 +355,29 @@ public class PersonalFinanceAnalytics extends Fragment {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
                         expensePOJOArrayList.add(expensePOJO);
+
                         /**----------------------------------------------------------------------*/
-                        // expense year and month wise
+                        // expense YEAR/MONTH wise
+                        if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
+                            if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                ArrayList<ExpensePOJO> expensePOJOArrayList2 = yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                                expensePOJOArrayList2.add(expensePOJO);
+                                yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
+                            } else {
+                                ArrayList<ExpensePOJO> expensePOJOArrayList2 = new ArrayList<>();
+                                expensePOJOArrayList2.add(expensePOJO);
+                                yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
+                            }
+                        } else {
+                            HashMap<Integer, ArrayList<ExpensePOJO>> monthHashMap = new HashMap<>();
+                            ArrayList<ExpensePOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                            expensePOJOArrayListTemp.add(expensePOJO);
+                            monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
+                            yearMonthExpenseArrayListHashMap.put(expensePOJO.getYear(), monthHashMap);
+                        }
+
+                        /**----------------------------------------------------------------------*/
+                        // expense YEAR/MONTH/DATE wise
                         if (yearMonthDateHashMap.containsKey(expensePOJO.getYear())) {
                             if (yearMonthDateHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
                                 if (yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).containsKey(expensePOJO.getDate())) {
@@ -408,6 +446,7 @@ public class PersonalFinanceAnalytics extends Fragment {
                 /**----------------------------------------------------------------------*/
 
                 // reflect updated data
+                updateTotalExpense();
                 updateCategoryExpenses();
                 updateDayExpenses();
 
@@ -420,6 +459,24 @@ public class PersonalFinanceAnalytics extends Fragment {
         };
 
         mExpensesDatabaseReference.addValueEventListener(mExpenseValueEventListener);
+    }
+
+    void updateTotalExpense() {
+        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
+            if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
+                if (yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0) {
+                    mTotalExpenseTextView.setText("0.00");
+                } else {
+                    ArrayList<ExpensePOJO> tempExpensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
+                    double tempTotal = 0.0;
+                    for (int i = 0; i < tempExpensePOJO.size(); i++) {
+                        tempTotal += tempExpensePOJO.get(i).getAmount();
+                    }
+                    mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", tempTotal));
+                }
+            }
+        }
     }
 
     class DayExpensePOJO {
@@ -575,7 +632,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         reflectLineChart();
     }
 
-    void reflectLineChart(){
+    void reflectLineChart() {
 
     }
 
@@ -733,7 +790,6 @@ public class PersonalFinanceAnalytics extends Fragment {
         legend.setWordWrapEnabled(true);
         mPieChart.setData(data);
         mPieChart.setDrawEntryLabels(false);
-
 
 
         mPieChart.setUsePercentValues(true);

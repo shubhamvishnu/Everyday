@@ -51,7 +51,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList;
     public static ArrayList<BoardExpensePOJO> mPersonalExpensesArrayList, mSharedExpensesArrayList, mOtherExpensesArrayList;
 
-    Button mPersonalViewButton, mEveryoneViewButton, mSpeicifViewButton;
+    Button mPersonalViewButton, mSharedViewButton, mOtherViewButton;
     View view;
 
 
@@ -84,8 +84,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
         mTotalAmountOwing = view.findViewById(R.id.total_amount_owing_finance_board_textview);
 
         mPersonalViewButton = view.findViewById(R.id.personal_expenses_view_button);
-        mEveryoneViewButton = view.findViewById(R.id.everyone_expenses_view_button);
-        mSpeicifViewButton = view.findViewById(R.id.specific_expenses_view_button);
+        mSharedViewButton = view.findViewById(R.id.shared_expenses_view_button);
+        mOtherViewButton = view.findViewById(R.id.other_expenses_view_button);
 
         mCurencyTextView = view.findViewById(R.id.currency_fiance_board_textview);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
@@ -93,8 +93,8 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
 
         mPersonalViewButton.setOnClickListener(this);
-        mEveryoneViewButton.setOnClickListener(this);
-        mSpeicifViewButton.setOnClickListener(this);
+        mSharedViewButton.setOnClickListener(this);
+        mOtherViewButton.setOnClickListener(this);
 
         mTotalAmountSpent.setText("-");
         mTotalAmountOwed.setText("-");
@@ -253,15 +253,48 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.personal_expenses_view_button:
+                initChildExpensesFragment();
                 break;
-            case R.id.everyone_expenses_view_button:
+            case R.id.shared_expenses_view_button:
+                initSharedExpenses();
                 break;
-            case R.id.specific_expenses_view_button:
+            case R.id.other_expenses_view_button:
+                initOtherExpenses();
                 break;
 
         }
     }
 
+    void initSharedExpenses(){
+        ExpensesSharedChildFragement expensesChildFragement = new ExpensesSharedChildFragement();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("board_pojo", boardPOJO);
+        bundle.putSerializable("user_profile", userInfoPOJO);
+        expensesChildFragement.setArguments(bundle);
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.expenses_detail_fragment_container, expensesChildFragement);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
+    void initOtherExpenses(){
+        ExpensesOtherFragement expensesChildFragement = new ExpensesOtherFragement();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("board_pojo", boardPOJO);
+        bundle.putSerializable("user_profile", userInfoPOJO);
+        expensesChildFragement.setArguments(bundle);
+
+        FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.expenses_detail_fragment_container, expensesChildFragement);
+        transaction.addToBackStack(null);
+
+        transaction.commit();
+    }
 
     /**-----------------------------------------------------------------------
      * Personal expenses view
