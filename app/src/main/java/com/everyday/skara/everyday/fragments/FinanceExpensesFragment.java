@@ -522,6 +522,7 @@ public class FinanceExpensesFragment extends Fragment implements View.OnClickLis
 
                 public ExpensesChildViewHolder(View itemView) {
                     super(itemView);
+
                     mDescription = itemView.findViewById(R.id.expenses_others_view_desc);
                     mAmount = itemView.findViewById(R.id.expenses_others_view_amount);
                 }
