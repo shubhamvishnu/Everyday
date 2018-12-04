@@ -438,24 +438,25 @@ public class CategoriesActivity extends AppCompatActivity {
 
         }
     }
-
+    double limitAmount = 0.0;
     void addNewCategoryDialog() {
         mAddNewCatDialog = new BottomSheetDialog(this);
         mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout);
         choosenIcon = -1;
         choosenColor = -1;
-        final EditText mTitle;
+        final EditText mTitle, mLimit;
         ImageButton mClose;
         Button mChooseIcon;
         ImageButton mRed, mYellow, mBlue, mGreen, mBlueGreen, mPink;
         Button mDone;
+        limitAmount = 0.0;
 
         mTitle = mAddNewCatDialog.findViewById(R.id.new_category_title);
         mClose = mAddNewCatDialog.findViewById(R.id.close_new_category_dialog);
         mChooseIcon = mAddNewCatDialog.findViewById(R.id.choose_icon_button);
         mChosenIconImageButton = mAddNewCatDialog.findViewById(R.id.ic_icon_chosen);
+        mLimit = mAddNewCatDialog.findViewById(R.id.new_category_limit);
         mDone = mAddNewCatDialog.findViewById(R.id.new_cat_dialog_done);
-
         mRed = mAddNewCatDialog.findViewById(R.id.red);
         mYellow = mAddNewCatDialog.findViewById(R.id.yellow);
         mBlue = mAddNewCatDialog.findViewById(R.id.blue);
@@ -527,9 +528,15 @@ public class CategoriesActivity extends AppCompatActivity {
                         if (choosenColor == -1) {
                             choosenColor = 0;
                         }
+                        double inputAmount = Double.valueOf(mLimit.getText().toString());
+                        if(!(inputAmount > 0)){
+                            limitAmount = 0.0;
+                        }else{
+                            limitAmount = inputAmount;
+                        }
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);
                         DatabaseReference catReference = databaseReference.child("categories").push();
-                        catReference.setValue(new Categories(title, catReference.getKey(), choosenIcon, choosenColor));
+                        catReference.setValue(new Categories(title, catReference.getKey(), choosenIcon, choosenColor, limitAmount));
                         mAddNewCatDialog.dismiss();
                     }
                 }

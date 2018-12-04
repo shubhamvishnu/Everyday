@@ -5,15 +5,17 @@ public class Categories {
     String categoryKey;
     int categoryIconId;
     int colorId;
+    double limitAmount;
 
     public Categories(){
 
     }
-    public Categories(String categoryName, String categoryKey, int categoryIconId, int colorId) {
+    public Categories(String categoryName, String categoryKey, int categoryIconId, int colorId, double limitAmount) {
         this.categoryName = categoryName;
         this.categoryKey = categoryKey;
         this.categoryIconId = categoryIconId;
         this.colorId = colorId;
+        this.limitAmount = limitAmount;
     }
 
     public int getCategoryIconId() {

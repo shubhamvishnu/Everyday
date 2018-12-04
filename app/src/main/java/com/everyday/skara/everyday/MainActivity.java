@@ -434,23 +434,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             DatabaseReference catReference = boardReference.child("categories").push();
             catReference.keepSynced(true);
-            catReference.setValue(new Categories("Others", catReference.getKey(), 2005, 1));
+            catReference.setValue(new Categories("Others", catReference.getKey(), 2005, 1, 0.0));
 
             DatabaseReference catReference2 = boardReference.child("categories").push();
             catReference2.keepSynced(true);
-            catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey(), 2002, 2));
+            catReference2.setValue(new Categories("Food and Drinks", catReference2.getKey(), 2002, 2, 0.0));
 
             DatabaseReference catReference3 = boardReference.child("categories").push();
             catReference3.keepSynced(true);
-            catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000, 3));
+            catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000, 3, 0.0));
 
             DatabaseReference catReference4 = boardReference.child("categories").push();
             catReference4.keepSynced(true);
-            catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4));
+            catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4, 0.0));
 
             DatabaseReference catReference5 = boardReference.child("categories").push();
             catReference5.keepSynced(true);
-            catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006, 5));
+            catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006, 5, 0.0));
 
         }
         // initializing ActivityPOJO class
