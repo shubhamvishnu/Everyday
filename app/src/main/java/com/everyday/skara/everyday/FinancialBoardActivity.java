@@ -78,7 +78,7 @@ public class FinancialBoardActivity extends AppCompatActivity {
                 toBoardMembersActivity();
                 return true;
 
-            case R.id.add_new_expense_menu_item:
+            case R.id.add_new_entry_menu_item:
                 toNewExpenseActivity();
                 return true;
             default:

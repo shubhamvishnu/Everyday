@@ -17,13 +17,12 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.NewExpenseActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
-import com.everyday.skara.everyday.pojo.ExpensePOJO;
+import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -35,7 +34,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -46,7 +44,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
+    ArrayList<FinanceEntryPOJO> expensePOJOArrayList;
     RecyclerView mPersonalFinanceRecyclerView;
     PersonalFinanceAdapter mPersonalFinanceAdapter;
     ChildEventListener mExpenseChildEventListener;
@@ -54,7 +52,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     BottomSheetDialog mMonthBottomSheetDialog;
 
-    LinkedHashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>>> catYearMonthExpenseArrayListHashMap;
+    LinkedHashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>>> catYearMonthExpenseArrayListHashMap;
     ArrayList<Categories> categoriesArrayList;
 
     FloatingTextButton mMonthSelectionButton;
@@ -302,27 +300,27 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         mExpenseChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
+                FinanceEntryPOJO expensePOJO = dataSnapshot.getValue(FinanceEntryPOJO.class);
                 expensePOJOArrayList.add(expensePOJO);
 
 
                 if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
                     if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
                         if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
-                            ArrayList<ExpensePOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
                             expensePOJOArrayList4.add(expensePOJO);
                             catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
                         } else {
-                            ArrayList<ExpensePOJO> expensePOJOArrayList4 = new ArrayList<>();
+                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = new ArrayList<>();
                             expensePOJOArrayList4.add(expensePOJO);
                             catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
 
                         }
 
                     } else {
-                        HashMap<Integer, ArrayList<ExpensePOJO>> monthHashMap = new HashMap<>();
+                        HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
 
-                        ArrayList<ExpensePOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                        ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
                         expensePOJOArrayListTemp.add(expensePOJO);
 
                         monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
@@ -330,10 +328,10 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                         catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).put(expensePOJO.getYear(), monthHashMap);
                     }
                 } else {
-                    HashMap<Integer, HashMap<Integer, ArrayList<ExpensePOJO>>> yearMonthHashMap = new HashMap<>();
-                    HashMap<Integer, ArrayList<ExpensePOJO>> monthHashMap = new HashMap<>();
+                    HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthHashMap = new HashMap<>();
+                    HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
 
-                    ArrayList<ExpensePOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                    ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
                     expensePOJOArrayListTemp.add(expensePOJO);
 
                     monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
@@ -420,7 +418,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ArrayList<ExpensePOJO> expensePOJOArrayList = new ArrayList<>();
+            ArrayList<FinanceEntryPOJO> expensePOJOArrayList = new ArrayList<>();
             double total = 0.0;
             Categories categories = categoriesArrayList.get(position);
             if (catYearMonthExpenseArrayListHashMap.containsKey(categories.getCategoryKey())) {

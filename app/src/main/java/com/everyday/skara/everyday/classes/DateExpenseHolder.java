@@ -1,15 +1,15 @@
 package com.everyday.skara.everyday.classes;
 
-import com.everyday.skara.everyday.pojo.ExpensePOJO;
+import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 
 import java.util.ArrayList;
 
 public class DateExpenseHolder {
     String date;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
+    ArrayList<FinanceEntryPOJO> expensePOJOArrayList;
 
     public DateExpenseHolder(){}
-    public DateExpenseHolder(String date, ArrayList<ExpensePOJO> expensePOJOArrayList) {
+    public DateExpenseHolder(String date, ArrayList<FinanceEntryPOJO> expensePOJOArrayList) {
         this.date = date;
         this.expensePOJOArrayList = expensePOJOArrayList;
     }
@@ -22,11 +22,11 @@ public class DateExpenseHolder {
         this.date = date;
     }
 
-    public ArrayList<ExpensePOJO> getExpensePOJOArrayList() {
+    public ArrayList<FinanceEntryPOJO> getExpensePOJOArrayList() {
         return expensePOJOArrayList;
     }
 
-    public void setExpensePOJOArrayList(ArrayList<ExpensePOJO> expensePOJOArrayList) {
+    public void setExpensePOJOArrayList(ArrayList<FinanceEntryPOJO> expensePOJOArrayList) {
         this.expensePOJOArrayList = expensePOJOArrayList;
     }
 }

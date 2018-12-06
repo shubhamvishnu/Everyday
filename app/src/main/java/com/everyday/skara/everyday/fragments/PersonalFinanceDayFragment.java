@@ -25,7 +25,7 @@ import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
-import com.everyday.skara.everyday.pojo.ExpensePOJO;
+import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -36,9 +36,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
@@ -48,7 +46,7 @@ public class PersonalFinanceDayFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     UserInfoPOJO userInfoPOJO;
-    ArrayList<ExpensePOJO> expensePOJOArrayList;
+    ArrayList<FinanceEntryPOJO> expensePOJOArrayList;
     RecyclerView mPersonalFinanceRecyclerView;
     PersonalFinanceAdapter mPersonalFinanceAdapter;
     ChildEventListener mExpenseChildEventListener;
@@ -56,7 +54,7 @@ public class PersonalFinanceDayFragment extends Fragment {
 
     BottomSheetDialog mMonthBottomSheetDialog;
 
-    HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>>> yearMonthDateHashMap;
+    HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>>> yearMonthDateHashMap;
 
     FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView;
@@ -267,7 +265,7 @@ public class PersonalFinanceDayFragment extends Fragment {
         mPersonalFinanceRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mPersonalFinanceRecyclerView.setLayoutManager(linearLayoutManager);
-        mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<ExpensePOJO>>());
+        mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<FinanceEntryPOJO>>());
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
 
         initExpenses();
@@ -283,32 +281,32 @@ public class PersonalFinanceDayFragment extends Fragment {
         mExpenseChildEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ExpensePOJO expensePOJO = dataSnapshot.getValue(ExpensePOJO.class);
+                FinanceEntryPOJO expensePOJO = dataSnapshot.getValue(FinanceEntryPOJO.class);
                 expensePOJOArrayList.add(expensePOJO);
 
                 // expense year and month wise
                 if (yearMonthDateHashMap.containsKey(expensePOJO.getYear())) {
                     if (yearMonthDateHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
                         if (yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).containsKey(expensePOJO.getDate())) {
-                            ArrayList<ExpensePOJO> expensePOJOArrayList2 = yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).get(expensePOJO.getDate());
+                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).get(expensePOJO.getDate());
                             expensePOJOArrayList2.add(expensePOJO);
                             yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList2);
                         } else {
-                            ArrayList<ExpensePOJO> expensePOJOArrayList5 = new ArrayList<>();
+                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList5 = new ArrayList<>();
                             expensePOJOArrayList5.add(expensePOJO);
                             yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList5);
                         }
                     } else {
-                        HashMap<String, ArrayList<ExpensePOJO>> dateExpenseHashMap = new HashMap<>();
-                        ArrayList<ExpensePOJO> expensePOJOArrayList2 = new ArrayList<>();
+                        HashMap<String, ArrayList<FinanceEntryPOJO>> dateExpenseHashMap = new HashMap<>();
+                        ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
                         expensePOJOArrayList2.add(expensePOJO);
                         dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
                         yearMonthDateHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), dateExpenseHashMap);
                     }
                 } else {
-                    HashMap<Integer, HashMap<String, ArrayList<ExpensePOJO>>> monthDateExpenseHashMap = new HashMap<>();
-                    HashMap<String, ArrayList<ExpensePOJO>> dateExpenseHashMap = new HashMap<>();
-                    ArrayList<ExpensePOJO> expensePOJOArrayList2 = new ArrayList<>();
+                    HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>> monthDateExpenseHashMap = new HashMap<>();
+                    HashMap<String, ArrayList<FinanceEntryPOJO>> dateExpenseHashMap = new HashMap<>();
+                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
                     expensePOJOArrayList2.add(expensePOJO);
                     dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
                     monthDateExpenseHashMap.put(expensePOJO.getMonth(), dateExpenseHashMap);
@@ -350,7 +348,7 @@ public class PersonalFinanceDayFragment extends Fragment {
             if(yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)){
                 mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthDateHashMap.get(currentYear).get(currentMonth));
             }else{
-                mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<ExpensePOJO>>());
+                mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<FinanceEntryPOJO>>());
             }
 
         }
@@ -384,14 +382,14 @@ public class PersonalFinanceDayFragment extends Fragment {
         private LayoutInflater inflator;
         ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
 
-        public PersonalFinanceAdapter(HashMap<String, ArrayList<ExpensePOJO>> expensePOJOHashMapArrayList) {
+        public PersonalFinanceAdapter(HashMap<String, ArrayList<FinanceEntryPOJO>> expensePOJOHashMapArrayList) {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
                 totalExpense = 0.0;
                 mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
 
                 dateExpenseHolderArrayList = new ArrayList<>();
-                for (Map.Entry<String, ArrayList<ExpensePOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
+                for (Map.Entry<String, ArrayList<FinanceEntryPOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
                     dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));
 
                 }
@@ -410,10 +408,10 @@ public class PersonalFinanceDayFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             DateExpenseHolder dateExpenseHolder = dateExpenseHolderArrayList.get(position);
-            ArrayList<ExpensePOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
+            ArrayList<FinanceEntryPOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
             double dayAmount = 0.0;
             for(int i = 0; i < expensePOJOArrayList.size(); i++){
-                ExpensePOJO expensePOJO = expensePOJOArrayList.get(i);
+                FinanceEntryPOJO expensePOJO = expensePOJOArrayList.get(i);
                 dayAmount += expensePOJO.getAmount();
                 totalExpense += expensePOJO.getAmount();
             }

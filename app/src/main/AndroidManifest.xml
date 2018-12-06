@@ -63,7 +63,8 @@
         <activity android:name=".PersonalHabitActivity" />
         <activity android:name=".PersonalStopwatchActivity" />
         <activity android:name=".NewHabitActivity" />
-        <activity android:name=".NewBoardExpenseActivity"></activity>
+        <activity android:name=".NewBoardExpenseActivity" />
+        <activity android:name=".NewIncomeExpenseActivity"></activity>
     </application>
 
 </manifest>

@@ -1,13 +1,18 @@
 package com.everyday.skara.everyday;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.everyday.skara.everyday.classes.NewOptionTypes;
@@ -187,8 +192,8 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.add_new_expense_menu_item:
-                toNewExpenseActivity();
+            case R.id.add_new_entry_menu_item:
+                chooseEntryTypeBoard();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
@@ -196,6 +201,47 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    void chooseEntryTypeBoard() {
+        final Dialog mEntryTypeDialog = new BottomSheetDialog(this);
+        mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
+        Button mIncomeType, mExpenseType;
+        mIncomeType = mEntryTypeDialog.findViewById(R.id.income_type_button);
+        mExpenseType = mEntryTypeDialog.findViewById(R.id.expense_type_button);
+
+        ImageButton mClose = mEntryTypeDialog.findViewById(R.id.close_entry_option_dialog);
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+            }
+        });
+
+        mIncomeType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+                toNewIncomeActivity();
+            }
+        });
+        mExpenseType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+                toNewExpenseActivity();
+            }
+        });
+
+        mEntryTypeDialog.setCanceledOnTouchOutside(false);
+        mEntryTypeDialog.show();
+    }
+
+    void toNewIncomeActivity() {
+        Intent intent = new Intent(PersonalFinancialBoardActivity.this, NewIncomeExpenseActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     void toNewExpenseActivity() {
@@ -215,6 +261,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     public void onBackPressed() {
         toBoardActivity();
     }
+
     void toBoardActivity() {
         Intent intent = new Intent(PersonalFinancialBoardActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

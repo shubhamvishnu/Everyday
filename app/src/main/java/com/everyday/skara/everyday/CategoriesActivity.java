@@ -1,7 +1,6 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
-import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -16,14 +15,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.pojo.Categories;
-import com.everyday.skara.everyday.pojo.ExpensePOJO;
+import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -350,7 +348,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     if (dataSnapshot.hasChildren()) {
                         for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            ExpensePOJO expensePOJO = snapshot.getValue(ExpensePOJO.class);
+                            FinanceEntryPOJO expensePOJO = snapshot.getValue(FinanceEntryPOJO.class);
                             Categories categories1 = expensePOJO.getCategories();
                             if (categories1.getCategoryKey().equals(categories.getCategoryKey())) {
 

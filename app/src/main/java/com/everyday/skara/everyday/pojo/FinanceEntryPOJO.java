@@ -3,7 +3,7 @@ package com.everyday.skara.everyday.pojo;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ExpensePOJO implements Serializable{
+public class FinanceEntryPOJO implements Serializable{
     String entryKey;
     Double amount;
     String description;
@@ -13,12 +13,13 @@ public class ExpensePOJO implements Serializable{
     int year;
     int month;
     int day;
+    int entryType;
     Categories categories;
     UserInfoPOJO userInfoPOJO;
 
-    public ExpensePOJO(){
+    public FinanceEntryPOJO(){
     }
-    public ExpensePOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, Categories categories, UserInfoPOJO userInfoPOJO) {
+    public FinanceEntryPOJO(String entryKey, Double amount, String description, String date, String note, String transactionId, int year, int month, int day, int entryType, Categories categories, UserInfoPOJO userInfoPOJO) {
         this.entryKey = entryKey;
         this.amount = amount;
         this.description = description;
@@ -28,8 +29,17 @@ public class ExpensePOJO implements Serializable{
         this.year = year;
         this.month = month;
         this.day = day;
+        this.entryType = entryType;
         this.categories = categories;
         this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public int getEntryType() {
+        return entryType;
+    }
+
+    public void setEntryType(int entryType) {
+        this.entryType = entryType;
     }
 
     public Categories getCategories() {
