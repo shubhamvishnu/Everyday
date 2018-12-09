@@ -23,6 +23,7 @@ import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
+import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
@@ -57,8 +58,8 @@ public class PersonalFinanceDayFragment extends Fragment {
     HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>>> yearMonthDateHashMap;
 
     FloatingTextButton mMonthSelectionButton;
-    TextView mTotalExpenseTextView;
-    TextView mCurencyTextView;
+    TextView mTotalExpenseTextView, mIncomeTextView, mRemaining;
+    TextView mCurencyTextView, mPosCurr;
 
     View view;
 
@@ -66,6 +67,7 @@ public class PersonalFinanceDayFragment extends Fragment {
     int currentMonth;
 
     Double totalExpense = 0.0;
+    Double totalIncome = 0.0;
 
     @Nullable
     @Override
@@ -92,9 +94,13 @@ public class PersonalFinanceDayFragment extends Fragment {
         mPersonalFinanceRecyclerView = view.findViewById(R.id.personal_finance_recyclerview);
         mMonthSelectionButton = view.findViewById(R.id.month_selection_button);
         mTotalExpenseTextView = view.findViewById(R.id.total_amount_textview);
+        mIncomeTextView = view.findViewById(R.id.total_income_textview);
         mCurencyTextView = view.findViewById(R.id.currency_textview);
+        mPosCurr = view.findViewById(R.id.positive_currency_all_textview);
+        mRemaining = view.findViewById(R.id.total_remaining);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
+        mPosCurr.setText(currency);
         expensePOJOArrayList = new ArrayList<>();
 
         yearMonthDateHashMap = new HashMap<>();
@@ -104,8 +110,10 @@ public class PersonalFinanceDayFragment extends Fragment {
         currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
+        mIncomeTextView.setText("0.00");
+        mRemaining.setText("0.00");
 
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,6 +123,48 @@ public class PersonalFinanceDayFragment extends Fragment {
         });
         initFinanceRecyclerView();
 
+    }
+
+    void updateMonthTitle() {
+        switch (currentMonth) {
+            case 0:
+                mMonthSelectionButton.setTitle("Jan");
+                break;
+            case 1:
+                mMonthSelectionButton.setTitle("Feb");
+                break;
+            case 2:
+                mMonthSelectionButton.setTitle("Mar");
+                break;
+            case 3:
+                mMonthSelectionButton.setTitle("Apr");
+                break;
+            case 4:
+                mMonthSelectionButton.setTitle("May");
+                break;
+            case 5:
+                mMonthSelectionButton.setTitle("Jun");
+                break;
+            case 6:
+                mMonthSelectionButton.setTitle("Jul");
+                break;
+            case 7:
+                mMonthSelectionButton.setTitle("Aug");
+                break;
+            case 8:
+                mMonthSelectionButton.setTitle("Sep");
+                break;
+            case 9:
+                mMonthSelectionButton.setTitle("Oct");
+                break;
+            case 10:
+                mMonthSelectionButton.setTitle("Nov");
+                break;
+            case 11:
+                mMonthSelectionButton.setTitle("Dec");
+                break;
+
+        }
     }
 
     void showMonthSelectionDialog() {
@@ -342,16 +392,18 @@ public class PersonalFinanceDayFragment extends Fragment {
 
 
     void updateExpenses() {
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        updateMonthTitle();
         mPersonalFinanceRecyclerView.invalidate();
-        if(yearMonthDateHashMap.containsKey(currentYear)){
-            if(yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)){
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
                 mPersonalFinanceAdapter = new PersonalFinanceAdapter(yearMonthDateHashMap.get(currentYear).get(currentMonth));
-            }else{
+                updateView(yearMonthDateHashMap.get(currentYear).get(currentMonth));
+            } else {
                 mPersonalFinanceAdapter = new PersonalFinanceAdapter(new HashMap<String, ArrayList<FinanceEntryPOJO>>());
+                updateView(new HashMap<String, ArrayList<FinanceEntryPOJO>>());
             }
-
         }
+
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
         mPersonalFinanceAdapter.notifyDataSetChanged();
 
@@ -378,6 +430,41 @@ public class PersonalFinanceDayFragment extends Fragment {
     }
 
 
+    void updateView(HashMap<String, ArrayList<FinanceEntryPOJO>> expensePOJOHashMapArrayList) {
+        totalExpense = 0.0;
+        totalIncome = 0.0;
+
+        for (Map.Entry<String, ArrayList<FinanceEntryPOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
+
+            DateExpenseHolder dateExpenseHolder = new DateExpenseHolder(entry.getKey(), entry.getValue());
+            ArrayList<FinanceEntryPOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
+            for (int i = 0; i < expensePOJOArrayList.size(); i++) {
+                FinanceEntryPOJO expensePOJO = expensePOJOArrayList.get(i);
+                if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                    totalExpense += expensePOJO.getAmount();
+                } else if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_INCOME) {
+                    totalIncome += expensePOJO.getAmount();
+                }
+            }
+        }
+
+        mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+        mIncomeTextView.setText(String.format(Locale.getDefault(), "%.2f", totalIncome));
+        updateRemainingIncomeView(totalExpense, totalIncome);
+    }
+
+    void updateRemainingIncomeView(double expense, double income) {
+        String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+        double difference = income - expense;
+        if (difference > 0) {
+            mRemaining.setTextColor(getResources().getColor(R.color.green_selected));
+            mRemaining.setText(" + " + currency + String.format(Locale.getDefault(), "%.2f", difference));
+        } else {
+            mRemaining.setTextColor(getResources().getColor(R.color.red));
+            mRemaining.setText(" - " + currency + String.format(Locale.getDefault(), "%.2f", Math.abs(difference)));
+        }
+    }
+
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
         ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
@@ -385,7 +472,6 @@ public class PersonalFinanceDayFragment extends Fragment {
         public PersonalFinanceAdapter(HashMap<String, ArrayList<FinanceEntryPOJO>> expensePOJOHashMapArrayList) {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
-                totalExpense = 0.0;
                 mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
 
                 dateExpenseHolderArrayList = new ArrayList<>();
@@ -407,20 +493,38 @@ public class PersonalFinanceDayFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+            ((PersonalFinanceViewHolder) holder).mCurrency.setText(currency);
+            ((PersonalFinanceViewHolder) holder).mIncomeCurrecy.setText(currency);
             DateExpenseHolder dateExpenseHolder = dateExpenseHolderArrayList.get(position);
             ArrayList<FinanceEntryPOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
             double dayAmount = 0.0;
-            for(int i = 0; i < expensePOJOArrayList.size(); i++){
+            double dayIncome = 0.0;
+            for (int i = 0; i < expensePOJOArrayList.size(); i++) {
                 FinanceEntryPOJO expensePOJO = expensePOJOArrayList.get(i);
-                dayAmount += expensePOJO.getAmount();
-                totalExpense += expensePOJO.getAmount();
+                if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                    dayAmount += expensePOJO.getAmount();
+                } else if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_INCOME) {
+                    dayIncome += expensePOJO.getAmount();
+                }
             }
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
-            ((PersonalFinanceViewHolder)holder).mDate.setText(dateExpenseHolder.getDate());
-            ((PersonalFinanceViewHolder)holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f", dayAmount));
-          //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
-            setProgressAnimate(((PersonalFinanceViewHolder)holder).mProgressBar, 50);
+            double percentageValue = 0.0;
+            if (totalExpense > 0) {
+                if (dayAmount > 0) {
+                    percentageValue = (dayAmount * 100) / totalExpense;
+                }
+            }
+            ((PersonalFinanceViewHolder) holder).mDate.setText(dateExpenseHolder.getDate());
+            ((PersonalFinanceViewHolder) holder).mAmount.setText(String.format(Locale.getDefault(), "%.2f", dayAmount));
+            ((PersonalFinanceViewHolder) holder).mIncomeAmount.setText(String.format(Locale.getDefault(), "%.2f", dayIncome));
+            ((PersonalFinanceViewHolder) holder).mPercentageValue.setText(String.format(Locale.getDefault(), "%.2f", percentageValue));
+
+
+            //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
+            setProgressAnimate(((PersonalFinanceViewHolder) holder).mProgressBar, 50);
         }
+
         private void setProgressAnimate(ProgressBar pb, int progressTo) {
             ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo);
             animation.setDuration(500);
@@ -434,18 +538,24 @@ public class PersonalFinanceDayFragment extends Fragment {
         }
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
-            public TextView mDate, mAmount;
+            public TextView mDate, mAmount, mIncomeAmount, mPercentageValue;
             public ProgressBar mProgressBar;
+            public TextView mCurrency, mIncomeCurrecy;
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 mAmount = itemView.findViewById(R.id.date_expense_amount_textview);
                 mDate = itemView.findViewById(R.id.date_expense_textview);
+                mIncomeAmount = itemView.findViewById(R.id.date_income_amount_textview);
                 mProgressBar = itemView.findViewById(R.id.expense_percentage);
+                mCurrency = itemView.findViewById(R.id.date_expense_currency_textview);
+                mIncomeCurrecy = itemView.findViewById(R.id.date_income_currency_textview);
+                mPercentageValue = itemView.findViewById(R.id.expense_percentage_value_textview);
             }
         }
 
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

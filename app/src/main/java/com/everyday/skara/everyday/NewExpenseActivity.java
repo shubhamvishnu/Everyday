@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -51,12 +52,12 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
     EditText mTransactionId;
     EditText mNote;
     Button mDoneExpenseEntry;
-
+    ImageButton mCategoryImage;
+    Button mCatNameButton;
 
     String date;
     int day, month, year;
 
-    Button mCategoryChoiceOption;
     BottomSheetDialog mCategoriesDialog;
 
     ArrayList<Categories> categoriesArrayList;
@@ -73,10 +74,12 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Categories categories = snapshot.getValue(Categories.class);
-                    categoriesArrayList.add(categories);
+                    if (categories.getCategoryIconId() != 2048) {
+                        categoriesArrayList.add(categories);
+                    }
                 }
                 selectedCat = categoriesArrayList.get(0);
-                mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+                updateCategoryView(selectedCat);
             }
 
             @Override
@@ -115,7 +118,8 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         mNote = findViewById(R.id.expense_note_edittext);
         mDoneExpenseEntry = findViewById(R.id.done_expense_button);
 
-        mCategoryChoiceOption = findViewById(R.id.category_choose_option);
+        mCategoryImage = findViewById(R.id.expense_cat_icon_new_expense);
+        mCatNameButton = findViewById(R.id.cat_name_text_view_new_expense);
 
         mChooseDateImageButton.setOnClickListener(this);
         mDoneExpenseEntry.setOnClickListener(this);
@@ -126,7 +130,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         year = Calendar.getInstance().get(Calendar.YEAR);
         mExpenseEntryDate.setText(date);
 
-        mCategoryChoiceOption.setOnClickListener(this);
+        mCatNameButton.setOnClickListener(this);
         initCategories();
 
     }
@@ -150,11 +154,211 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 expenseDoneClicked();
                 break;
 
-            case R.id.category_choose_option:
+            case R.id.cat_name_text_view_new_expense:
                 showCategoryChoiceDialog();
                 break;
         }
 
+    }
+
+    void updateCategoryView(Categories categories) {
+        mCatNameButton.setText(categories.getCategoryName());
+        switch (categories.getColorId()) {
+            case 1:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_red);
+                break;
+            case 2:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_yellow);
+                break;
+            case 3:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_blue);
+                break;
+            case 4:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_green);
+                break;
+            case 5:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_green_blue);
+                break;
+            case 6:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_pink);
+                break;
+            default:
+                mCategoryImage.setBackgroundResource(R.drawable.circle_background_blue);
+                break;
+        }
+
+        switch (categories.getCategoryIconId()) {
+            case 2000:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2000);
+                break;
+            case 2001:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2001);
+                break;
+            case 2002:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2002);
+                break;
+            case 2003:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2003);
+                break;
+            case 2004:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2004);
+                break;
+            case 2005:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2005);
+                break;
+            case 2006:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2006);
+                break;
+            case 2007:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2007);
+                break;
+
+            case 2008:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2008);
+                break;
+
+            case 2009:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2009);
+                break;
+
+            case 2010:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2010);
+                break;
+
+            case 2011:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2011);
+                break;
+
+            case 2012:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2012);
+                break;
+
+            case 2013:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2013);
+                break;
+
+            case 2014:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2014);
+                break;
+
+            case 2015:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2015);
+                break;
+
+            case 2016:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2016);
+                break;
+
+            case 2017:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2017);
+                break;
+
+            case 2018:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2018);
+                break;
+
+            case 2019:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2019);
+                break;
+
+            case 2020:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2020);
+                break;
+
+            case 2021:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2021);
+                break;
+
+            case 2022:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2022);
+                break;
+
+            case 2023:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2023);
+                break;
+
+            case 2024:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2024);
+                break;
+
+            case 2025:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2025);
+                break;
+
+            case 2026:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2026);
+                break;
+
+            case 2027:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2027);
+                break;
+
+            case 2028:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2028);
+                break;
+
+            case 2029:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2029);
+                break;
+
+            case 2030:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2030);
+                break;
+            case 2031:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2031);
+                break;
+            case 2032:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2032);
+                break;
+            case 2033:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2033);
+                break;
+            case 2034:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2034);
+                break;
+            case 2035:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2035);
+                break;
+            case 2036:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2036);
+                break;
+            case 2037:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2037);
+                break;
+            case 2038:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2038);
+                break;
+            case 2039:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2039);
+                break;
+            case 2040:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2040);
+                break;
+            case 2041:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2041);
+                break;
+            case 2042:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2042);
+                break;
+            case 2043:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2043);
+                break;
+            case 2044:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2044);
+                break;
+            case 2045:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2045);
+                break;
+            case 2046:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2046);
+                break;
+            case 2047:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2047);
+                break;
+            default:
+                mCategoryImage.setImageResource(R.drawable.ic_cat_2000);
+                break;
+        }
     }
 
     void showCategoryChoiceDialog() {
@@ -177,14 +381,13 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
             }
         });
 
-
-        mCategoriesDialog.setCanceledOnTouchOutside(false);
+        mCategoriesDialog.setCanceledOnTouchOutside(true);
         mCategoriesDialog.show();
     }
 
     void updateCategorySelected(int position) {
         selectedCat = categoriesArrayList.get(position);
-        mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+        updateCategoryView(selectedCat);
 
     }
 
@@ -407,6 +610,9 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 mCatName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if(mCategoriesDialog != null && mCategoriesDialog.isShowing()){
+                            mCategoriesDialog.dismiss();
+                        }
                         updateCategorySelected(getPosition());
                     }
                 });

@@ -1,6 +1,7 @@
 package com.everyday.skara.everyday;
 
 import android.content.Intent;
+import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
@@ -15,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EdgeEffect;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -88,8 +90,10 @@ public class CategoriesActivity extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Categories categories = dataSnapshot.getValue(Categories.class);
-                categoriesArrayList.add(categories);
-                catAdapter.notifyItemInserted(categoriesArrayList.size());
+                if (categories.getCategoryIconId() != 2048) {
+                    categoriesArrayList.add(categories);
+                    catAdapter.notifyItemInserted(categoriesArrayList.size());
+                }
             }
 
             @Override
@@ -363,6 +367,10 @@ public class CategoriesActivity extends AppCompatActivity {
                         FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories").child(categories.getCategoryKey()).removeValue();
                         categoriesArrayList.remove(position);
                         catAdapter.notifyDataSetChanged();
+                    }else{
+                        FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories").child(categories.getCategoryKey()).removeValue();
+                        categoriesArrayList.remove(position);
+                        catAdapter.notifyDataSetChanged();
                     }
                 }
 
@@ -436,25 +444,26 @@ public class CategoriesActivity extends AppCompatActivity {
 
         }
     }
+
     double limitAmount = 0.0;
+
     void addNewCategoryDialog() {
         mAddNewCatDialog = new BottomSheetDialog(this);
         mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout);
         choosenIcon = -1;
         choosenColor = -1;
-        final EditText mTitle, mLimit;
+        final EditText mTitle;
         ImageButton mClose;
         Button mChooseIcon;
         ImageButton mRed, mYellow, mBlue, mGreen, mBlueGreen, mPink;
         Button mDone;
         limitAmount = 0.0;
-
         mTitle = mAddNewCatDialog.findViewById(R.id.new_category_title);
         mClose = mAddNewCatDialog.findViewById(R.id.close_new_category_dialog);
         mChooseIcon = mAddNewCatDialog.findViewById(R.id.choose_icon_button);
         mChosenIconImageButton = mAddNewCatDialog.findViewById(R.id.ic_icon_chosen);
-        mLimit = mAddNewCatDialog.findViewById(R.id.new_category_limit);
         mDone = mAddNewCatDialog.findViewById(R.id.new_cat_dialog_done);
+        final EditText mLimit = mAddNewCatDialog.findViewById(R.id.new_category_limit);
         mRed = mAddNewCatDialog.findViewById(R.id.red);
         mYellow = mAddNewCatDialog.findViewById(R.id.yellow);
         mBlue = mAddNewCatDialog.findViewById(R.id.blue);
@@ -515,6 +524,7 @@ public class CategoriesActivity extends AppCompatActivity {
         mDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                limitAmount = 0.0;
                 String title = mTitle.getText().toString().trim();
 
                 if (title.isEmpty() || title.equals("")) {
@@ -526,10 +536,16 @@ public class CategoriesActivity extends AppCompatActivity {
                         if (choosenColor == -1) {
                             choosenColor = 0;
                         }
-                        double inputAmount = Double.valueOf(mLimit.getText().toString());
-                        if(!(inputAmount > 0)){
+                        double inputAmount = 0.0;
+                        if (mLimit.getText().toString().isEmpty()) {
+                            inputAmount = 0.0;
+                        } else {
+                            inputAmount = Double.valueOf(mLimit.getText().toString());
+                        }
+
+                        if (!(inputAmount > 0)) {
                             limitAmount = 0.0;
-                        }else{
+                        } else {
                             limitAmount = inputAmount;
                         }
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL);

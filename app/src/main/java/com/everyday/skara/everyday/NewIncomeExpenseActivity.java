@@ -51,16 +51,10 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
     EditText mTransactionId;
     EditText mNote;
     Button mDoneExpenseEntry;
-
-
     String date;
     int day, month, year;
-
-    Button mCategoryChoiceOption;
-    BottomSheetDialog mCategoriesDialog;
-
     ArrayList<Categories> categoriesArrayList;
-
+    ImageButton mCatIcon;
     Categories selectedCat;
 
 
@@ -73,10 +67,12 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Categories categories = snapshot.getValue(Categories.class);
-                    categoriesArrayList.add(categories);
+                    if (categories.getCategoryIconId() == 2048) {
+                        categoriesArrayList.add(categories);
+                    }
                 }
                 selectedCat = categoriesArrayList.get(0);
-                mCategoryChoiceOption.setText(selectedCat.getCategoryName());
+                updateIncomeCat();
             }
 
             @Override
@@ -86,6 +82,10 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
         });
 
 
+    }
+    void updateIncomeCat(){
+        mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+        mCatIcon.setImageResource(R.drawable.ic_cat_2048);
     }
 
 
@@ -114,8 +114,8 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
         mTransactionId = findViewById(R.id.income_transaction_id_edittext);
         mNote = findViewById(R.id.income_note_edittext);
         mDoneExpenseEntry = findViewById(R.id.done_income_button);
+        mCatIcon = findViewById(R.id.expense_cat_icon_new_income);
 
-        mCategoryChoiceOption = findViewById(R.id.income_category_choose_option);
 
         mChooseDateImageButton.setOnClickListener(this);
         mDoneExpenseEntry.setOnClickListener(this);
@@ -126,7 +126,6 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
         year = Calendar.getInstance().get(Calendar.YEAR);
         mExpenseEntryDate.setText(date);
 
-        mCategoryChoiceOption.setOnClickListener(this);
         initCategories();
 
     }
@@ -149,272 +148,9 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
             case R.id.done_income_button:
                 expenseDoneClicked();
                 break;
-
-            case R.id.income_category_choose_option:
-                showCategoryChoiceDialog();
-                break;
         }
 
     }
-
-    void showCategoryChoiceDialog() {
-        mCategoriesDialog = new BottomSheetDialog(this);
-        mCategoriesDialog.setContentView(R.layout.dialog_choose_category_layout);
-        ImageButton mClose = mCategoriesDialog.findViewById(R.id.close_cat_option_dialog);
-        RecyclerView mCategoriesRecyclerView = mCategoriesDialog.findViewById(R.id.recyclerview_choose_category);
-
-        mCategoriesRecyclerView.invalidate();
-        mCategoriesRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mCategoriesRecyclerView.setLayoutManager(linearLayoutManager);
-       CatAdapter catAdapter = new CatAdapter();
-        mCategoriesRecyclerView.setAdapter(catAdapter);
-
-        mClose.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCategoriesDialog.dismiss();
-            }
-        });
-
-
-        mCategoriesDialog.setCanceledOnTouchOutside(false);
-        mCategoriesDialog.show();
-    }
-
-    void updateCategorySelected(int position) {
-        selectedCat = categoriesArrayList.get(position);
-        mCategoryChoiceOption.setText(selectedCat.getCategoryName());
-
-    }
-
-    public class CatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private LayoutInflater inflator;
-        //ArrayList<Categories> categoriesArrayList;
-
-        public CatAdapter() {
-            try {
-                this.inflator = LayoutInflater.from(mCategoriesDialog.getContext());
-                // this.categoriesArrayList = categoriesArrayList;
-            } catch (NullPointerException e) {
-
-            }
-        }
-
-        @NonNull
-        @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
-            return new CatAdapter.CatViewHolder(view);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            Categories categories = categoriesArrayList.get(position);
-            ((CatAdapter.CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
-            showCatIcon(holder, categories);
-        }
-
-
-        void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
-            switch (categories.getCategoryIconId()) {
-                case 2000:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
-                    break;
-                case 2001:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
-                    break;
-                case 2002:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
-                    break;
-                case 2003:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
-                    break;
-                case 2004:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
-                    break;
-                case 2005:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
-                    break;
-                case 2006:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
-                    break;
-                case 2007:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
-                    break;
-
-                case 2008:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
-                    break;
-
-                case 2009:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
-                    break;
-
-                case 2010:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
-                    break;
-
-                case 2011:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
-                    break;
-
-                case 2012:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
-                    break;
-
-                case 2013:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
-                    break;
-
-                case 2014:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
-                    break;
-
-                case 2015:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
-                    break;
-
-                case 2016:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
-                    break;
-
-                case 2017:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
-                    break;
-
-                case 2018:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
-                    break;
-
-                case 2019:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
-                    break;
-
-                case 2020:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
-                    break;
-
-                case 2021:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
-                    break;
-
-                case 2022:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
-                    break;
-
-                case 2023:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
-                    break;
-
-                case 2024:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
-                    break;
-
-                case 2025:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
-                    break;
-
-                case 2026:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
-                    break;
-
-                case 2027:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
-                    break;
-
-                case 2028:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
-                    break;
-
-                case 2029:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
-                    break;
-
-                case 2030:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
-                    break;
-                case 2031:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
-                    break;
-                case 2032:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
-                    break;
-                case 2033:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
-                    break;
-                case 2034:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
-                    break;
-                case 2035:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
-                    break;
-                case 2036:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
-                    break;
-                case 2037:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
-                    break;
-                case 2038:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
-                    break;
-                case 2039:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
-                    break;
-                case 2040:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
-                    break;
-                case 2041:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
-                    break;
-                case 2042:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
-                    break;
-                case 2043:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
-                    break;
-                case 2044:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
-                    break;
-                case 2045:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
-                    break;
-                case 2046:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
-                    break;
-                case 2047:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
-                    break;
-                default:
-                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
-                    break;
-            }
-        }
-
-        @Override
-        public int getItemCount() {
-            return categoriesArrayList.size();
-        }
-
-        public class CatViewHolder extends RecyclerView.ViewHolder {
-            public Button mCatName;
-            public ImageButton mCatIcon;
-
-            public CatViewHolder(View itemView) {
-                super(itemView);
-                mCatName = itemView.findViewById(R.id.category_name_row_textview);
-                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_row);
-                mCatName.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        updateCategorySelected(getPosition());
-                    }
-                });
-            }
-        }
-
-    }
-
 
     void expenseDoneClicked() {
         String description = mDescription.getText().toString().trim();

@@ -19,6 +19,7 @@ import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
+import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
@@ -67,21 +68,22 @@ public class PersonalFinanceAnalytics extends Fragment {
     ArrayList<Categories> categoriesArrayList;
 
     FloatingTextButton mMonthSelectionButton;
-    TextView mTotalExpenseTextView;
-    TextView mCurencyTextView;
+    TextView mTotalExpenseTextView, mTotalIncomeTextView, mRemaining;
+    TextView mCurencyTextView, mPositiveCurr;
 
     View view;
 
     int currentYear;
     int currentMonth;
     HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthExpenseArrayListHashMap;
+    HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthIncomeArrayListHashMap;
+
     ArrayList<CategoryExpensePOJO> mCategoryExpenseArrayList = new ArrayList<>();
     HashMap<String, ArrayList<WeekDayWiseExpense>> weekWiseExpenseHashMap;
 
     TextView mMaxExpenseCat, mMaxExpenseCatName;
     TextView mExpenseDateTextView, mExpenseDayAmount;
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
-
     PieChart mPieChart;
     LineChart mExpensesLineChart;
 
@@ -109,11 +111,14 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         mMonthSelectionButton = view.findViewById(R.id.month_selection_button);
         mTotalExpenseTextView = view.findViewById(R.id.total_amount_textview);
+        mTotalIncomeTextView = view.findViewById(R.id.total_income_textview);
         mCurencyTextView = view.findViewById(R.id.currency_textview);
         mMaxExpenseCatName = view.findViewById(R.id.max_expense_cat_name_textview);
+        mPositiveCurr = view.findViewById(R.id.positive_currency_all_textview);
         mMaxExpenseCat = view.findViewById(R.id.max_expense_cat_textview);
         mExpenseDateTextView = view.findViewById(R.id.max_expense_day_date_textview);
         mExpenseDayAmount = view.findViewById(R.id.max_expense_day_textview);
+        mRemaining = view.findViewById(R.id.total_remaining);
         mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
         mExpensesLineChart = view.findViewById(R.id.expenses_line_chart);
@@ -122,14 +127,16 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
+        mPositiveCurr.setText(currency);
         expensePOJOArrayList = new ArrayList<>();
 
         currentYear = PersonalFinancialBoardActivity.mViewCurrentYear;
         currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
-
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        mTotalIncomeTextView.setText("0.00");
+        mRemaining.setText("0.00");
+        updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -339,10 +346,53 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     }
 
+    void updateMonthTitle() {
+        switch (currentMonth) {
+            case 0:
+                mMonthSelectionButton.setTitle("Jan");
+                break;
+            case 1:
+                mMonthSelectionButton.setTitle("Feb");
+                break;
+            case 2:
+                mMonthSelectionButton.setTitle("Mar");
+                break;
+            case 3:
+                mMonthSelectionButton.setTitle("Apr");
+                break;
+            case 4:
+                mMonthSelectionButton.setTitle("May");
+                break;
+            case 5:
+                mMonthSelectionButton.setTitle("Jun");
+                break;
+            case 6:
+                mMonthSelectionButton.setTitle("Jul");
+                break;
+            case 7:
+                mMonthSelectionButton.setTitle("Aug");
+                break;
+            case 8:
+                mMonthSelectionButton.setTitle("Sep");
+                break;
+            case 9:
+                mMonthSelectionButton.setTitle("Oct");
+                break;
+            case 10:
+                mMonthSelectionButton.setTitle("Nov");
+                break;
+            case 11:
+                mMonthSelectionButton.setTitle("Dec");
+                break;
+
+        }
+    }
+
     void initExpenses() {
         expensePOJOArrayList = new ArrayList<>();
 
         yearMonthExpenseArrayListHashMap = new HashMap<>();
+        yearMonthIncomeArrayListHashMap = new HashMap<>();
         yearMonthDateHashMap = new HashMap<>();
         catYearMonthExpenseArrayListHashMap = new HashMap<>();
 
@@ -354,91 +404,113 @@ public class PersonalFinanceAnalytics extends Fragment {
                 if (snapshot.hasChildren()) {
                     for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
                         FinanceEntryPOJO expensePOJO = dataSnapshot.getValue(FinanceEntryPOJO.class);
-                        expensePOJOArrayList.add(expensePOJO);
+                        if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                            expensePOJOArrayList.add(expensePOJO);
 
-                        /**----------------------------------------------------------------------*/
-                        // expense YEAR/MONTH wise
-                        if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
-                            if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
-                                ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
-                                expensePOJOArrayList2.add(expensePOJO);
-                                yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
-                            } else {
-                                ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
-                                expensePOJOArrayList2.add(expensePOJO);
-                                yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
-                            }
-                        } else {
-                            HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
-                            ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
-                            expensePOJOArrayListTemp.add(expensePOJO);
-                            monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
-                            yearMonthExpenseArrayListHashMap.put(expensePOJO.getYear(), monthHashMap);
-                        }
-
-                        /**----------------------------------------------------------------------*/
-                        // expense YEAR/MONTH/DATE wise
-                        if (yearMonthDateHashMap.containsKey(expensePOJO.getYear())) {
-                            if (yearMonthDateHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
-                                if (yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).containsKey(expensePOJO.getDate())) {
-                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).get(expensePOJO.getDate());
+                            /**----------------------------------------------------------------------*/
+                            // expense YEAR/MONTH wise
+                            if (yearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getYear())) {
+                                if (yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
                                     expensePOJOArrayList2.add(expensePOJO);
-                                    yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList2);
+                                    yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
                                 } else {
-                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList5 = new ArrayList<>();
-                                    expensePOJOArrayList5.add(expensePOJO);
-                                    yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList5);
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
+                                    expensePOJOArrayList2.add(expensePOJO);
+                                    yearMonthExpenseArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList2);
                                 }
                             } else {
+                                HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
+                                ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                                expensePOJOArrayListTemp.add(expensePOJO);
+                                monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
+                                yearMonthExpenseArrayListHashMap.put(expensePOJO.getYear(), monthHashMap);
+                            }
+
+                            /**----------------------------------------------------------------------*/
+                            // expense YEAR/MONTH/DATE wise
+                            if (yearMonthDateHashMap.containsKey(expensePOJO.getYear())) {
+                                if (yearMonthDateHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                    if (yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).containsKey(expensePOJO.getDate())) {
+                                        ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).get(expensePOJO.getDate());
+                                        expensePOJOArrayList2.add(expensePOJO);
+                                        yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList2);
+                                    } else {
+                                        ArrayList<FinanceEntryPOJO> expensePOJOArrayList5 = new ArrayList<>();
+                                        expensePOJOArrayList5.add(expensePOJO);
+                                        yearMonthDateHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth()).put(expensePOJO.getDate(), expensePOJOArrayList5);
+                                    }
+                                } else {
+                                    HashMap<String, ArrayList<FinanceEntryPOJO>> dateExpenseHashMap = new HashMap<>();
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
+                                    expensePOJOArrayList2.add(expensePOJO);
+                                    dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
+                                    yearMonthDateHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), dateExpenseHashMap);
+                                }
+                            } else {
+                                HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>> monthDateExpenseHashMap = new HashMap<>();
                                 HashMap<String, ArrayList<FinanceEntryPOJO>> dateExpenseHashMap = new HashMap<>();
                                 ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
                                 expensePOJOArrayList2.add(expensePOJO);
                                 dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
-                                yearMonthDateHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), dateExpenseHashMap);
+                                monthDateExpenseHashMap.put(expensePOJO.getMonth(), dateExpenseHashMap);
+                                yearMonthDateHashMap.put(expensePOJO.getYear(), monthDateExpenseHashMap);
                             }
-                        } else {
-                            HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>> monthDateExpenseHashMap = new HashMap<>();
-                            HashMap<String, ArrayList<FinanceEntryPOJO>> dateExpenseHashMap = new HashMap<>();
-                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList2 = new ArrayList<>();
-                            expensePOJOArrayList2.add(expensePOJO);
-                            dateExpenseHashMap.put(expensePOJO.getDate(), expensePOJOArrayList2);
-                            monthDateExpenseHashMap.put(expensePOJO.getMonth(), dateExpenseHashMap);
-                            yearMonthDateHashMap.put(expensePOJO.getYear(), monthDateExpenseHashMap);
-                        }
-                        /**----------------------------------------------------------------------*/
-                        if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
-                            if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
-                                if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
-                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
-                                    expensePOJOArrayList4.add(expensePOJO);
-                                    catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                            /**----------------------------------------------------------------------*/
+                            if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
+                                if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
+                                    if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                        ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                                        expensePOJOArrayList4.add(expensePOJO);
+                                        catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                                    } else {
+                                        ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = new ArrayList<>();
+                                        expensePOJOArrayList4.add(expensePOJO);
+                                        catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+
+                                    }
+
                                 } else {
-                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = new ArrayList<>();
-                                    expensePOJOArrayList4.add(expensePOJO);
-                                    catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                                    HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
 
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                                    expensePOJOArrayListTemp.add(expensePOJO);
+
+                                    monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
+
+                                    catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).put(expensePOJO.getYear(), monthHashMap);
                                 }
-
                             } else {
+                                HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthHashMap = new HashMap<>();
                                 HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
 
                                 ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
                                 expensePOJOArrayListTemp.add(expensePOJO);
 
                                 monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
-
-                                catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).put(expensePOJO.getYear(), monthHashMap);
+                                yearMonthHashMap.put(expensePOJO.getYear(), monthHashMap);
+                                catYearMonthExpenseArrayListHashMap.put(expensePOJO.getCategories().getCategoryKey(), yearMonthHashMap);
                             }
-                        } else {
-                            HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthHashMap = new HashMap<>();
-                            HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
-
-                            ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
-                            expensePOJOArrayListTemp.add(expensePOJO);
-
-                            monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
-                            yearMonthHashMap.put(expensePOJO.getYear(), monthHashMap);
-                            catYearMonthExpenseArrayListHashMap.put(expensePOJO.getCategories().getCategoryKey(), yearMonthHashMap);
+                        } else if (expensePOJO.getEntryType() == ExpenseTypes.ENTRY_TYPE_INCOME) {
+                            /** ----------------------------------------------------*/
+                            // income YEAR/MONTH wise
+                            if (yearMonthIncomeArrayListHashMap.containsKey(expensePOJO.getYear())) {
+                                if (yearMonthIncomeArrayListHashMap.get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                    ArrayList<FinanceEntryPOJO> incomePOJOArrayList2 = yearMonthIncomeArrayListHashMap.get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                                    incomePOJOArrayList2.add(expensePOJO);
+                                    yearMonthIncomeArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), incomePOJOArrayList2);
+                                } else {
+                                    ArrayList<FinanceEntryPOJO> incomePOJOArrayList2 = new ArrayList<>();
+                                    incomePOJOArrayList2.add(expensePOJO);
+                                    yearMonthIncomeArrayListHashMap.get(expensePOJO.getYear()).put(expensePOJO.getMonth(), incomePOJOArrayList2);
+                                }
+                            } else {
+                                HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
+                                ArrayList<FinanceEntryPOJO> incomePOJOArrayList2Temp = new ArrayList<>();
+                                incomePOJOArrayList2Temp.add(expensePOJO);
+                                monthHashMap.put(expensePOJO.getMonth(), incomePOJOArrayList2Temp);
+                                yearMonthIncomeArrayListHashMap.put(expensePOJO.getYear(), monthHashMap);
+                            }
                         }
                     }
                 }
@@ -462,20 +534,59 @@ public class PersonalFinanceAnalytics extends Fragment {
     }
 
     void updateTotalExpense() {
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        double tempTotal = 0.0;
+        updateMonthTitle();
         if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
             if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
                 if (yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0) {
                     mTotalExpenseTextView.setText("0.00");
                 } else {
                     ArrayList<FinanceEntryPOJO> tempExpensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
-                    double tempTotal = 0.0;
+                    tempTotal = 0.0;
                     for (int i = 0; i < tempExpensePOJO.size(); i++) {
-                        tempTotal += tempExpensePOJO.get(i).getAmount();
+                        if (tempExpensePOJO.get(i).getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                            tempTotal += tempExpensePOJO.get(i).getAmount();
+                        }
                     }
                     mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", tempTotal));
                 }
             }
+        }
+
+        updateTotalIncome(tempTotal);
+    }
+
+    void updateTotalIncome(double tempExpense) {
+        double tempTotal = 0.0;
+        if (yearMonthIncomeArrayListHashMap.containsKey(currentYear)) {
+            if (yearMonthIncomeArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
+                if (yearMonthIncomeArrayListHashMap.get(currentYear).get(currentMonth).size() == 0) {
+                    mTotalIncomeTextView.setText("0.00");
+                } else {
+                    ArrayList<FinanceEntryPOJO> tempIncomePOJO = yearMonthIncomeArrayListHashMap.get(currentYear).get(currentMonth);
+                    tempTotal = 0.0;
+                    for (int i = 0; i < tempIncomePOJO.size(); i++) {
+                        if (tempIncomePOJO.get(i).getEntryType() == ExpenseTypes.ENTRY_TYPE_INCOME) {
+                            tempTotal += tempIncomePOJO.get(i).getAmount();
+                        }
+                    }
+                    mTotalIncomeTextView.setText(String.format(Locale.getDefault(), "%.2f", tempTotal));
+                }
+            }
+        }
+        updateRemainingIncomeView(tempExpense, tempTotal);
+
+    }
+
+    void updateRemainingIncomeView(double expense, double income) {
+        String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+        double difference = income - expense;
+        if (difference > 0) {
+            mRemaining.setTextColor(getResources().getColor(R.color.green_selected));
+            mRemaining.setText(" + " + currency + String.format(Locale.getDefault(), "%.2f", difference));
+        } else {
+            mRemaining.setTextColor(getResources().getColor(R.color.red));
+            mRemaining.setText(" - " + currency + String.format(Locale.getDefault(), "%.2f", Math.abs(difference)));
         }
     }
 

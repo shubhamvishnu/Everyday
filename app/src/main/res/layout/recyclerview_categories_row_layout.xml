@@ -23,13 +23,35 @@
             android:textSize="24sp"
             android:layout_height="wrap_content"
             android:text="category" />
-        <TextView
-            android:id="@+id/total_amount_cat_recyclerview"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:textSize="24sp"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:textColor="@color/red"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/currency_textview_recyclerview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/total_amount_cat_recyclerview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0.00"
+                android:textColor="@color/red"
+                android:textSize="24sp" />
+        </LinearLayout>
+
     </LinearLayout>
     <TextView
         android:layout_width="match_parent"

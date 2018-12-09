@@ -293,10 +293,13 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         catReference3.setValue(new Categories("Transport", catReference3.getKey(), 2000, 3, 0.0));
 
         DatabaseReference catReference4 = databaseReference.child("categories").push();
-        catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4,0.0));
+        catReference4.setValue(new Categories("Shopping", catReference4.getKey(), 2001, 4, 0.0));
 
         DatabaseReference catReference5 = databaseReference.child("categories").push();
         catReference5.setValue(new Categories("Leisure", catReference5.getKey(), 2006, 5, 0.0));
+
+        DatabaseReference catReference6 = databaseReference.child("categories").push();
+        catReference6.setValue(new Categories("Income", catReference6.getKey(), 2048, 1, 0.0));
 
         final BoardPOJO boardPOJO3 = new BoardPOJO("Gratitude Board", DateTimeStamp.getDate(), "-gratitude_board", BoardTypes.BOARD_TYPE_PERSONAL_GRATITUDE, userInfoPOJO);
         DatabaseReference databaseReference3 = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_GRATITUDE);

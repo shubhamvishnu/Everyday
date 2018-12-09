@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
@@ -69,7 +70,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
+        view = inflater.inflate(R.layout.fragment_personal_categories_finance_layout, container, false);
         return view;
     }
 
@@ -101,7 +102,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
         mTotalExpenseTextView.setText("0.00");
 
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,6 +111,48 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             }
         });
         initCategories();
+    }
+
+    void updateMonthTitle() {
+        switch (currentMonth) {
+            case 0:
+                mMonthSelectionButton.setTitle("Jan");
+                break;
+            case 1:
+                mMonthSelectionButton.setTitle("Feb");
+                break;
+            case 2:
+                mMonthSelectionButton.setTitle("Mar");
+                break;
+            case 3:
+                mMonthSelectionButton.setTitle("Apr");
+                break;
+            case 4:
+                mMonthSelectionButton.setTitle("May");
+                break;
+            case 5:
+                mMonthSelectionButton.setTitle("Jun");
+                break;
+            case 6:
+                mMonthSelectionButton.setTitle("Jul");
+                break;
+            case 7:
+                mMonthSelectionButton.setTitle("Aug");
+                break;
+            case 8:
+                mMonthSelectionButton.setTitle("Sep");
+                break;
+            case 9:
+                mMonthSelectionButton.setTitle("Oct");
+                break;
+            case 10:
+                mMonthSelectionButton.setTitle("Nov");
+                break;
+            case 11:
+                mMonthSelectionButton.setTitle("Dec");
+                break;
+
+        }
     }
 
     void showMonthSelectionDialog() {
@@ -274,7 +317,10 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    categoriesArrayList.add(snapshot.getValue(Categories.class));
+                    Categories categories = snapshot.getValue(Categories.class);
+                    if (categories.getCategoryIconId() != 2048) {
+                        categoriesArrayList.add(categories);
+                    }
                 }
             }
 
@@ -369,7 +415,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     void updateExpenses() {
 
-        mMonthSelectionButton.setTitle(String.valueOf(currentMonth));
+        updateMonthTitle();
         mPersonalFinanceRecyclerView.invalidate();
         mPersonalFinanceAdapter = new PersonalFinanceAdapter();
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
@@ -420,24 +466,33 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             ArrayList<FinanceEntryPOJO> expensePOJOArrayList = new ArrayList<>();
             double total = 0.0;
+            double income = 0.0;
             Categories categories = categoriesArrayList.get(position);
             if (catYearMonthExpenseArrayListHashMap.containsKey(categories.getCategoryKey())) {
                 if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).containsKey(currentYear)) {
                     if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).containsKey(currentMonth)) {
                         expensePOJOArrayList = catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).get(currentMonth);
                         for (int i = 0; i < expensePOJOArrayList.size(); i++) {
-                            total += expensePOJOArrayList.get(i).getAmount();
+                            if (expensePOJOArrayList.get(i).getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                                total += expensePOJOArrayList.get(i).getAmount();
+                            } else if (expensePOJOArrayList.get(i).getEntryType() == ExpenseTypes.ENTRY_TYPE_INCOME) {
+                                income += expensePOJOArrayList.get(i).getAmount();
+                            }
                         }
 
                     }
                 }
             }
+            String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
+            ((PersonalFinanceViewHolder) holder).mCurr.setText(currency);
+
             ((PersonalFinanceViewHolder) holder).mCatName.setText(categories.getCategoryName());
             ((PersonalFinanceViewHolder) holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
             setCatIconBackground(holder, categories);
             showCatIcon(holder, categories);
             totalExpense += total;
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+
         }
 
         void setCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
@@ -465,6 +520,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                     break;
             }
         }
+
 
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getCategoryIconId()) {
@@ -647,7 +703,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         }
 
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
-            public TextView mCatName, mTotal;
+            public TextView mCatName, mTotal, mCurr;
             public ImageButton mCatIcon;
 
 
@@ -656,6 +712,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                 mCatName = itemView.findViewById(R.id.cat_name_text_view_recyclerview);
                 mTotal = itemView.findViewById(R.id.total_amount_cat_recyclerview);
                 mCatIcon = itemView.findViewById(R.id.expense_cat_icon_recyclerview);
+                mCurr = itemView.findViewById(R.id.currency_textview_recyclerview);
 
             }
         }
