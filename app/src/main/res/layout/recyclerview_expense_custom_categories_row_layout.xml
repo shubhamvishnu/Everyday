@@ -1,23 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:orientation="vertical">
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_margin="6dp"
+    android:orientation="horizontal">
     <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/expense_cat_icon_row"
         android:layout_width="42dp"
         android:layout_height="42dp"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
-        android:padding="2dp"
+        android:padding="6dp"
         android:scaleType="fitCenter" />
     <Button
-        android:layout_width="match_parent"
+        android:id="@+id/category_name_row_textview"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:textSize="24sp"
+        android:background="@color/transparent"
         android:layout_height="wrap_content"
-        android:text="category name"
-        android:id="@+id/category_name_row_textview"/>
+        android:text="category" />
     <Button
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/delete_custom_cat_button"
-        android:text="delete"/>
+        android:text="Delete"
+        android:id="@+id/delete_custom_cat_button"/>
+
+</LinearLayout>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="12dp"
+    android:background="#e6e6e6" />
+
 </LinearLayout>

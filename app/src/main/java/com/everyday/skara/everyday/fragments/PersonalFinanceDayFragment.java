@@ -36,7 +36,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,9 +65,9 @@ public class PersonalFinanceDayFragment extends Fragment {
     FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView, mIncomeTextView, mRemaining;
     TextView mCurencyTextView, mPosCurr;
-
+    ImageButton mFilterButton;
     View view;
-
+    public static boolean clicked = false;
     int currentYear;
     int currentMonth;
 
@@ -98,6 +103,7 @@ public class PersonalFinanceDayFragment extends Fragment {
         mCurencyTextView = view.findViewById(R.id.currency_textview);
         mPosCurr = view.findViewById(R.id.positive_currency_all_textview);
         mRemaining = view.findViewById(R.id.total_remaining);
+        mFilterButton = getActivity().findViewById(R.id.filter_finance_option_button);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
         mCurencyTextView.setText(currency);
         mPosCurr.setText(currency);
@@ -122,7 +128,19 @@ public class PersonalFinanceDayFragment extends Fragment {
             }
         });
         initFinanceRecyclerView();
-
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clicked = !clicked;
+                if (clicked) {
+                    mFilterButton.setRotation(180);
+                   updateExpenses();
+                } else {
+                    mFilterButton.setRotation(0);
+                   updateExpenses();
+                }
+            }
+        });
     }
 
     void updateMonthTitle() {
@@ -464,6 +482,41 @@ public class PersonalFinanceDayFragment extends Fragment {
             mRemaining.setText(" - " + currency + String.format(Locale.getDefault(), "%.2f", Math.abs(difference)));
         }
     }
+    ArrayList<DateExpenseHolder> sortDateAscending(ArrayList<DateExpenseHolder> dateExpenseHolderArrayList) {
+        ArrayList<DateExpenseHolder> sortDateExpenseHolder = dateExpenseHolderArrayList;
+
+        Collections.sort(sortDateExpenseHolder, new Comparator<DateExpenseHolder>() {
+            DateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+            @Override
+            public int compare(DateExpenseHolder o1, DateExpenseHolder o2) {
+                try {
+                    return f.parse(o2.getDate()).compareTo(f.parse(o1.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+        return sortDateExpenseHolder;
+    }
+
+    ArrayList<DateExpenseHolder> sortDateDescending(ArrayList<DateExpenseHolder> dateExpenseHolderArrayList) {
+        ArrayList<DateExpenseHolder> sortDateExpenseHolder = dateExpenseHolderArrayList;
+
+        Collections.sort(sortDateExpenseHolder, new Comparator<DateExpenseHolder>() {
+            DateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+            @Override
+            public int compare(DateExpenseHolder o1, DateExpenseHolder o2) {
+                try {
+                    return f.parse(o1.getDate()).compareTo(f.parse(o2.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+        return sortDateExpenseHolder;
+    }
 
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
@@ -477,7 +530,11 @@ public class PersonalFinanceDayFragment extends Fragment {
                 dateExpenseHolderArrayList = new ArrayList<>();
                 for (Map.Entry<String, ArrayList<FinanceEntryPOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
                     dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));
-
+                }
+                if (clicked) {
+                    dateExpenseHolderArrayList = sortDateDescending(dateExpenseHolderArrayList);
+                }else{
+                    dateExpenseHolderArrayList = sortDateAscending(dateExpenseHolderArrayList);
                 }
             } catch (NullPointerException e) {
 

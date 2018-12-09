@@ -420,6 +420,30 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
 
 
         void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getColorId()) {
+                case 1:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    break;
+                case 2:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_yellow);
+                    break;
+                case 3:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+                case 4:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                    break;
+                case 5:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green_blue);
+                    break;
+                case 6:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
+                    break;
+                default:
+                    ((CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+            }
+
             switch (categories.getCategoryIconId()) {
                 case 2000:
                     ((CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);

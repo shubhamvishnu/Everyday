@@ -24,6 +24,7 @@ import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +35,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -57,10 +63,12 @@ public class PersonalFinanceFragment extends Fragment {
     FloatingTextButton mMonthSelectionButton;
     TextView mTotalExpenseTextView, mTotalIncomeTextView;
     TextView mCurencyTextView, mPositiveCurrency;
+    ImageButton mFilterButton;
     View view;
 
     Double totalExpense = 0.0;
     Double totalIncome = 0.0;
+    public static boolean clicked = false;
     int currentYear;
     int currentMonth;
 
@@ -97,6 +105,8 @@ public class PersonalFinanceFragment extends Fragment {
         mTotalIncomeTextView = view.findViewById(R.id.total_income_textview);
         mRemaining = view.findViewById(R.id.total_remaining);
 
+        mFilterButton = getActivity().findViewById(R.id.filter_finance_option_button);
+
         mCurencyTextView = view.findViewById(R.id.currency_textview);
         mPositiveCurrency = view.findViewById(R.id.positive_currency_all_textview);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
@@ -114,7 +124,7 @@ public class PersonalFinanceFragment extends Fragment {
         mTotalIncomeTextView.setText("0.00");
         mRemaining.setText("0.00");
 
-       updateMonthTitle();
+        updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +134,19 @@ public class PersonalFinanceFragment extends Fragment {
         });
 
         initFinanceRecyclerView();
-
+        mFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clicked = !clicked;
+                if (clicked) {
+                    mFilterButton.setRotation(180);
+                    updateExpenses();
+                } else {
+                    mFilterButton.setRotation(0);
+                    updateExpenses();
+                }
+            }
+        });
     }
 
     void showMonthSelectionDialog() {
@@ -435,6 +457,11 @@ public class PersonalFinanceFragment extends Fragment {
 
     void updateExpenses() {
         updateMonthTitle();
+        if (clicked) {
+            sortDateAscending();
+        } else {
+            sortDateDescending();
+        }
         if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
             if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
                 if (yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0) {
@@ -495,6 +522,52 @@ public class PersonalFinanceFragment extends Fragment {
         PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
     }
 
+
+    void sortDateAscending() {
+        ArrayList<FinanceEntryPOJO> sortFinanceArrayList;
+        if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
+            if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
+                sortFinanceArrayList = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
+                Collections.sort(sortFinanceArrayList, new Comparator<FinanceEntryPOJO>() {
+                    DateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+                    @Override
+                    public int compare(FinanceEntryPOJO o1, FinanceEntryPOJO o2) {
+                        try {
+                            return f.parse(o2.getDate()).compareTo(f.parse(o1.getDate()));
+                        } catch (ParseException e) {
+                            throw new IllegalArgumentException(e);
+                        }
+                    }
+                });
+                yearMonthExpenseArrayListHashMap.get(currentYear).put(currentMonth, sortFinanceArrayList);
+            }
+
+        }
+    }
+
+    void sortDateDescending() {
+        ArrayList<FinanceEntryPOJO> sortFinanceArrayList;
+        if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
+            if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {
+                sortFinanceArrayList = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
+                Collections.sort(sortFinanceArrayList, new Comparator<FinanceEntryPOJO>() {
+                    DateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+                    @Override
+                    public int compare(FinanceEntryPOJO o1, FinanceEntryPOJO o2) {
+                        try {
+                            return f.parse(o1.getDate()).compareTo(f.parse(o2.getDate()));
+                        } catch (ParseException e) {
+                            throw new IllegalArgumentException(e);
+                        }
+                    }
+                });
+                yearMonthExpenseArrayListHashMap.get(currentYear).put(currentMonth, sortFinanceArrayList);
+            }
+
+        }
+    }
 
     public class PersonalFinanceAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public final static int VIEW_EXPENSE = 1;
