@@ -88,7 +88,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mExpenseDateTextView, mExpenseDayAmount;
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
     PieChart mPieChart;
-    BarChart mExpenseBarChart;
+    BarChart mExpenseBarChart, mWeekDayWiseBarChart;
 
     @Nullable
     @Override
@@ -125,6 +125,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
         mExpenseBarChart = view.findViewById(R.id.expense_bar_chart);
+        mWeekDayWiseBarChart = view.findViewById(R.id.weekday_wise_bar_chart);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
