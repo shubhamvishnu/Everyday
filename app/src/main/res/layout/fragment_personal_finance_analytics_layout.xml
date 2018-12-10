@@ -212,8 +212,8 @@
                 android:layout_height="wrap_content" />
 
             <com.github.mikephil.charting.charts.BarChart
-                android:id="expense_bar_chart"
-                android:layout_width="250dp"
+                android:id="@+id/expense_bar_chart"
+                android:layout_width="match_parent"
                 android:layout_height="250dp" />
 
             <com.github.mikephil.charting.charts.PieChart

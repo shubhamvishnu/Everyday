@@ -29,6 +29,9 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -744,6 +747,49 @@ public class PersonalFinanceAnalytics extends Fragment {
     }
 
     void reflectedBarChart() {
+
+        List<BarEntry> entries = new ArrayList<>();
+        ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
+                HashMap<String, ArrayList<FinanceEntryPOJO>> expensePOJOHashMapArrayList = yearMonthDateHashMap.get(currentYear).get(currentMonth);
+                dateExpenseHolderArrayList = new ArrayList<>();
+                for (Map.Entry<String, ArrayList<FinanceEntryPOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
+                    dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));
+                }
+
+                for (int i = 0; i < dateExpenseHolderArrayList.size(); i++) {
+                    DateExpenseHolder dateExpenseHolder = dateExpenseHolderArrayList.get(i);
+                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
+                    double dayAmount = 0.0;
+                    for (int j = 0; j < expensePOJOArrayList.size(); j++) {
+                        FinanceEntryPOJO expensePOJO = expensePOJOArrayList.get(j);
+                        dayAmount += expensePOJO.getAmount();
+                    }
+
+                    /**---------------------------------------------------------------------------*/
+                    String dayOfWeek = null;
+                    try {
+                        dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(dateExpenseHolder.getDate()));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(dayAmount))));
+                }
+
+            }else{
+            }
+        }
+
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        mExpenseBarChart.setData(data);
+        mExpenseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mExpenseBarChart.invalidate(); // refresh
+
 
     }
 
