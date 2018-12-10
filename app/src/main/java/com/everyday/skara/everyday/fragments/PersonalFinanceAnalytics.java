@@ -745,6 +745,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         }
 
         reflectedBarChart();
+        reflectWeekWiseBarChart();
     }
 
     void reflectedBarChart() {
@@ -780,7 +781,7 @@ public class PersonalFinanceAnalytics extends Fragment {
                     entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(dayAmount))));
                 }
 
-            }else{
+            } else {
             }
         }
 
@@ -794,6 +795,45 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     }
 
+    /**
+     * String weekDay;
+     * ArrayList<FinanceEntryPOJO> expensePOJOArrayList;
+     * double totalWeekDayExpense;
+     * String date;
+     * <p>
+     * weekWiseExpenseHashMap.put(dayOfWeek, weekDayWiseExpensesArrayList);
+     */
+    void reflectWeekWiseBarChart() {
+        List<BarEntry> entries = new ArrayList<>();
+
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
+                for (Map.Entry<String, ArrayList<WeekDayWiseExpense>> entry : weekWiseExpenseHashMap.entrySet()) {
+                    ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = entry.getValue();
+                    double dayWiseTotalExpense = 0.00;
+                    for (int i = 0; i < weekDayWiseExpensesArrayList.size(); i++) {
+                        dayWiseTotalExpense += weekDayWiseExpensesArrayList.get(i).totalWeekDayExpense;
+                    }
+                    String dayOfWeek;
+                    try {
+                        dayOfWeek = new SimpleDateFormat("u").format(new SimpleDateFormat("EE").parse(entry.getKey()));
+                        entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(dayWiseTotalExpense))));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+        }
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        mWeekDayWiseBarChart.setData(data);
+        mWeekDayWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mWeekDayWiseBarChart.invalidate(); // refresh
+    }
 
     @Override
     public void onStop() {
