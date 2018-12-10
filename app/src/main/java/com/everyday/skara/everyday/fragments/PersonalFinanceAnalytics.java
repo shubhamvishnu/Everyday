@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.NewBoardExpenseActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
@@ -44,6 +47,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,14 +67,14 @@ public class PersonalFinanceAnalytics extends Fragment {
     ValueEventListener mExpenseValueEventListener;
     DatabaseReference mExpensesDatabaseReference;
 
-    BottomSheetDialog mMonthBottomSheetDialog;
+    BottomSheetDialog mMonthBottomSheetDialog, mCategoriesBottomSheetDialog;
 
     HashMap<String, HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>>> catYearMonthExpenseArrayListHashMap;
     HashMap<Integer, HashMap<Integer, HashMap<String, ArrayList<FinanceEntryPOJO>>>> yearMonthDateHashMap;
 
     ArrayList<Categories> categoriesArrayList;
 
-    FloatingTextButton mMonthSelectionButton;
+    FloatingTextButton mMonthSelectionButton, mCategorySelectionButton;
     TextView mTotalExpenseTextView, mTotalIncomeTextView, mRemaining;
     TextView mCurencyTextView, mPositiveCurr;
 
@@ -88,7 +92,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mExpenseDateTextView, mExpenseDayAmount;
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
     PieChart mPieChart;
-    BarChart mExpenseBarChart, mWeekDayWiseBarChart;
+    BarChart mExpenseBarChart, mWeekDayWiseBarChart, mCategoryWiseBarChart;
 
     @Nullable
     @Override
@@ -113,6 +117,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
 
         mMonthSelectionButton = view.findViewById(R.id.month_selection_button);
+        mCategorySelectionButton = view.findViewById(R.id.category_selection_chart_ftb);
         mTotalExpenseTextView = view.findViewById(R.id.total_amount_textview);
         mTotalIncomeTextView = view.findViewById(R.id.total_income_textview);
         mCurencyTextView = view.findViewById(R.id.currency_textview);
@@ -126,6 +131,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
         mExpenseBarChart = view.findViewById(R.id.expense_bar_chart);
         mWeekDayWiseBarChart = view.findViewById(R.id.weekday_wise_bar_chart);
+        mCategoryWiseBarChart = view.findViewById(R.id.category_wise_bar_chart);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -146,6 +152,13 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onClick(View v) {
                 showMonthSelectionDialog();
+            }
+        });
+
+        mCategorySelectionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCategoryChartSelectionDialog();
             }
         });
 
@@ -325,7 +338,261 @@ public class PersonalFinanceAnalytics extends Fragment {
         mMonthBottomSheetDialog.show();
     }
 
+    void showCategoryChartSelectionDialog(){
 
+        mCategoriesBottomSheetDialog = new BottomSheetDialog(getActivity());
+        mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
+        ImageButton mClose = mCategoriesBottomSheetDialog.findViewById(R.id.close_cat_option_dialog);
+        RecyclerView mCategoriesRecyclerView = mCategoriesBottomSheetDialog.findViewById(R.id.recyclerview_choose_category);
+
+        mCategoriesRecyclerView.invalidate();
+        mCategoriesRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        mCategoriesRecyclerView.setLayoutManager(linearLayoutManager);
+        CatAdapter catAdapter = new CatAdapter();
+        mCategoriesRecyclerView.setAdapter(catAdapter);
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCategoriesBottomSheetDialog.dismiss();
+            }
+        });
+
+
+        mCategoriesBottomSheetDialog.setCanceledOnTouchOutside(false);
+        mCategoriesBottomSheetDialog.show();
+    }
+
+    public class CatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+        private LayoutInflater inflator;
+        //ArrayList<Categories> categoriesArrayList;
+
+        public CatAdapter() {
+            try {
+                this.inflator = LayoutInflater.from(mCategoriesBottomSheetDialog.getContext());
+                // this.categoriesArrayList = categoriesArrayList;
+            } catch (NullPointerException e) {
+
+            }
+        }
+
+        @NonNull
+        @Override
+        public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
+            return new CatAdapter.CatViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+            Categories categories = categoriesArrayList.get(position);
+            ((CatAdapter.CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
+            showCatIcon(holder, categories);
+        }
+
+
+        void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getCategoryIconId()) {
+                case 2000:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+                case 2001:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    break;
+                case 2002:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    break;
+                case 2003:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    break;
+                case 2004:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    break;
+                case 2005:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                    break;
+                case 2006:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    break;
+                case 2007:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                    break;
+
+                case 2008:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                    break;
+
+                case 2009:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                    break;
+
+                case 2010:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                    break;
+
+                case 2011:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                    break;
+
+                case 2012:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                    break;
+
+                case 2013:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                    break;
+
+                case 2014:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                    break;
+
+                case 2015:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                    break;
+
+                case 2016:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                    break;
+
+                case 2017:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                    break;
+
+                case 2018:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                    break;
+
+                case 2019:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                    break;
+
+                case 2020:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                    break;
+
+                case 2021:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                    break;
+
+                case 2022:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                    break;
+
+                case 2023:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                    break;
+
+                case 2024:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                    break;
+
+                case 2025:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                    break;
+
+                case 2026:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                    break;
+
+                case 2027:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                    break;
+
+                case 2028:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                    break;
+
+                case 2029:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                    break;
+
+                case 2030:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                    break;
+                case 2031:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                    break;
+                case 2032:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                    break;
+                case 2033:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                    break;
+                case 2034:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                    break;
+                case 2035:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                    break;
+                case 2036:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                    break;
+                case 2037:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                    break;
+                case 2038:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                    break;
+                case 2039:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                    break;
+                case 2040:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                    break;
+                case 2041:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                    break;
+                case 2042:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                    break;
+                case 2043:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                    break;
+                case 2044:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                    break;
+                case 2045:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                    break;
+                case 2046:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                    break;
+                case 2047:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                    break;
+                default:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+            }
+        }
+
+        @Override
+        public int getItemCount() {
+            return categoriesArrayList.size();
+        }
+
+        public class CatViewHolder extends RecyclerView.ViewHolder {
+            public Button mCatName;
+            public ImageButton mCatIcon;
+
+            public CatViewHolder(View itemView) {
+                super(itemView);
+                mCatName = itemView.findViewById(R.id.category_name_row_textview);
+                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_row);
+                mCatName.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateCategorySelected(getPosition());
+                    }
+                });
+            }
+        }
+    }
+    void updateCategorySelected(int position){
+        mCategorySelectionButton.setTitle(categoriesArrayList.get(position).getCategoryName());
+        reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
+    }
     void initCategories() {
         categoriesArrayList = new ArrayList<>();
 
@@ -335,7 +602,9 @@ public class PersonalFinanceAnalytics extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    categoriesArrayList.add(snapshot.getValue(Categories.class));
+                    if (snapshot.getValue(Categories.class).getCategoryIconId() != 2048) {
+                        categoriesArrayList.add(snapshot.getValue(Categories.class));
+                    }
                 }
             }
 
@@ -746,6 +1015,39 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         reflectedBarChart();
         reflectWeekWiseBarChart();
+        reflectCategoryWiseBarChart(categoriesArrayList.get(0).getCategoryKey());
+    }
+
+
+    void reflectCategoryWiseBarChart(String categoryKey) {
+        List<BarEntry> entries = new ArrayList<>();
+            if(catYearMonthExpenseArrayListHashMap.containsKey(categoryKey)){
+                HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> categoryContainerMap = catYearMonthExpenseArrayListHashMap.get(categoryKey);
+                if(categoryContainerMap.containsKey(currentYear)){
+                    if(categoryContainerMap.get(currentYear).containsKey(currentMonth)){
+                        ArrayList<FinanceEntryPOJO> financeEntryPOJOArrayList = categoryContainerMap.get(currentYear).get(currentMonth);
+                       for(int j = 0; j < financeEntryPOJOArrayList.size(); j++){
+                           String dayOfWeek = null;
+                           try {
+                               dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(financeEntryPOJOArrayList.get(j).getDate()));
+
+                           } catch (ParseException e) {
+                               e.printStackTrace();
+                           }
+                           entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(financeEntryPOJOArrayList.get(j).getAmount()))));
+
+                       }
+                    }
+                }
+            }
+
+
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+        mCategoryWiseBarChart.setData(data);
+        mCategoryWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mCategoryWiseBarChart.invalidate(); // refresh
     }
 
     void reflectedBarChart() {
