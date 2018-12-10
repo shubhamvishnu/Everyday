@@ -134,10 +134,10 @@ public class PersonalFinanceDayFragment extends Fragment {
                 clicked = !clicked;
                 if (clicked) {
                     mFilterButton.setRotation(180);
-                   updateExpenses();
+                    updateExpenses();
                 } else {
                     mFilterButton.setRotation(0);
-                   updateExpenses();
+                    updateExpenses();
                 }
             }
         });
@@ -482,6 +482,7 @@ public class PersonalFinanceDayFragment extends Fragment {
             mRemaining.setText(" - " + currency + String.format(Locale.getDefault(), "%.2f", Math.abs(difference)));
         }
     }
+
     ArrayList<DateExpenseHolder> sortDateAscending(ArrayList<DateExpenseHolder> dateExpenseHolderArrayList) {
         ArrayList<DateExpenseHolder> sortDateExpenseHolder = dateExpenseHolderArrayList;
 
@@ -533,7 +534,7 @@ public class PersonalFinanceDayFragment extends Fragment {
                 }
                 if (clicked) {
                     dateExpenseHolderArrayList = sortDateDescending(dateExpenseHolderArrayList);
-                }else{
+                } else {
                     dateExpenseHolderArrayList = sortDateAscending(dateExpenseHolderArrayList);
                 }
             } catch (NullPointerException e) {
@@ -579,7 +580,7 @@ public class PersonalFinanceDayFragment extends Fragment {
 
 
             //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
-            setProgressAnimate(((PersonalFinanceViewHolder) holder).mProgressBar, 50);
+            setProgressAnimate(((PersonalFinanceViewHolder) holder).mProgressBar, Integer.parseInt(String.valueOf(Math.round(percentageValue))));
         }
 
         private void setProgressAnimate(ProgressBar pb, int progressTo) {

@@ -25,7 +25,7 @@ import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
-import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
@@ -85,7 +85,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mExpenseDateTextView, mExpenseDayAmount;
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
     PieChart mPieChart;
-    LineChart mExpensesLineChart;
+    BarChart mExpenseBarChart;
 
     @Nullable
     @Override
@@ -121,7 +121,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mRemaining = view.findViewById(R.id.total_remaining);
         mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
-        mExpensesLineChart = view.findViewById(R.id.expenses_line_chart);
+        mExpenseBarChart = view.findViewById(R.id.expense_bar_chart);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -740,10 +740,10 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         }
 
-        reflectLineChart();
+        reflectedBarChart();
     }
 
-    void reflectLineChart() {
+    void reflectedBarChart() {
 
     }
 

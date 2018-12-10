@@ -62,8 +62,13 @@
                             android:textColor="@color/green_selected"
                             android:textSize="24sp" />
                     </LinearLayout>
-                </LinearLayout>
 
+                </LinearLayout>
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_margin="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/grey" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -104,7 +109,11 @@
                             android:textSize="24sp" />
                     </LinearLayout>
                 </LinearLayout>
-
+                <TextView
+                    android:layout_width="1dp"
+                    android:layout_margin="4dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/grey" />
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -202,8 +211,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/expenses_line_chart"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="expense_bar_chart"
                 android:layout_width="250dp"
                 android:layout_height="250dp" />
 
