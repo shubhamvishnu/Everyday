@@ -1,5 +1,6 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +13,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -414,7 +417,6 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     }
 
     void updateExpenses() {
-
         updateMonthTitle();
         mPersonalFinanceRecyclerView.invalidate();
         mPersonalFinanceAdapter = new PersonalFinanceAdapter();
@@ -493,6 +495,14 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             totalExpense += total;
             mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
 
+            //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
+        }
+
+        private void setProgressAnimate(ProgressBar pb, int progressTo) {
+            ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo);
+            animation.setDuration(500);
+            animation.setInterpolator(new DecelerateInterpolator());
+            animation.start();
         }
 
         void setCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
@@ -705,7 +715,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         public class PersonalFinanceViewHolder extends RecyclerView.ViewHolder {
             public TextView mCatName, mTotal, mCurr;
             public ImageButton mCatIcon;
-
+            public ProgressBar mExpenseCategoryProgress;
 
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
@@ -713,6 +723,7 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
                 mTotal = itemView.findViewById(R.id.total_amount_cat_recyclerview);
                 mCatIcon = itemView.findViewById(R.id.expense_cat_icon_recyclerview);
                 mCurr = itemView.findViewById(R.id.currency_textview_recyclerview);
+                mExpenseCategoryProgress = itemView.findViewById(R.id.category_horizontal_expense_percentage);
 
             }
         }
