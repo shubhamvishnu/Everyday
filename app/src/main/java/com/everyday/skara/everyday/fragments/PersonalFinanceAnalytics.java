@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.NewBoardExpenseActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
@@ -91,6 +92,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mMaxExpenseCat, mMaxExpenseCatName;
     TextView mExpenseDateTextView, mExpenseDayAmount;
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
+    DonutProgress mDonutProgress;
     PieChart mPieChart;
     BarChart mExpenseBarChart, mWeekDayWiseBarChart, mCategoryWiseBarChart;
 
@@ -132,6 +134,8 @@ public class PersonalFinanceAnalytics extends Fragment {
         mExpenseBarChart = view.findViewById(R.id.expense_bar_chart);
         mWeekDayWiseBarChart = view.findViewById(R.id.weekday_wise_bar_chart);
         mCategoryWiseBarChart = view.findViewById(R.id.category_wise_bar_chart);
+        mDonutProgress = view.findViewById(R.id.donut_progress);
+        mDonutProgress.setProgress(0.0f);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -146,6 +150,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mTotalExpenseTextView.setText("0.00");
         mTotalIncomeTextView.setText("0.00");
         mRemaining.setText("0.00");
+        mDonutProgress.setProgress(0.0f);
         updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
@@ -338,7 +343,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mMonthBottomSheetDialog.show();
     }
 
-    void showCategoryChartSelectionDialog(){
+    void showCategoryChartSelectionDialog() {
 
         mCategoriesBottomSheetDialog = new BottomSheetDialog(getActivity());
         mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
@@ -589,10 +594,12 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
         }
     }
-    void updateCategorySelected(int position){
+
+    void updateCategorySelected(int position) {
         mCategorySelectionButton.setTitle(categoriesArrayList.get(position).getCategoryName());
         reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
     }
+
     void initCategories() {
         categoriesArrayList = new ArrayList<>();
 
@@ -807,6 +814,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     }
 
     void updateTotalExpense() {
+        mDonutProgress.setProgress(0.0f);
         double tempTotal = 0.0;
         updateMonthTitle();
         if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
@@ -825,7 +833,6 @@ public class PersonalFinanceAnalytics extends Fragment {
                 }
             }
         }
-
         updateTotalIncome(tempTotal);
     }
 
@@ -847,6 +854,12 @@ public class PersonalFinanceAnalytics extends Fragment {
                 }
             }
         }
+
+        double percentageValue = 0.0;
+        if (tempTotal > 0) {
+            percentageValue = (tempExpense * 100) / tempTotal;
+        }
+        mDonutProgress.setProgress(Float.valueOf(String.valueOf(percentageValue)));
         updateRemainingIncomeView(tempExpense, tempTotal);
 
     }
@@ -1021,25 +1034,25 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void reflectCategoryWiseBarChart(String categoryKey) {
         List<BarEntry> entries = new ArrayList<>();
-            if(catYearMonthExpenseArrayListHashMap.containsKey(categoryKey)){
-                HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> categoryContainerMap = catYearMonthExpenseArrayListHashMap.get(categoryKey);
-                if(categoryContainerMap.containsKey(currentYear)){
-                    if(categoryContainerMap.get(currentYear).containsKey(currentMonth)){
-                        ArrayList<FinanceEntryPOJO> financeEntryPOJOArrayList = categoryContainerMap.get(currentYear).get(currentMonth);
-                       for(int j = 0; j < financeEntryPOJOArrayList.size(); j++){
-                           String dayOfWeek = null;
-                           try {
-                               dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(financeEntryPOJOArrayList.get(j).getDate()));
+        if (catYearMonthExpenseArrayListHashMap.containsKey(categoryKey)) {
+            HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> categoryContainerMap = catYearMonthExpenseArrayListHashMap.get(categoryKey);
+            if (categoryContainerMap.containsKey(currentYear)) {
+                if (categoryContainerMap.get(currentYear).containsKey(currentMonth)) {
+                    ArrayList<FinanceEntryPOJO> financeEntryPOJOArrayList = categoryContainerMap.get(currentYear).get(currentMonth);
+                    for (int j = 0; j < financeEntryPOJOArrayList.size(); j++) {
+                        String dayOfWeek = null;
+                        try {
+                            dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(financeEntryPOJOArrayList.get(j).getDate()));
 
-                           } catch (ParseException e) {
-                               e.printStackTrace();
-                           }
-                           entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(financeEntryPOJOArrayList.get(j).getAmount()))));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(financeEntryPOJOArrayList.get(j).getAmount()))));
 
-                       }
                     }
                 }
             }
+        }
 
 
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
