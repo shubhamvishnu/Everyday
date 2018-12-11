@@ -410,6 +410,12 @@ public class PersonalFinanceDayFragment extends Fragment {
 
 
     void updateExpenses() {
+        totalExpense = 0.0;
+        totalIncome = 0.0;
+        mTotalExpenseTextView.setText("0.00");
+        mRemaining.setText("0.00");
+        mIncomeTextView.setText("0.00");
+
         updateMonthTitle();
         mPersonalFinanceRecyclerView.invalidate();
         if (yearMonthDateHashMap.containsKey(currentYear)) {

@@ -51,7 +51,6 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     ArrayList<FinanceEntryPOJO> expensePOJOArrayList;
     RecyclerView mPersonalFinanceRecyclerView;
     PersonalFinanceAdapter mPersonalFinanceAdapter;
-    ChildEventListener mExpenseChildEventListener;
     DatabaseReference mExpensesDatabaseReference;
 
     BottomSheetDialog mMonthBottomSheetDialog;
@@ -104,7 +103,6 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
-
         updateMonthTitle();
 
         mMonthSelectionButton.setOnClickListener(new View.OnClickListener() {
@@ -340,84 +338,71 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     void initExpenses() {
         expensePOJOArrayList = new ArrayList<>();
-
         catYearMonthExpenseArrayListHashMap = new LinkedHashMap<>();
-
-
         mExpensesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses");
         mExpensesDatabaseReference.keepSynced(true);
-        mExpenseChildEventListener = new ChildEventListener() {
+        mExpensesDatabaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                FinanceEntryPOJO expensePOJO = dataSnapshot.getValue(FinanceEntryPOJO.class);
-                expensePOJOArrayList.add(expensePOJO);
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.hasChildren()) {
+                    for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
 
-                if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
-                    if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
-                        if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
-                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
-                            expensePOJOArrayList4.add(expensePOJO);
-                            catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                        FinanceEntryPOJO expensePOJO = dataSnapshot.getValue(FinanceEntryPOJO.class);
+                        expensePOJOArrayList.add(expensePOJO);
+
+
+                        if (catYearMonthExpenseArrayListHashMap.containsKey(expensePOJO.getCategories().getCategoryKey())) {
+                            if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).containsKey(expensePOJO.getYear())) {
+                                if (catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).containsKey(expensePOJO.getMonth())) {
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).get(expensePOJO.getMonth());
+                                    expensePOJOArrayList4.add(expensePOJO);
+                                    catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                                } else {
+                                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = new ArrayList<>();
+                                    expensePOJOArrayList4.add(expensePOJO);
+                                    catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+
+                                }
+
+                            } else {
+                                HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
+
+                                ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                                expensePOJOArrayListTemp.add(expensePOJO);
+
+                                monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
+
+                                catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).put(expensePOJO.getYear(), monthHashMap);
+                            }
                         } else {
-                            ArrayList<FinanceEntryPOJO> expensePOJOArrayList4 = new ArrayList<>();
-                            expensePOJOArrayList4.add(expensePOJO);
-                            catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).get(expensePOJO.getYear()).put(expensePOJO.getMonth(), expensePOJOArrayList4);
+                            HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthHashMap = new HashMap<>();
+                            HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
 
+                            ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
+                            expensePOJOArrayListTemp.add(expensePOJO);
+
+                            monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
+                            yearMonthHashMap.put(expensePOJO.getYear(), monthHashMap);
+                            catYearMonthExpenseArrayListHashMap.put(expensePOJO.getCategories().getCategoryKey(), yearMonthHashMap);
                         }
-
-                    } else {
-                        HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
-
-                        ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
-                        expensePOJOArrayListTemp.add(expensePOJO);
-
-                        monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
-
-                        catYearMonthExpenseArrayListHashMap.get(expensePOJO.getCategories().getCategoryKey()).put(expensePOJO.getYear(), monthHashMap);
                     }
-                } else {
-                    HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> yearMonthHashMap = new HashMap<>();
-                    HashMap<Integer, ArrayList<FinanceEntryPOJO>> monthHashMap = new HashMap<>();
+                    // reflect updated data
+                    updateExpenses();
 
-                    ArrayList<FinanceEntryPOJO> expensePOJOArrayListTemp = new ArrayList<>();
-                    expensePOJOArrayListTemp.add(expensePOJO);
-
-                    monthHashMap.put(expensePOJO.getMonth(), expensePOJOArrayListTemp);
-                    yearMonthHashMap.put(expensePOJO.getYear(), monthHashMap);
-                    catYearMonthExpenseArrayListHashMap.put(expensePOJO.getCategories().getCategoryKey(), yearMonthHashMap);
                 }
-
-                // reflect updated data
-                updateExpenses();
-            }
-
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
-        };
-        mExpensesDatabaseReference.addChildEventListener(mExpenseChildEventListener);
+        });
     }
 
     void updateExpenses() {
         updateMonthTitle();
+        updateTotalExpenses();
         mPersonalFinanceRecyclerView.invalidate();
         mPersonalFinanceAdapter = new PersonalFinanceAdapter();
         mPersonalFinanceRecyclerView.setAdapter(mPersonalFinanceAdapter);
@@ -425,12 +410,36 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     }
 
+    void updateTotalExpenses() {
+        totalExpense = 0.0;
+        double total = 0.0;
+        mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+
+        for (int j = 0; j < categoriesArrayList.size(); j++) {
+            total = 0.0;
+            ArrayList<FinanceEntryPOJO> expensePOJOArrayList = new ArrayList<>();
+            Categories categories = categoriesArrayList.get(j);
+            if (catYearMonthExpenseArrayListHashMap.containsKey(categories.getCategoryKey())) {
+                if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).containsKey(currentYear)) {
+                    if (catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).containsKey(currentMonth)) {
+                        expensePOJOArrayList = catYearMonthExpenseArrayListHashMap.get(categories.getCategoryKey()).get(currentYear).get(currentMonth);
+                        for (int i = 0; i < expensePOJOArrayList.size(); i++) {
+                            if (expensePOJOArrayList.get(i).getEntryType() == ExpenseTypes.ENTRY_TYPE_EXPENSE) {
+                                total += expensePOJOArrayList.get(i).getAmount();
+                            }
+                        }
+                    }
+                }
+            }
+            totalExpense += total;
+        }
+        mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
+
+    }
+
     @Override
     public void onStop() {
         super.onStop();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
-        }
         PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
         PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
     }
@@ -438,9 +447,6 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mExpenseChildEventListener != null) {
-            mExpensesDatabaseReference.removeEventListener(mExpenseChildEventListener);
-        }
         PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
         PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
     }
@@ -492,10 +498,13 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
             ((PersonalFinanceViewHolder) holder).mTotal.setText(String.format(Locale.getDefault(), "%.2f", total));
             setCatIconBackground(holder, categories);
             showCatIcon(holder, categories);
-            totalExpense += total;
-            mTotalExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", totalExpense));
 
-            //  ((PersonalFinanceViewHolder)holder).mProgressBar.setMax(totalExpense);
+            double percentageValue = 0.0;
+            if (totalExpense > 0) {
+                percentageValue = (total * 100) / totalExpense;
+            }
+            setProgressAnimate(((PersonalFinanceViewHolder) holder).mExpenseCategoryProgress, Integer.parseInt(String.valueOf(Math.round(percentageValue))));
+
         }
 
         private void setProgressAnimate(ProgressBar pb, int progressTo) {

@@ -1,6 +1,7 @@
 package com.everyday.skara.everyday;
 
 import android.app.Dialog;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomSheetDialog;
@@ -64,6 +65,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+                clearBackStack();
                 PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
                 Bundle bundle = new Bundle();
@@ -81,6 +83,8 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mCatExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearBackStack();
+
                 optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
 
@@ -99,6 +103,8 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mDayExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearBackStack();
+
                 optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
                 PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
 
@@ -117,6 +123,8 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mExpenseAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearBackStack();
+
                 optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
                 PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
 
@@ -134,12 +142,19 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         });
         initFragment();
     }
+    void clearBackStack(){
+        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
+        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+            fm.popBackStack();
+        }
+    }
 
     void initFragment() {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.financial_fragment_container) != null) {
             if (optionType == NewOptionTypes.TYPE_PERSONAL_EXPENSE) {
+                clearBackStack();
                 PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
                 Bundle bundle = new Bundle();
@@ -149,6 +164,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.financial_fragment_container, personalFinanceFragment).commit();
             } else if (optionType == NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE) {
+                clearBackStack();
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
 
                 Bundle bundle = new Bundle();
@@ -158,6 +174,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.financial_fragment_container, personalFinanceCategoriesFragment).commit();
             } else if (optionType == NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE) {
+                clearBackStack();
                 PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
 
                 Bundle bundle = new Bundle();
@@ -167,6 +184,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.financial_fragment_container, personalFinanceDayFragment).commit();
             } else if (optionType == NewOptionTypes.TYPE_PERSONAL_ANALYTICS_) {
+                clearBackStack();
                 PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
 
                 Bundle bundle = new Bundle();

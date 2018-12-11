@@ -456,6 +456,12 @@ public class PersonalFinanceFragment extends Fragment {
     }
 
     void updateExpenses() {
+        totalExpense = 0.0;
+        totalIncome = 0.0;
+        mTotalExpenseTextView.setText("0.00");
+        mRemaining.setText("0.00");
+        mTotalIncomeTextView.setText("0.00");
+
         updateMonthTitle();
         if (clicked) {
             sortDateAscending();
