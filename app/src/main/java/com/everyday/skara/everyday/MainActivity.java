@@ -59,8 +59,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     UserProfilePOJO userProfilePOJO;
     UserInfoPOJO userInfoPOJO;
 
-
-    RecyclerView mBoardsRecyclerView;
+    // RecyclerView
+    //BoardsAdapter boardsAdapter;
+    //RecyclerView mBoardsRecyclerView;
 
     // Dialog
     BottomSheetDialog mNewBoardDialog;
@@ -70,12 +71,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView mDate;
     Button mDone;
 
-    // RecyclerView
-    BoardsAdapter boardsAdapter;
+
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
 
-    TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle, mPersonalLsTitle;
+    // TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle, mPersonalLsTitle;
+    ImageButton mTodo, mLink, mNotes, mFinance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,13 +101,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-        mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
+       // mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
+
+        mTodo = findViewById(R.id.todo_board_image);
+        mLink = findViewById(R.id.link_board_image);
+        mNotes = findViewById(R.id.notes_board_image);
+        mFinance = findViewById(R.id.finance_board_image);
+/*
         mPersonalFinanceTitle = findViewById(R.id.personal_financial_cardview_title);
         mPersoanlProdTitle = findViewById(R.id.personal_prod_cardview_title);
         mPersonalGratitudeTitle = findViewById(R.id.personal_gratitude_cardview_title);
         mPersonalHabitTitle = findViewById(R.id.personal_habits_cardview_title);
         mPersonalLsTitle = findViewById(R.id.personal_ls_cardview_title);
-
+*/
         // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
         String name = sharedPreferences.getString("name", null);
@@ -119,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
         userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
 
+        /*
         mPersonalFinanceTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,7 +158,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toPersonalLsActivity();
             }
         });
-        initRecyclerView();
+
+        */
+        mFinance.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalFinanceActivity();
+            }
+        });
+        mTodo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalProducitivityActivity();
+            }
+        });
+        mLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalProducitivityActivity();
+            }
+        });
+        mNotes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toPersonalProducitivityActivity();
+            }
+        });
+       // initRecyclerView();
     }
 
     void toPersonalFinanceActivity() {
@@ -273,9 +307,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
                 // int position, MainActivity.BoardsAdapter boardsAdapter, BoardMembersActivity.MembersAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList
-                BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
-                boardViewHolderClassArrayList.add(boardViewHolderClass);
-                boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
+              //  BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
+               // boardViewHolderClassArrayList.add(boardViewHolderClass);
+                //boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
                 fetchBoardMembers(boardPOJO, (boardPOJOArrayList.size() - 1));
             }
 
@@ -330,11 +364,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void initRecyclerView() {
         boardPOJOArrayList = new ArrayList<>();
-        mBoardsRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        mBoardsRecyclerView.setLayoutManager(linearLayoutManager);
-        boardsAdapter = new BoardsAdapter();
-        mBoardsRecyclerView.setAdapter(boardsAdapter);
+//        mBoardsRecyclerView.setHasFixedSize(true);
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+//        mBoardsRecyclerView.setLayoutManager(linearLayoutManager);
+//        boardsAdapter = new BoardsAdapter();
+//        mBoardsRecyclerView.setAdapter(boardsAdapter);
 
 
         initBoards();
@@ -428,9 +462,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         databaseReference.setValue(boardPOJO);
         DatabaseReference databaseReferenceCat = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_BOARDS + userInfoPOJO.getUser_key() + "/" + boardKey);
         databaseReferenceCat.keepSynced(true);
-        Log.d("kkkkkkkkkkkkkkkkkk", boardType +"");
+        Log.d("kkkkkkkkkkkkkkkkkk", boardType + "");
         if (boardType == BoardTypes.BOARD_TYPE_FINANCIAL) {
-            Log.d("kkkkkkkkkkkkkkkkkk", boardType +"========");
+            Log.d("kkkkkkkkkkkkkkkkkk", boardType + "========");
 
             DatabaseReference catReference = boardReference.child("categories").push();
             catReference.keepSynced(true);

@@ -62,7 +62,7 @@
                         android:background="@android:color/transparent"
                         android:padding="6dp"
                         android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_expenses_icon" />
+                        app:srcCompat="@drawable/ic_coin_stack_icon" />
 
                     <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/category_expenses_icon"
@@ -74,7 +74,7 @@
                         android:background="@android:color/transparent"
                         android:padding="6dp"
                         android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_category_icon" />
+                        app:srcCompat="@drawable/ic_categories_icon" />
 
                     <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/day_wise_expense_option"
@@ -86,7 +86,7 @@
                         android:background="@android:color/transparent"
                         android:padding="6dp"
                         android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_link_24dp" />
+                        app:srcCompat="@drawable/ic_calendar_icon" />
                     <android.support.v7.widget.AppCompatImageButton
                         android:id="@+id/expense_analytics_item"
                         android:layout_width="40dp"
@@ -97,7 +97,7 @@
                         android:background="@android:color/transparent"
                         android:padding="6dp"
                         android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_link_24dp" />
+                        app:srcCompat="@drawable/ic_graph_icon" />
                     <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/filter_finance_option_button"
                         android:layout_width="40dp"
