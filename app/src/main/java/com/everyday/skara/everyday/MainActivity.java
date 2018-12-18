@@ -3,9 +3,11 @@ package com.everyday.skara.everyday;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,13 +25,16 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.classes.ActionType;
-import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.BoardTypes;
 import com.everyday.skara.everyday.classes.BoardViewHolderClass;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.fragments.PersoanalLinksFragment;
+import com.everyday.skara.everyday.fragments.PersonalNotesFragment;
+import com.everyday.skara.everyday.fragments.PersonalTodoFragment;
+import com.everyday.skara.everyday.fragments.UserAccountFragment;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.BoardMembersPOJO;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
@@ -44,6 +49,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.roughike.bottombar.BottomBar;
+import com.roughike.bottombar.OnTabSelectListener;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
@@ -71,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextView mDate;
     Button mDone;
 
-
+    BottomBar mBottomBar;
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
 
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }else{
 //            setTheme(R.style.DarkTheme);
 //        }
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_layout);
         Toolbar myToolbar = findViewById(R.id.boards_toolbar);
         myToolbar.setTitle("My Boards");
         setSupportActionBar(myToolbar);
@@ -99,15 +106,90 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+        void initBottomBar() {
+            mBottomBar = (BottomBar) findViewById(R.id.bottom_bar_main);
+            mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+                @Override
+                public void onTabSelected(@IdRes int tabId) {
+                    if (tabId == R.id.finance_item) {
+                        PersonalFinancialBoardActivity financialBoardActivity = new PersonalFinancialBoardActivity();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user_profile", userInfoPOJO);
+                        financialBoardActivity.setArguments(bundle);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.main_content_container, financialBoardActivity);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    } else if (tabId == R.id.todo_item_menu) {
+                        PersonalTodoFragment todoFragment = new PersonalTodoFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user_profile", userInfoPOJO);
+                        todoFragment.setArguments(bundle);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.main_content_container, todoFragment);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    } else if (tabId == R.id.note_item) {
+                        PersonalNotesFragment notesFragment = new PersonalNotesFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user_profile", userInfoPOJO);
+                        notesFragment.setArguments(bundle);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.main_content_container, notesFragment);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    } else if (tabId == R.id.link_item) {
+                        PersoanalLinksFragment linksFragment = new PersoanalLinksFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user_profile", userInfoPOJO);
+                        linksFragment.setArguments(bundle);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.main_content_container, linksFragment);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    }else if(tabId == R.id.user_profile_item){
+                        UserAccountFragment userAccountFragment= new UserAccountFragment();
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("user_profile", userInfoPOJO);
+                        userAccountFragment.setArguments(bundle);
+
+                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                        transaction.replace(R.id.main_content_container, userAccountFragment);
+                        transaction.addToBackStack(null);
+
+                        transaction.commit();
+                    }
+                }
+            });
+        }
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-       // mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
+/*
+        mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
 
         mTodo = findViewById(R.id.todo_board_image);
         mLink = findViewById(R.id.link_board_image);
         mNotes = findViewById(R.id.notes_board_image);
         mFinance = findViewById(R.id.finance_board_image);
-/*
+
         mPersonalFinanceTitle = findViewById(R.id.personal_financial_cardview_title);
         mPersoanlProdTitle = findViewById(R.id.personal_prod_cardview_title);
         mPersonalGratitudeTitle = findViewById(R.id.personal_gratitude_cardview_title);
@@ -159,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        */
+
         mFinance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,7 +266,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 toPersonalProducitivityActivity();
             }
         });
-       // initRecyclerView();
+       initRecyclerView();
+        */
+
+        initBottomBar();
     }
 
     void toPersonalFinanceActivity() {
@@ -232,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_user_account:
-                toUserAccountActivity();
                 return true;
 
             case R.id.action_new_board:
@@ -402,11 +486,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    void toUserAccountActivity() {
-        Intent intent = new Intent(MainActivity.this, UserAccountActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
 
     void showNewBoardDialog(final int boardType) {
         mNewBoardDialog = new BottomSheetDialog(this);

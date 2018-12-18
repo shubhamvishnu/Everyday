@@ -93,28 +93,28 @@ public class PersoanalLinksFragment extends Fragment {
         linkPOJOArrayList = new ArrayList<>();
         mLinksRecyclerView = view.findViewById(R.id.links_view_recycler);
 
-        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+        //mFilterButton = getActivity().findViewById(R.id.filter_option_button);
 
         mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_link_linear_layout);
         mEmptyLinearLayout.setVisibility(View.INVISIBLE);
 
         mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_links_fragment);
 
-        mFilterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clicked = !clicked;
-                if (clicked) {
-                    mFilterButton.setRotation(180);
-                    sortDateAscending();
-                    mLinksAdapter.notifyDataSetChanged();
-                } else {
-                    mFilterButton.setRotation(0);
-                    sortDateDescending();
-                    mLinksAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+//        mFilterButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clicked = !clicked;
+//                if (clicked) {
+//                    mFilterButton.setRotation(180);
+//                    sortDateAscending();
+//                    mLinksAdapter.notifyDataSetChanged();
+//                } else {
+//                    mFilterButton.setRotation(0);
+//                    sortDateDescending();
+//                    mLinksAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
         initLinksRecyclerView();
     }
 

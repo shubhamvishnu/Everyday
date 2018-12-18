@@ -4,15 +4,20 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 
@@ -28,53 +33,60 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
-public class PersonalFinancialBoardActivity extends AppCompatActivity {
+public class PersonalFinancialBoardActivity extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;
     public static int optionType;
     public static int mViewCurrentYear, mViewCurrentMonth;
     ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics;
+    View view;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_personal_financial_board, container, false);
+        return view;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal_financial_board);
-        Toolbar myToolbar = findViewById(R.id.financial_board_toolbar);
-        setSupportActionBar(myToolbar);
-        if (user != null) {
-            init();
-        } else {
-            toLoginActivity();
+    public void onStart() {
+        super.onStart();
+        if (getActivity() != null) {
+            if (user != null) {
+                init();
+            } else {
+                toLoginActivity();
+            }
         }
     }
 
     void init() {
-        Intent intent = getIntent();
-        userInfoPOJO = (UserInfoPOJO) intent.getSerializableExtra("user_profile");
+        Intent intent = getActivity().getIntent();
+        userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
         optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
 
         mViewCurrentYear = Calendar.getInstance().get(Calendar.YEAR);
         mViewCurrentMonth = Calendar.getInstance().get(Calendar.MONTH);
 
-        mExpenses = findViewById(R.id.expenses_option_icon);
-        mCatExpenses = findViewById(R.id.category_expenses_icon);
-        mDayExpenses = findViewById(R.id.day_wise_expense_option);
-        mExpenseAnalytics = findViewById(R.id.expense_analytics_item);
+        mExpenses = view.findViewById(R.id.expenses_option_icon);
+        mCatExpenses = view.findViewById(R.id.category_expenses_icon);
+        mDayExpenses = view.findViewById(R.id.day_wise_expense_option);
+        mExpenseAnalytics = view.findViewById(R.id.expense_analytics_item);
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
-                clearBackStack();
+              //  clearBackStack();
                 PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("user_profile", userInfoPOJO);
                 personalFinanceFragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.financial_fragment_container, personalFinanceFragment);
+                transaction.replace(R.id.personal_financial_fragment_container, personalFinanceFragment);
                 transaction.addToBackStack(null);
 
                 transaction.commit();
@@ -83,7 +95,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mCatExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearBackStack();
+               // clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
@@ -92,9 +104,9 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 bundle.putSerializable("user_profile", userInfoPOJO);
                 personalFinanceCategoriesFragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.financial_fragment_container, personalFinanceCategoriesFragment);
+                transaction.replace(R.id.personal_financial_fragment_container, personalFinanceCategoriesFragment);
                 transaction.addToBackStack(null);
 
                 transaction.commit();
@@ -103,7 +115,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mDayExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearBackStack();
+             //   clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
                 PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
@@ -112,9 +124,9 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 bundle.putSerializable("user_profile", userInfoPOJO);
                 personalFinanceDayFragment.setArguments(bundle);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.financial_fragment_container, personalFinanceDayFragment);
+                transaction.replace(R.id.personal_financial_fragment_container, personalFinanceDayFragment);
                 transaction.addToBackStack(null);
 
                 transaction.commit();
@@ -123,7 +135,7 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         mExpenseAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clearBackStack();
+             //   clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
                 PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
@@ -132,9 +144,9 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
                 bundle.putSerializable("user_profile", userInfoPOJO);
                 personalFinanceAnalytics.setArguments(bundle);
 
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-                transaction.replace(R.id.financial_fragment_container, personalFinanceAnalytics);
+                transaction.replace(R.id.personal_financial_fragment_container, personalFinanceAnalytics);
                 transaction.addToBackStack(null);
 
                 transaction.commit();
@@ -142,87 +154,32 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
         });
         initFragment();
     }
-    void clearBackStack(){
-        android.support.v4.app.FragmentManager fm = getSupportFragmentManager();
-        for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
-            fm.popBackStack();
-        }
-    }
+
 
     void initFragment() {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.financial_fragment_container) != null) {
-            if (optionType == NewOptionTypes.TYPE_PERSONAL_EXPENSE) {
-                clearBackStack();
-                PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
+            optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+            //  clearBackStack();
+            PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user_profile", userInfoPOJO);
-                personalFinanceFragment.setArguments(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("user_profile", userInfoPOJO);
+            personalFinanceFragment.setArguments(bundle);
 
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.financial_fragment_container, personalFinanceFragment).commit();
-            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE) {
-                clearBackStack();
-                PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user_profile", userInfoPOJO);
-                personalFinanceCategoriesFragment.setArguments(bundle);
+            transaction.replace(R.id.personal_financial_fragment_container, personalFinanceFragment);
+            transaction.addToBackStack(null);
 
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.financial_fragment_container, personalFinanceCategoriesFragment).commit();
-            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE) {
-                clearBackStack();
-                PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user_profile", userInfoPOJO);
-                personalFinanceDayFragment.setArguments(bundle);
-
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.financial_fragment_container, personalFinanceDayFragment).commit();
-            } else if (optionType == NewOptionTypes.TYPE_PERSONAL_ANALYTICS_) {
-                clearBackStack();
-                PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
-
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("user_profile", userInfoPOJO);
-                personalFinanceAnalytics.setArguments(bundle);
-
-                getSupportFragmentManager().beginTransaction()
-                        .add(R.id.financial_fragment_container, personalFinanceAnalytics).commit();
-            }
-
-        }
+            transaction.commit();
 
 
-    }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_financial_board_activity, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_new_entry_menu_item:
-                chooseEntryTypeBoard();
-                return true;
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
     }
 
     void chooseEntryTypeBoard() {
-        final Dialog mEntryTypeDialog = new BottomSheetDialog(this);
+        final Dialog mEntryTypeDialog = new BottomSheetDialog(getActivity());
         mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
         Button mIncomeType, mExpenseType;
         mIncomeType = mEntryTypeDialog.findViewById(R.id.income_type_button);
@@ -256,32 +213,27 @@ public class PersonalFinancialBoardActivity extends AppCompatActivity {
     }
 
     void toNewIncomeActivity() {
-        Intent intent = new Intent(PersonalFinancialBoardActivity.this, NewIncomeExpenseActivity.class);
+        Intent intent = new Intent(getActivity(), NewIncomeExpenseActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
     void toNewExpenseActivity() {
-        Intent intent = new Intent(PersonalFinancialBoardActivity.this, NewExpenseActivity.class);
+        Intent intent = new Intent(getActivity(), NewExpenseActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
     }
 
     void toLoginActivity() {
-        Intent intent = new Intent(PersonalFinancialBoardActivity.this, LoginActivity.class);
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
-    @Override
-    public void onBackPressed() {
-        toBoardActivity();
-    }
-
     void toBoardActivity() {
-        Intent intent = new Intent(PersonalFinancialBoardActivity.this, MainActivity.class);
+        Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

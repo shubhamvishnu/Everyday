@@ -89,27 +89,27 @@ public class PersonalNotesFragment extends Fragment {
         notesDatabaseReference.keepSynced(true);
         mNotesRecyclerView = view.findViewById(R.id.notes_view_recycler);
 
-        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
+       // mFilterButton = getActivity().findViewById(R.id.filter_option_button);
         mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_notes_linear_layout);
         mEmptyLinearLayout.setVisibility(View.INVISIBLE);
 
         mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_notes_fragment);
 
-        mFilterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clicked = !clicked;
-                if (clicked) {
-                    mFilterButton.setRotation(180);
-                    sortDateAscending();
-                    mNotesAdapter.notifyDataSetChanged();
-                } else {
-                    mFilterButton.setRotation(0);
-                    sortDateDescending();
-                    mNotesAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+//        mFilterButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clicked = !clicked;
+//                if (clicked) {
+//                    mFilterButton.setRotation(180);
+//                    sortDateAscending();
+//                    mNotesAdapter.notifyDataSetChanged();
+//                } else {
+//                    mFilterButton.setRotation(0);
+//                    sortDateDescending();
+//                    mNotesAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
         notePOJOArrayList = new ArrayList<>();
         initNotesRecyclerView();
     }

@@ -6,16 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".FinancialBoardActivity">
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/financial_board_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/blue"
-        android:elevation="4dp"
-        app:title="Financial Board"
-        android:theme="@style/AppTheme.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/white" />
     <FrameLayout
         android:id="@+id/financial_fragment_container"
         android:layout_width="match_parent"

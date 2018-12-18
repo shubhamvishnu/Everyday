@@ -30,6 +30,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.android.support:support-vector-drawable:27.1.1'
     implementation 'com.android.support:recyclerview-v7:27.1.1'
+    implementation 'com.roughike:bottom-bar:2.3.1'
 
     // Bottom Sheet Picker
     implementation('com.philliphsu:bottomsheetpickers:2.4.1') {

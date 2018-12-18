@@ -122,7 +122,6 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
     void init() {
         todoArrayList = new ArrayList<>();
-        mFilterButton = getActivity().findViewById(R.id.filter_option_button);
 
 
         //Intent intent = getActivity().getIntent();
@@ -138,21 +137,21 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
         mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_todo_fragment);
 
-        mFilterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                clicked = !clicked;
-                if (clicked) {
-                    mFilterButton.setRotation(180);
-                    sortDateAscending();
-                    todoAdapter.notifyDataSetChanged();
-                } else {
-                    mFilterButton.setRotation(0);
-                    sortDateDescending();
-                    todoAdapter.notifyDataSetChanged();
-                }
-            }
-        });
+//        mFilterButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                clicked = !clicked;
+//                if (clicked) {
+//                    mFilterButton.setRotation(180);
+//                    sortDateAscending();
+//                    todoAdapter.notifyDataSetChanged();
+//                } else {
+//                    mFilterButton.setRotation(0);
+//                    sortDateDescending();
+//                    todoAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
         initReminders();
 
     }

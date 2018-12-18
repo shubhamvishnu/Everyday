@@ -28,8 +28,6 @@ public class FinancialBoardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_financial_board);
-        Toolbar myToolbar = findViewById(R.id.financial_board_toolbar);
-        setSupportActionBar(myToolbar);
         if (user != null) {
             init();
         } else {

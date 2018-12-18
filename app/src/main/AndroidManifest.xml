@@ -35,7 +35,7 @@
         <activity android:name=".AddBoardMembersActivity" />
         <activity android:name=".BoardMembersActivity" />
         <activity android:name=".OtherBoardsActivity" />
-        <activity android:name=".UserAccountActivity" />
+        <activity android:name=".fragments.UserAccountFragment" />
 
         <!-- <receiver android:name=".receivers.TodoReminderReceiver"> -->
         <!-- <intent-filter> -->

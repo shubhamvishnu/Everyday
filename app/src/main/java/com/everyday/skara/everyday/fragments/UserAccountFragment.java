@@ -1,4 +1,4 @@
-package com.everyday.skara.everyday;
+package com.everyday.skara.everyday.fragments;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -9,11 +9,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +26,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.LoginTypes;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -41,7 +47,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserAccountActivity extends FragmentActivity implements View.OnClickListener {
+public class UserAccountFragment extends Fragment implements View.OnClickListener{
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference;
@@ -53,41 +59,51 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
     CircleImageView mUserProfile;
     TextView mName, mEmail;
     Button mLogout;
+    View view;
 
     String userKey;
     int selectedIcon;
     ImageButton mShareAppPlaystore, mShareAppLink;
 
-
+    @Nullable
     @Override
-    protected void onStart() {
-        initGoogleSignout();
-        super.onStart();
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.activity_user_account, container, false);
+        return view;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_account);
-        if (user != null) {
-            init();
-        } else {
-            toLogin();
+    public void onStart() {
+        initGoogleSignout();
+        super.onStart();
+        if (getActivity() != null) {
+            if (user != null) {
+                init();
+            } else {
+                toLoginActivity();
+            }
         }
     }
 
+    void toLoginActivity(){
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+
     void init() {
 
-        mUserProfile = (CircleImageView) findViewById(R.id.user_profile_circle_image_view);
-        mName = (TextView) findViewById(R.id.user_profile_name_text_view);
-        mEmail = (TextView) findViewById(R.id.user_profile_email_text_view);
+        mUserProfile = (CircleImageView) view.findViewById(R.id.user_profile_circle_image_view);
+        mName = (TextView) view.findViewById(R.id.user_profile_name_text_view);
+        mEmail = (TextView) view.findViewById(R.id.user_profile_email_text_view);
 
-        mFeedbackButton = findViewById(R.id.feedback_button);
+        mFeedbackButton = view.findViewById(R.id.feedback_button);
 
-        mShareAppPlaystore = findViewById(R.id.share_app_playstore);
-        mShareAppLink = findViewById(R.id.share_app_via_link);
+        mShareAppPlaystore = view.findViewById(R.id.share_app_playstore);
+        mShareAppLink = view.findViewById(R.id.share_app_via_link);
 
-        mLogout = (Button) findViewById(R.id.user_profile_logout_button);
+        mLogout = (Button) view.findViewById(R.id.user_profile_logout_button);
         mLogout.setOnClickListener(this);
         mFeedbackButton.setOnClickListener(this);
         mShareAppLink.setOnClickListener(this);
@@ -111,8 +127,8 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
     }
 
     void initUserProfileDetails() {
-        // initializing UserProfilePOJO
-        userSharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
+        // initializing UserProfilePOJOview.
+        userSharedPreferences = getActivity().getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
         String name = userSharedPreferences.getString("name", null);
         String email = userSharedPreferences.getString("email", null);
         String profile_url = userSharedPreferences.getString("url", null);
@@ -126,25 +142,15 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
     }
 
     void toLogin() {
-        Intent intent = new Intent(UserAccountActivity.this, LoginActivity.class);
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
-    @Override
-    public void onBackPressed() {
-        toMainActivity();
-    }
-
-    void toMainActivity() {
-        Intent intent = new Intent(UserAccountActivity.this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
 
     void showLogoutAlert() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                this);
+                getActivity());
 
         // set title
         alertDialogBuilder.setTitle("Logout");
@@ -208,7 +214,7 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
 
 
     void showFeedbackDialog() {
-        mFeedbackDialog = new Dialog(this);
+        mFeedbackDialog = new Dialog(getActivity());
         mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout);
         selectedIcon = -1;
         final ImageButton sad, happy, inlove;
@@ -255,7 +261,7 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
             public void onClick(View view) {
                 String note = feedbackNote.getText().toString();
                 if ((selectedIcon == -1) && (note.isEmpty())) {
-                    Toast.makeText(UserAccountActivity.this, "You haven't selected anything", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "You haven't selected anything", Toast.LENGTH_SHORT).show();
                 } else if ((selectedIcon != -1)) {
                     doneFeedback.setEnabled(false);
                     FeedbackPOJO feedbackPOJO = new FeedbackPOJO(userProfilePOJO, "NULL", selectedIcon);
@@ -300,7 +306,7 @@ public class UserAccountActivity extends FragmentActivity implements View.OnClic
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         mGoogleApiClient.connect();
