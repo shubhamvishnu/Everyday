@@ -19,8 +19,7 @@ import android.widget.TextView;
 
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.NewBoardExpenseActivity;
-import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
+import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
@@ -48,7 +47,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -144,8 +142,8 @@ public class PersonalFinanceAnalytics extends Fragment {
         mPositiveCurr.setText(currency);
         expensePOJOArrayList = new ArrayList<>();
 
-        currentYear = PersonalFinancialBoardActivity.mViewCurrentYear;
-        currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
+        currentYear = PersonalFinancialBoardFragment.mViewCurrentYear;
+        currentMonth = PersonalFinancialBoardFragment.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
         mTotalIncomeTextView.setText("0.00");
@@ -1156,8 +1154,8 @@ public class PersonalFinanceAnalytics extends Fragment {
         if (mExpenseValueEventListener != null) {
             mExpensesDatabaseReference.removeEventListener(mExpenseValueEventListener);
         }
-        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
-        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+        PersonalFinancialBoardFragment.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardFragment.mViewCurrentYear = currentYear;
 
     }
 
@@ -1167,8 +1165,8 @@ public class PersonalFinanceAnalytics extends Fragment {
         if (mExpenseValueEventListener != null) {
             mExpensesDatabaseReference.removeEventListener(mExpenseValueEventListener);
         }
-        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
-        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+        PersonalFinancialBoardFragment.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardFragment.mViewCurrentYear = currentYear;
     }
 
     class CategoryExpensePOJO {

@@ -2,11 +2,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- "Mark Favorite", should appear as action button if possible -->
-    <item
-        android:id="@+id/action_user_account"
-        android:icon="@drawable/ic_person_24dp"
-        android:title="User Account"
-        app:showAsAction="always"/>
+    <!--<item-->
+        <!--android:id="@+id/action_user_account"-->
+        <!--android:icon="@drawable/ic_person_24dp"-->
+        <!--android:title="User Account"-->
+        <!--app:showAsAction="always"/>-->
 
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_new_board"
@@ -17,9 +17,9 @@
         android:title="Settings"
         android:icon="@drawable/ic_settings_icon"
         app:showAsAction="always"/>
-    <item android:id="@+id/action_other_board"
-        android:title="Other Boards"
+    <!--<item android:id="@+id/action_other_board"-->
+        <!--android:title="Other Boards"-->
 
-        app:showAsAction="always"/>
+        <!--app:showAsAction="always"/>-->
 
 </menu>

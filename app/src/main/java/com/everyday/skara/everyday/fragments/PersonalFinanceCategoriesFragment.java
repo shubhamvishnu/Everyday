@@ -20,7 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.PersonalFinancialBoardActivity;
+import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -30,7 +30,6 @@ import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -99,8 +98,8 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
         mCurencyTextView.setText(currency);
         expensePOJOArrayList = new ArrayList<>();
 
-        currentYear = PersonalFinancialBoardActivity.mViewCurrentYear;
-        currentMonth = PersonalFinancialBoardActivity.mViewCurrentMonth;
+        currentYear = PersonalFinancialBoardFragment.mViewCurrentYear;
+        currentMonth = PersonalFinancialBoardFragment.mViewCurrentMonth;
 
         mTotalExpenseTextView.setText("0.00");
         updateMonthTitle();
@@ -440,15 +439,15 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
-        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+        PersonalFinancialBoardFragment.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardFragment.mViewCurrentYear = currentYear;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        PersonalFinancialBoardActivity.mViewCurrentMonth = currentMonth;
-        PersonalFinancialBoardActivity.mViewCurrentYear = currentYear;
+        PersonalFinancialBoardFragment.mViewCurrentMonth = currentMonth;
+        PersonalFinancialBoardFragment.mViewCurrentYear = currentYear;
     }
 
 

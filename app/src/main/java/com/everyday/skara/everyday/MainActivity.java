@@ -1,5 +1,7 @@
 package com.everyday.skara.everyday;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -84,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     // TextView mPersonalFinanceTitle, mPersoanlProdTitle, mPersonalGratitudeTitle, mPersonalHabitTitle, mPersonalLsTitle;
     ImageButton mTodo, mLink, mNotes, mFinance;
-
+    public static int OPTION_TYPE = 1;
+    SharedPreferences sharedPreferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar myToolbar = findViewById(R.id.boards_toolbar);
         myToolbar.setTitle("My Boards");
         setSupportActionBar(myToolbar);
-
+         sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         if (user != null) {
             init();
         } else {
@@ -106,80 +109,115 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-        void initBottomBar() {
-            mBottomBar = (BottomBar) findViewById(R.id.bottom_bar_main);
-            mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
-                @Override
-                public void onTabSelected(@IdRes int tabId) {
-                    if (tabId == R.id.finance_item) {
-                        PersonalFinancialBoardActivity financialBoardActivity = new PersonalFinancialBoardActivity();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_profile", userInfoPOJO);
-                        financialBoardActivity.setArguments(bundle);
-
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        transaction.replace(R.id.main_content_container, financialBoardActivity);
-                        transaction.addToBackStack(null);
-
-                        transaction.commit();
-                    } else if (tabId == R.id.todo_item_menu) {
-                        PersonalTodoFragment todoFragment = new PersonalTodoFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_profile", userInfoPOJO);
-                        todoFragment.setArguments(bundle);
-
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        transaction.replace(R.id.main_content_container, todoFragment);
-                        transaction.addToBackStack(null);
-
-                        transaction.commit();
-                    } else if (tabId == R.id.note_item) {
-                        PersonalNotesFragment notesFragment = new PersonalNotesFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_profile", userInfoPOJO);
-                        notesFragment.setArguments(bundle);
-
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        transaction.replace(R.id.main_content_container, notesFragment);
-                        transaction.addToBackStack(null);
-
-                        transaction.commit();
-                    } else if (tabId == R.id.link_item) {
-                        PersoanalLinksFragment linksFragment = new PersoanalLinksFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_profile", userInfoPOJO);
-                        linksFragment.setArguments(bundle);
-
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        transaction.replace(R.id.main_content_container, linksFragment);
-                        transaction.addToBackStack(null);
-
-                        transaction.commit();
-                    }else if(tabId == R.id.user_profile_item){
-                        UserAccountFragment userAccountFragment= new UserAccountFragment();
-
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("user_profile", userInfoPOJO);
-                        userAccountFragment.setArguments(bundle);
-
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        transaction.replace(R.id.main_content_container, userAccountFragment);
-                        transaction.addToBackStack(null);
-
-                        transaction.commit();
-                    }
-                }
-            });
+    void initBottomBar() {
+        sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains("item_selected")){
+            OPTION_TYPE = sharedPreferences.getInt("item_selected", 1);
+        }else {
+            OPTION_TYPE = 1;
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("item_selected", 1);
+            editor.apply();
         }
+
+
+        mBottomBar = (BottomBar) findViewById(R.id.bottom_bar_main);
+        --OPTION_TYPE;
+        mBottomBar.selectTabAtPosition(OPTION_TYPE);
+        mBottomBar.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelected(@IdRes int tabId) {
+                if (tabId == R.id.finance_item) {
+                    OPTION_TYPE = 1;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 1);
+                    editor.apply();
+
+                    PersonalFinancialBoardFragment financialBoardActivity = new PersonalFinancialBoardFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    financialBoardActivity.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, financialBoardActivity);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                } else if (tabId == R.id.todo_item_menu) {
+                    OPTION_TYPE = 2;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 2);
+                    editor.apply();
+                    PersonalTodoFragment todoFragment = new PersonalTodoFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    todoFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, todoFragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                } else if (tabId == R.id.note_item) {
+                    OPTION_TYPE = 3;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 3);
+                    editor.apply();
+                    PersonalNotesFragment notesFragment = new PersonalNotesFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    notesFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, notesFragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                } else if (tabId == R.id.link_item) {
+                    OPTION_TYPE = 4;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 4);
+                    editor.apply();
+                    PersoanalLinksFragment linksFragment = new PersoanalLinksFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    linksFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, linksFragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                } else if (tabId == R.id.user_profile_item) {
+                    OPTION_TYPE = 5;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 5);
+                    editor.apply();
+                    UserAccountFragment userAccountFragment = new UserAccountFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    userAccountFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, userAccountFragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                }
+            }
+        });
+    }
+
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
 /*
@@ -273,7 +311,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void toPersonalFinanceActivity() {
-        Intent intent = new Intent(MainActivity.this, PersonalFinancialBoardActivity.class);
+        Intent intent = new Intent(MainActivity.this, PersonalFinancialBoardFragment.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
         startActivity(intent);
@@ -316,16 +354,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_user_account:
-                return true;
+//            case R.id.action_user_account:
+//                return true;
 
             case R.id.action_new_board:
-                showBoardTypesDialog();
+                //showBoardTypesDialog();
+                newItemClicked();
                 return true;
-
-            case R.id.action_other_board:
-                toOtherBoardsActivity();
-                return true;
+//
+//            case R.id.action_other_board:
+//                toOtherBoardsActivity();
+//                return true;
 
             case R.id.action_Settings:
                 toSettingsActivity();
@@ -336,6 +375,89 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    void chooseEntryTypeBoard() {
+        final Dialog mEntryTypeDialog = new BottomSheetDialog(MainActivity.this);
+        mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
+        Button mIncomeType, mExpenseType;
+        mIncomeType = mEntryTypeDialog.findViewById(R.id.income_type_button);
+        mExpenseType = mEntryTypeDialog.findViewById(R.id.expense_type_button);
+
+        ImageButton mClose = mEntryTypeDialog.findViewById(R.id.close_entry_option_dialog);
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+            }
+        });
+
+        mIncomeType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+                toNewIncomeActivity();
+            }
+        });
+        mExpenseType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEntryTypeDialog.dismiss();
+                toNewExpenseActivity();
+            }
+        });
+
+        mEntryTypeDialog.setCanceledOnTouchOutside(true);
+        mEntryTypeDialog.show();
+    }
+
+    void toNewIncomeActivity() {
+        Intent intent = new Intent(MainActivity.this, NewIncomeExpenseActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+    void toNewExpenseActivity() {
+        Intent intent = new Intent(MainActivity.this, NewExpenseActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+    void newItemClicked() {
+        if (OPTION_TYPE == 1) {
+            chooseEntryTypeBoard();
+        } else if (OPTION_TYPE == 2) {
+            toNewTodoActivity();
+        } else if (OPTION_TYPE == 3) {
+            toNewNoteActivity();
+        } else if (OPTION_TYPE == 4) {
+            toNewLinkActivity();
+        } else if (OPTION_TYPE == 5) {
+
+        }
+    }
+
+    void toNewNoteActivity() {
+        Intent intent = new Intent(MainActivity.this, PersonalNewNoteActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+    void toNewLinkActivity() {
+        Intent intent = new Intent(MainActivity.this, PersonalNewLinkActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
+
+    void toNewTodoActivity() {
+        Intent intent = new Intent(MainActivity.this, PersonalNewTodoActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     int boardType = 0;
@@ -391,8 +513,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 BoardPOJO boardPOJO = dataSnapshot.getValue(BoardPOJO.class);
                 boardPOJOArrayList.add(boardPOJO);
                 // int position, MainActivity.BoardsAdapter boardsAdapter, BoardMembersActivity.MembersAdapter membersAdapter, ArrayList<BoardMembersPOJO> boardMembersPOJOArrayList
-              //  BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
-               // boardViewHolderClassArrayList.add(boardViewHolderClass);
+                //  BoardViewHolderClass boardViewHolderClass = new BoardViewHolderClass((boardPOJOArrayList.size() - 1), boardsAdapter, new MembersViewAdapter((boardPOJOArrayList.size() - 1)), new ArrayList<BoardMembersPOJO>());
+                // boardViewHolderClassArrayList.add(boardViewHolderClass);
                 //boardsAdapter.notifyItemInserted(boardPOJOArrayList.size() - 1);
                 fetchBoardMembers(boardPOJO, (boardPOJOArrayList.size() - 1));
             }

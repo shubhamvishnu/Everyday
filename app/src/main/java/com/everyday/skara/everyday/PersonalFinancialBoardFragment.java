@@ -33,7 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
-public class PersonalFinancialBoardActivity extends Fragment {
+public class PersonalFinancialBoardFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;

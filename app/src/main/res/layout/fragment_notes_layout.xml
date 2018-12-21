@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#000000">
 
     <LinearLayout
         android:id="@+id/board_no_notes_linear_layout"
@@ -10,6 +10,7 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical"
+        android:background="#000000"
         android:visibility="invisible">
 
         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -27,7 +28,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="No Notes"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="22sp" />
 
         <!--<TextView-->
@@ -44,7 +45,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/linear_layout_notes_fragment"
-        android:background="#e6e6e6"
+        android:background="#000000"
+
         android:orientation="vertical">
 
         <android.support.v7.widget.RecyclerView

@@ -35,15 +35,63 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_close_24dp" />
     </LinearLayout>
-    <Button
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/income_type_button"
-        android:text="Income"/>
-    <Button
+        android:orientation="horizontal">
+
+        <!--<Button-->
+        <!--android:layout_width="36dp"-->
+        <!--android:layout_height="18dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="@color/red"-->
+        <!--android:gravity="center" />-->
+
+        <Button
+            android:id="@+id/expense_type_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:text="Expense"
+            android:textAllCaps="false"
+            android:textColor="@color/red" />
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="#e6e6e6" />
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/expense_type_button"
-        android:text="Expense"/>
+        android:orientation="horizontal">
+
+        <!--<Button-->
+        <!--android:layout_width="36dp"-->
+        <!--android:layout_height="18dp"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_margin="8dp"-->
+        <!--android:background="@color/green_selected"-->
+        <!--android:gravity="center" />-->
+
+        <Button
+            android:id="@+id/income_type_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@color/transparent"
+            android:text="Income"
+            android:textAllCaps="false"
+            android:textColor="@color/green_selected" />
+
+    </LinearLayout>
+
 
 </LinearLayout>

@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.DialogFragment;
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -101,7 +104,20 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
             toLoginActivity();
         }
     }
+    @Override
+    public void onBackPressed() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("item_selected", 1);
+        editor.apply();
+        toMainActivity();
+    }
 
+    void toMainActivity(){
+        Intent intent = new Intent(NewIncomeExpenseActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
     void init() {
         Intent intent = getIntent();
 //        boardPOJO = (BoardPOJO) intent.getSerializableExtra("board_pojo");
@@ -174,20 +190,13 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
                 //String entryKey, Double amount, String description, String date, String expenseType, ArrayList<BoardMembersPOJO> sharedByArrayList, String note, String transactionId, int year, int month, int day
                 FinanceEntryPOJO expensePOJO = new FinanceEntryPOJO(newExpenseDatabaseReference.getKey(), Double.valueOf(amount), description, date, notes, transactionId, year, month, day, ExpenseTypes.ENTRY_TYPE_INCOME, selectedCat, userInfoPOJO);
                 newExpenseDatabaseReference.setValue(expensePOJO);
-                toFinancialActivity();
+                toMainActivity();
             }
         }
 
 
     }
 
-    void toFinancialActivity() {
-        Intent intent = new Intent(this, PersonalFinancialBoardActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.putExtra("board_pojo", boardPOJO);
-        intent.putExtra("user_profile", userInfoPOJO);
-        startActivity(intent);
-    }
 
     /**
      * Bottom sheet picker for date and time

@@ -2,7 +2,9 @@ package com.everyday.skara.everyday;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -26,6 +28,7 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NotificationHolder;
 import com.everyday.skara.everyday.classes.NotificationTypes;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.pojo.ActivityPOJO;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
@@ -65,6 +68,21 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
     int hours, minutes;
     boolean timelineUpdated = false;
     TodoInfoPOJO todoInfoPOJOReminder = null;
+
+    @Override
+    public void onBackPressed() {
+        SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("item_selected", 2);
+        editor.apply();
+        toMainActivity();
+    }
+
+    void toMainActivity(){
+        Intent intent = new Intent(PersonalNewTodoActivity.this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
