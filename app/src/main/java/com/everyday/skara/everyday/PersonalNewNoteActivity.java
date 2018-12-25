@@ -48,13 +48,17 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onBackPressed() {
+       saveSelected();
+
+    }
+
+    void saveSelected(){
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("item_selected", 3);
         editor.apply();
         toMainActivity();
     }
-
     void toMainActivity(){
         Intent intent = new Intent(PersonalNewNoteActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -108,7 +112,7 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
             notesReference.setValue(notePOJO);
             ActivityPOJO activityPOJO = new ActivityPOJO("New Note Saved", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_NOTE, userInfoPOJO);
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
-            toPersoanalBoards();
+            saveSelected();
         } else {
             // TODO: show field empty alert
         }
@@ -127,10 +131,5 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
                 .show();
     }
 
-    void toPersoanalBoards() {
-        Intent intent = new Intent(PersonalNewNoteActivity.this, PersonalProductivityBoard.class);
-        intent.putExtra("user_profile", userInfoPOJO);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
+
 }

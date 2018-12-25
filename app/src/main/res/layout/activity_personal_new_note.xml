@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Title"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/dark_grey"
             android:padding="12dp"
             android:background="@android:color/transparent"
             android:textColor="@android:color/white"
@@ -44,7 +44,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:ems="10"
-            android:textColorHint="@color/grey"
+            android:textColorHint="@color/dark_grey"
             android:gravity="left"
             android:padding="12dp"
             android:textColor="@color/white"
@@ -58,7 +58,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="12dp"
-            android:background="#e6e6e6" />
+            android:background="@color/grey" />
         <TextView
             android:id="@+id/note_date"
             android:layout_width="match_parent"

@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:padding="8dp"
+    android:background="#000000"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <LinearLayout
+        android:background="#000000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -24,7 +26,8 @@
             android:background="@drawable/strike_through_textview_background"
             android:textSize="18dp"
             android:padding="8dp"
-            android:textColor="@android:color/black"
+
+            android:textColor="@android:color/white"
             android:layout_height="wrap_content"
             android:text="Todo item" />
         <android.support.v7.widget.AppCompatImageButton
@@ -42,5 +45,5 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
-        android:background="#e6e6e6" />
+        android:background="@color/grey" />
 </LinearLayout>

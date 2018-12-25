@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.NewOptionTypes;
 import com.everyday.skara.everyday.fragments.PersonalFinanceAnalytics;
@@ -40,6 +41,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
     public static int optionType;
     public static int mViewCurrentYear, mViewCurrentMonth;
     ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics;
+    TextView mExpensesSelected, mCatSelected, mASelected, mDaySelected, mFilterSelected;
+
     View view;
 
     @Nullable
@@ -73,11 +76,20 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mCatExpenses = view.findViewById(R.id.category_expenses_icon);
         mDayExpenses = view.findViewById(R.id.day_wise_expense_option);
         mExpenseAnalytics = view.findViewById(R.id.expense_analytics_item);
+
+        mExpensesSelected = view.findViewById(R.id.expenses_selected_textview);
+        mCatSelected = view.findViewById(R.id.category_selected_textview);
+        mASelected = view.findViewById(R.id.analytics_selected_textview);
+        mDaySelected = view.findViewById(R.id.dayview_selected_textview);
+        mFilterSelected = view.findViewById(R.id.filter_selected_textview);
+
+
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
-              //  clearBackStack();
+                selected(optionType);
+                //  clearBackStack();
                 PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
                 Bundle bundle = new Bundle();
@@ -95,9 +107,11 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mCatExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // clearBackStack();
+                // clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
+                selected(optionType);
+
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
 
                 Bundle bundle = new Bundle();
@@ -115,9 +129,11 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mDayExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   clearBackStack();
+                //   clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
+                selected(optionType);
+
                 PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
 
                 Bundle bundle = new Bundle();
@@ -135,9 +151,11 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mExpenseAnalytics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-             //   clearBackStack();
+                //   clearBackStack();
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
+                selected(optionType);
+
                 PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
 
                 Bundle bundle = new Bundle();
@@ -155,25 +173,59 @@ public class PersonalFinancialBoardFragment extends Fragment {
         initFragment();
     }
 
+    void selected(int option) {
+        switch (option) {
+            case NewOptionTypes.TYPE_PERSONAL_EXPENSE:
+                mExpensesSelected.setVisibility(View.VISIBLE);
+                mCatSelected.setVisibility(View.INVISIBLE);
+                mASelected.setVisibility(View.INVISIBLE);
+                mDaySelected.setVisibility(View.INVISIBLE);
+                mFilterSelected.setVisibility(View.INVISIBLE);
+                break;
+            case NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE:
+                mExpensesSelected.setVisibility(View.INVISIBLE);
+                mCatSelected.setVisibility(View.VISIBLE);
+                mASelected.setVisibility(View.INVISIBLE);
+                mDaySelected.setVisibility(View.INVISIBLE);
+                mFilterSelected.setVisibility(View.INVISIBLE);
+                break;
+            case NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE:
+                mExpensesSelected.setVisibility(View.INVISIBLE);
+                mCatSelected.setVisibility(View.INVISIBLE);
+                mASelected.setVisibility(View.INVISIBLE);
+                mDaySelected.setVisibility(View.VISIBLE);
+                mFilterSelected.setVisibility(View.INVISIBLE);
+                break;
+            case NewOptionTypes.TYPE_PERSONAL_ANALYTICS_:
+                mExpensesSelected.setVisibility(View.INVISIBLE);
+                mCatSelected.setVisibility(View.INVISIBLE);
+                mASelected.setVisibility(View.VISIBLE);
+                mDaySelected.setVisibility(View.INVISIBLE);
+                mFilterSelected.setVisibility(View.INVISIBLE);
+                break;
+
+        }
+    }
+
 
     void initFragment() {
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-            optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
-            //  clearBackStack();
-            PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
+        optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
+        selected(optionType);
+        //  clearBackStack();
+        PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
-            Bundle bundle = new Bundle();
-            bundle.putSerializable("user_profile", userInfoPOJO);
-            personalFinanceFragment.setArguments(bundle);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("user_profile", userInfoPOJO);
+        personalFinanceFragment.setArguments(bundle);
 
-            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
 
-            transaction.replace(R.id.personal_financial_fragment_container, personalFinanceFragment);
-            transaction.addToBackStack(null);
+        transaction.replace(R.id.personal_financial_fragment_container, personalFinanceFragment);
+        transaction.addToBackStack(null);
 
-            transaction.commit();
-
+        transaction.commit();
 
 
     }
