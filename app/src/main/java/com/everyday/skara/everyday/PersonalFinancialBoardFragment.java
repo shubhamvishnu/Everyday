@@ -42,7 +42,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
     public static int mViewCurrentYear, mViewCurrentMonth;
     ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics;
     TextView mExpensesSelected, mCatSelected, mASelected, mDaySelected, mFilterSelected;
-
+    Toolbar myToolbar;
     View view;
 
     @Nullable
@@ -71,6 +71,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
 
         mViewCurrentYear = Calendar.getInstance().get(Calendar.YEAR);
         mViewCurrentMonth = Calendar.getInstance().get(Calendar.MONTH);
+        myToolbar = getActivity().findViewById(R.id.boards_toolbar);
+        myToolbar.setTitle("Finance");
 
         mExpenses = view.findViewById(R.id.expenses_option_icon);
         mCatExpenses = view.findViewById(R.id.category_expenses_icon);
@@ -89,6 +91,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
             public void onClick(View v) {
                 optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
                 selected(optionType);
+                myToolbar.setTitle("Finance - Expenses");
+
                 //  clearBackStack();
                 PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
@@ -111,6 +115,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_CAT_EXPENSE;
                 selected(optionType);
+                myToolbar.setTitle("Finance - Categories");
+
 
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
 
@@ -133,6 +139,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
                 selected(optionType);
+                myToolbar.setTitle("Finance - Day Wise");
+
 
                 PersonalFinanceDayFragment personalFinanceDayFragment = new PersonalFinanceDayFragment();
 
@@ -155,6 +163,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
                 selected(optionType);
+                myToolbar.setTitle("Finance - Analytics");
+
 
                 PersonalFinanceAnalytics personalFinanceAnalytics = new PersonalFinanceAnalytics();
 
@@ -213,6 +223,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
         // the fragment_container FrameLayout
         optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
         selected(optionType);
+        myToolbar.setTitle("Finance - Expenses");
+
         //  clearBackStack();
         PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 

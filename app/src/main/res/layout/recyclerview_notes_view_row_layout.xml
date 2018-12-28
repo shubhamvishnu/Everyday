@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardElevation="1dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
     android:orientation="vertical"
-    android:padding="8dp">
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:orientation="vertical">
 
         <LinearLayout
@@ -37,7 +32,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="left"
                     android:textAllCaps="false"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="18dp" />
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -66,6 +61,7 @@
                 android:id="@+id/notes_view_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:text="notes"
                 android:textSize="18dp" />
 
@@ -75,7 +71,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
-                android:background="#e6e6e6" />
+                android:background="@color/grey" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -91,6 +87,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="left"
                     android:textAllCaps="false"
+                    android:textColor="@color/white"
                     android:textSize="12dp" />
 
                 </LinearLayout>
@@ -109,4 +106,9 @@
 
         <!--</android.support.v7.widget.CardView>-->
     </LinearLayout>
-</LinearLayout></android.support.v7.widget.CardView>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/white" />
+</LinearLayout>

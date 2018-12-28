@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     EditText mTitle;
     TextView mDate;
     Button mDone;
-
+    Toolbar myToolbar;
     BottomBar mBottomBar;
     ArrayList<BoardPOJO> boardPOJOArrayList;
     ArrayList<BoardViewHolderClass> boardViewHolderClassArrayList;
@@ -98,8 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            setTheme(R.style.DarkTheme);
 //        }
         setContentView(R.layout.activity_main_layout);
-        Toolbar myToolbar = findViewById(R.id.boards_toolbar);
-        myToolbar.setTitle("My Boards");
+        myToolbar = findViewById(R.id.boards_toolbar);
+        myToolbar.setTitle("Finance");
         setSupportActionBar(myToolbar);
          sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         if (user != null) {
@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("item_selected", 1);
                     editor.apply();
+                    myToolbar.setTitle("Finance");
 
                     PersonalFinancialBoardFragment financialBoardActivity = new PersonalFinancialBoardFragment();
 
@@ -152,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     editor.apply();
                     PersonalTodoFragment todoFragment = new PersonalTodoFragment();
 
+                    myToolbar.setTitle("TODOs");
+
+
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("user_profile", userInfoPOJO);
                     todoFragment.setArguments(bundle);
@@ -167,6 +171,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("item_selected", 3);
                     editor.apply();
+
+                    myToolbar.setTitle("Notes");
+
                     PersonalNotesFragment notesFragment = new PersonalNotesFragment();
 
                     Bundle bundle = new Bundle();
@@ -184,6 +191,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("item_selected", 4);
                     editor.apply();
+
+                    myToolbar.setTitle("Links");
+
                     PersoanalLinksFragment linksFragment = new PersoanalLinksFragment();
 
                     Bundle bundle = new Bundle();
@@ -201,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("item_selected", 5);
                     editor.apply();
+
+                    myToolbar.setTitle("Profile");
+
                     UserAccountFragment userAccountFragment = new UserAccountFragment();
 
                     Bundle bundle = new Bundle();

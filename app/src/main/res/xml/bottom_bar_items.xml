@@ -14,7 +14,7 @@
         barColorWhenSelected="#ff0d47a1"
         icon="@drawable/ic_list_24dp"
         id="@+id/todo_item_menu"
-        title="Todos" />
+        title="TODOs" />
     <tab
         barColorWhenSelected="#ff0d47a1"
         icon="@drawable/ic_note_24dp"

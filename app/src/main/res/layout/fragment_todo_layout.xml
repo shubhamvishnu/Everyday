@@ -9,6 +9,7 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal|center_vertical"
         android:orientation="vertical"
+        android:background="@color/black"
         android:visibility="invisible">
 
         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -42,10 +43,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/linear_layout_todo_fragment"
-    android:background="#e6e6e6">
+    android:background="@color/black">
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         android:id="@+id/todo_view_recycler"/>
 </LinearLayout></RelativeLayout>
