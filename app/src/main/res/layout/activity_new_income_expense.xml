@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/black"
     tools:context=".NewIncomeExpenseActivity">
 
     <android.support.v7.widget.Toolbar
@@ -31,13 +32,24 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="description"
+                android:hint="Description"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textSize="22sp"
+                android:textColorHint="@color/dark_grey"
+                android:textColor="@color/white"
                 android:id="@+id/income_description_edittext"/>
             <EditText
                 android:id="@+id/income_amount_edittext"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="amount"
+                android:hint="Amount"
+
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textSize="22sp"
+                android:textColorHint="@color/dark_grey"
+                android:textColor="@color/white"
                 android:inputType="number" />
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,8 +70,10 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textSize="24sp"
+                    android:textColor="@color/white"
+                    android:textAllCaps="false"
                     android:layout_height="wrap_content"
-                    android:text="INCOME" />
+                    android:text="Income" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -75,6 +89,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:padding="6dp"
+                    android:textColor="@color/white"
                     android:text="Date" />
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -91,12 +106,24 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="transaction ID"
+                android:hint="Transaction ID"
+
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textSize="22sp"
+                android:textColorHint="@color/dark_grey"
+                android:textColor="@color/white"
                 android:id="@+id/income_transaction_id_edittext"/>
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Note"
+
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textSize="22sp"
+                android:textColorHint="@color/dark_grey"
+                android:textColor="@color/white"
                 android:id="@+id/income_note_edittext"/>
 
         </LinearLayout>
