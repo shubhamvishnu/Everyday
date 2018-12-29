@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="16dp"
+    android:background="@color/black"
     android:orientation="vertical">
     <ScrollView
         android:layout_width="match_parent"
@@ -11,6 +11,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="16dp"
             android:orientation="vertical">
 
             <TextView
@@ -20,7 +21,7 @@
                 android:layout_margin="8dp"
                 android:gravity="center"
                 android:text="User Profile"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -37,7 +38,7 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="16dp"
                 android:gravity="center"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
             <TextView
@@ -45,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Email:"
-                android:textColor="@color/grey"
+                android:textColor="@color/dark_grey"
                 android:textSize="14sp" />
 
             <TextView
@@ -55,7 +56,7 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="16dp"
                 android:layout_marginTop="8dp"
-                android:textColor="@android:color/black"
+                android:textColor="@android:color/white"
                 android:textSize="18sp" />
 
             <Button
@@ -66,6 +67,7 @@
                 android:background="@color/transparent"
                 android:gravity="start|center"
                 android:text="Feedback"
+                android:textColor="@color/white"
                 android:textAllCaps="false"
                 android:textSize="18sp" />
 

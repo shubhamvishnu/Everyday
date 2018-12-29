@@ -24,6 +24,7 @@ import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
@@ -622,6 +623,8 @@ public class PersonalFinanceFragment extends Fragment {
                 ((PersonalFinanceViewHolder) holder).description.setText(expensePOJO.getDescription());
                 ((PersonalFinanceViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
                 ((PersonalFinanceViewHolder) holder).mDate.setText(expensePOJO.getDate());
+                setCatIconBackground(holder, expensePOJO.getCategories());
+                showCatIcon(holder, expensePOJO.getCategories());
             } else if (getItemViewType(position) == VIEW_INCOME) {
                 FinanceEntryPOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
                 String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
@@ -629,9 +632,213 @@ public class PersonalFinanceFragment extends Fragment {
                 ((PersonalFinanceIncomeViewHolder) holder).description.setText(expensePOJO.getDescription());
                 ((PersonalFinanceIncomeViewHolder) holder).mAmount.setText(String.valueOf(expensePOJO.getAmount()));
                 ((PersonalFinanceIncomeViewHolder) holder).mDate.setText(expensePOJO.getDate());
+                ((PersonalFinanceIncomeViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                ((PersonalFinanceIncomeViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2048);
             }
 
         }
+        void setCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getColorId()) {
+                case 1:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    break;
+                case 2:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_yellow);
+                    break;
+                case 3:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+                case 4:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                    break;
+                case 5:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green_blue);
+                    break;
+                case 6:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
+                    break;
+                default:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+            }
+        }
+
+
+        void showCatIcon(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getCategoryIconId()) {
+                case 2000:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+                case 2001:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                    break;
+                case 2002:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                    break;
+                case 2003:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                    break;
+                case 2004:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                    break;
+                case 2005:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                    break;
+                case 2006:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                    break;
+                case 2007:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                    break;
+
+                case 2008:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                    break;
+
+                case 2009:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                    break;
+
+                case 2010:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                    break;
+
+                case 2011:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                    break;
+
+                case 2012:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                    break;
+
+                case 2013:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                    break;
+
+                case 2014:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                    break;
+
+                case 2015:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                    break;
+
+                case 2016:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                    break;
+
+                case 2017:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                    break;
+
+                case 2018:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                    break;
+
+                case 2019:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                    break;
+
+                case 2020:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                    break;
+
+                case 2021:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                    break;
+
+                case 2022:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                    break;
+
+                case 2023:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                    break;
+
+                case 2024:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                    break;
+
+                case 2025:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                    break;
+
+                case 2026:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                    break;
+
+                case 2027:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                    break;
+
+                case 2028:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                    break;
+
+                case 2029:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                    break;
+
+                case 2030:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                    break;
+                case 2031:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                    break;
+                case 2032:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                    break;
+                case 2033:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                    break;
+                case 2034:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                    break;
+                case 2035:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                    break;
+                case 2036:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                    break;
+                case 2037:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                    break;
+                case 2038:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                    break;
+                case 2039:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                    break;
+                case 2040:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                    break;
+                case 2041:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                    break;
+                case 2042:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                    break;
+                case 2043:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                    break;
+                case 2044:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                    break;
+                case 2045:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                    break;
+                case 2046:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                    break;
+                case 2047:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                    break;
+                default:
+                    ((PersonalFinanceAdapter.PersonalFinanceViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+            }
+        }
+
 
         void deleteExpense(int position) {
             FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "expenses").child(yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position).getEntryKey()).removeValue();
@@ -642,7 +849,6 @@ public class PersonalFinanceFragment extends Fragment {
         EditText mTransactionId;
         EditText mNote;
         Button mDoneExpenseEntry;
-
 
         void showEditExpenseDialog(int position) {
             final FinanceEntryPOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
@@ -655,7 +861,6 @@ public class PersonalFinanceFragment extends Fragment {
             mTransactionId = mEditExpenseDialog.findViewById(R.id.transaction_id_edittext);
             mNote = mEditExpenseDialog.findViewById(R.id.expense_note_edittext);
             mDoneExpenseEntry = mEditExpenseDialog.findViewById(R.id.done_expense_button);
-
             mDescription.setText(expensePOJO.getDescription());
             mExpenseAmount.setText(String.format(Locale.getDefault(), "%.2f", expensePOJO.getAmount()));
             mTransactionId.setText(expensePOJO.getTransactionId());
@@ -717,7 +922,7 @@ public class PersonalFinanceFragment extends Fragment {
             public TextView description, mAmount, mDate;
             public TextView mCurrency;
             public ImageButton mDeleteExpense;
-
+            public ImageButton mCatIcon;
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 description = itemView.findViewById(R.id.expense_description_text_view);
@@ -725,13 +930,14 @@ public class PersonalFinanceFragment extends Fragment {
                 mDate = itemView.findViewById(R.id.expense_entry_date_textview_row);
                 mCurrency = itemView.findViewById(R.id.expense_currency_textview);
                 mDeleteExpense = itemView.findViewById(R.id.delete_expense_button);
+                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_finance_fragment);
+
                 mDeleteExpense.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         deleteExpense(getPosition());
                     }
                 });
-
                 description.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -747,6 +953,7 @@ public class PersonalFinanceFragment extends Fragment {
             public TextView description, mAmount, mDate;
             public TextView mCurrency;
             public ImageButton mDeleteExpense;
+            public ImageButton mCatIcon;
 
             public PersonalFinanceIncomeViewHolder(View itemView) {
                 super(itemView);
@@ -755,6 +962,8 @@ public class PersonalFinanceFragment extends Fragment {
                 mDate = itemView.findViewById(R.id.expense_entry_date_textview_row);
                 mCurrency = itemView.findViewById(R.id.positive_currency_textview);
                 mDeleteExpense = itemView.findViewById(R.id.delete_expense_button);
+                mCatIcon = itemView.findViewById(R.id.expense_cat_icon_finance_fragment);
+
                 mDeleteExpense.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

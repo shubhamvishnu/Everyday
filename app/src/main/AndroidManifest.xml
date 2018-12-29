@@ -35,7 +35,6 @@
         <activity android:name=".AddBoardMembersActivity" />
         <activity android:name=".BoardMembersActivity" />
         <activity android:name=".OtherBoardsActivity" />
-        <activity android:name=".fragments.UserAccountFragment" />
 
         <!-- <receiver android:name=".receivers.TodoReminderReceiver"> -->
         <!-- <intent-filter> -->
@@ -52,7 +51,6 @@
         <activity android:name=".TimelineActivity" />
         <activity android:name=".FinancialBoardActivity" />
         <activity android:name=".NewExpenseActivity" />
-        <activity android:name=".PersonalFinancialBoardFragment" />
         <activity android:name=".SettingsActivity" />
         <activity android:name=".PersonalProductivityBoard" />
         <activity android:name=".PersonalNewNoteActivity" />
@@ -64,7 +62,7 @@
         <activity android:name=".PersonalStopwatchActivity" />
         <activity android:name=".NewHabitActivity" />
         <activity android:name=".NewBoardExpenseActivity" />
-        <activity android:name=".NewIncomeExpenseActivity"></activity>
+        <activity android:name=".NewIncomeExpenseActivity" />
     </application>
 
 </manifest>

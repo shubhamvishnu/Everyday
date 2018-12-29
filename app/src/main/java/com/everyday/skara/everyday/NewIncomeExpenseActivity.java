@@ -87,7 +87,7 @@ public class NewIncomeExpenseActivity extends AppCompatActivity implements View.
 
     }
     void updateIncomeCat(){
-        mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+        mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
         mCatIcon.setImageResource(R.drawable.ic_cat_2048);
     }
 

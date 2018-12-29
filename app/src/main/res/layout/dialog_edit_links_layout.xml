@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     android:orientation="vertical">
 
     <ScrollView
@@ -31,7 +32,7 @@
                     android:paddingRight="8dp"
                     android:paddingTop="8dp"
                     android:text="Link"
-                    android:textColor="@android:color/black"
+                    android:textColor="@android:color/white"
                     android:textSize="18dp" />
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -51,7 +52,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
-                android:background="#e6e6e6" />
+                android:background="@color/grey" />
 
             <EditText
                 android:id="@+id/title_edit_link"
@@ -59,6 +60,8 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:hint="title"
+                android:textColor="@color/white"
+                android:textColorHint="@color/dark_grey"
                 android:padding="12dp"
                 android:textSize="22dp" />
 
@@ -79,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:visibility="gone"
                 android:gravity="left"
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
@@ -89,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingEnd="12dp"
+                android:visibility="gone"
                 android:paddingStart="12dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView

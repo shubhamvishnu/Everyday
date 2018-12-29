@@ -83,6 +83,7 @@
                 android:layout_gravity="center"
                 android:gravity="left"
                 android:textColor="@color/white"
+                android:visibility="gone"
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
                 android:text="Created By" />
@@ -92,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:paddingEnd="12dp"
                 android:paddingStart="12dp"
+                android:visibility="gone"
                 android:orientation="horizontal">
 
                 <de.hdodenhof.circleimageview.CircleImageView
