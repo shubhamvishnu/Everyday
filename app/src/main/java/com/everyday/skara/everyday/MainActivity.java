@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setContentView(R.layout.activity_main_layout_light);
         }else{
             setContentView(R.layout.activity_main_layout);
-
         }
         myToolbar = findViewById(R.id.boards_toolbar);
         myToolbar.setTitle("Finance");
@@ -394,7 +393,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void chooseEntryTypeBoard() {
         final Dialog mEntryTypeDialog = new BottomSheetDialog(MainActivity.this);
-        mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout_light);
+        }else {
+            mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
+        }
         Button mIncomeType, mExpenseType;
         mIncomeType = mEntryTypeDialog.findViewById(R.id.income_type_button);
         mExpenseType = mEntryTypeDialog.findViewById(R.id.expense_type_button);

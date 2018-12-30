@@ -1,8 +1,10 @@
 package com.everyday.skara.everyday.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,7 +24,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.NotePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -64,8 +68,16 @@ public class PersonalNotesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_notes_layout, container, false);
-        return view;
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.LIGHT_THEME) {
+            view = inflater.inflate(R.layout.fragment_notes_layout_light, container, false);
+            return view;
+        }else{
+            view = inflater.inflate(R.layout.fragment_notes_layout, container, false);
+            return view;
+        }
+
     }
 
     @Override
@@ -233,7 +245,14 @@ public class PersonalNotesFragment extends Fragment {
         Button mDone;
 
         mEditNotesDialog = new BottomSheetDialog(getActivity());
-        mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout);
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.LIGHT_THEME) {
+            mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout_light);
+        }else{
+            mEditNotesDialog.setContentView(R.layout.dialog_edit_notes_layout);
+        }
+
 
         final EditText mTitle = mEditNotesDialog.findViewById(R.id.title_edit_notes);
         final EditText mContent = mEditNotesDialog.findViewById(R.id.content_edit_notes);
@@ -329,8 +348,16 @@ public class PersonalNotesFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_notes_view_row_layout, parent, false);
-            return new NotesViewHolder(view);
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if(theme == BasicSettings.LIGHT_THEME) {
+                View view = inflator.inflate(R.layout.recyclerview_notes_view_row_layout_light, parent, false);
+                return new NotesViewHolder(view);
+            }else{
+                View view = inflator.inflate(R.layout.recyclerview_notes_view_row_layout, parent, false);
+                return new NotesViewHolder(view);
+            }
+
         }
 
         @Override

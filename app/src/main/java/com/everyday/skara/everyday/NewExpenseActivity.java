@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -103,15 +104,24 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
         toMainActivity();
     }
 
-    void toMainActivity(){
+    void toMainActivity() {
         Intent intent = new Intent(NewExpenseActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_expense);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            setContentView(R.layout.activity_new_expenses_light);
+
+        } else {
+            setContentView(R.layout.activity_new_expense);
+
+        }
         Toolbar myToolbar = findViewById(R.id.new_expense_toolbar);
         setSupportActionBar(myToolbar);
         if (user != null) {
@@ -650,7 +660,7 @@ public class NewExpenseActivity extends AppCompatActivity implements View.OnClic
                 mCatName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(mCategoriesDialog != null && mCategoriesDialog.isShowing()){
+                        if (mCategoriesDialog != null && mCategoriesDialog.isShowing()) {
                             mCategoriesDialog.dismiss();
                         }
                         updateCategorySelected(getPosition());

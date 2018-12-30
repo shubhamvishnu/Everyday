@@ -5,8 +5,10 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -34,10 +36,12 @@ import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalNewTodoActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.TodoActivity;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NotificationHolder;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
@@ -104,7 +108,13 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_todo_layout, container, false);
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            view = inflater.inflate(R.layout.fragment_todo_layout_light, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_todo_layout, container, false);
+        }
         return view;
     }
 
@@ -349,15 +359,31 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == VIEW_NOT_COMPLETE) {
-                View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
-                TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
-                return viewHolder;
-            } else if (viewType == VIEW_COMPLETE) {
-                View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
-                TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
-                return viewHolder;
+
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                if (viewType == VIEW_NOT_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout_light, parent, false);
+                    TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                    return viewHolder;
+                } else if (viewType == VIEW_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout_light, parent, false);
+                    TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                    return viewHolder;
+                }
+            } else {
+                if (viewType == VIEW_NOT_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
+                    TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                    return viewHolder;
+                } else if (viewType == VIEW_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
+                    TodoItemViewHolder viewHolder = new TodoItemViewHolder(view);
+                    return viewHolder;
+                }
             }
+
             return null;
         }
 
@@ -469,8 +495,16 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
         @NonNull
         @Override
         public TodoAdapter.TodoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_todo_row_layout, parent, false);
-            return new TodoAdapter.TodoViewHolder(view);
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                View view = inflator.inflate(R.layout.recyclerview_todo_row_layout_light, parent, false);
+                return new TodoAdapter.TodoViewHolder(view);
+            } else {
+                View view = inflator.inflate(R.layout.recyclerview_todo_row_layout, parent, false);
+                return new TodoAdapter.TodoViewHolder(view);
+
+            }
         }
 
         @Override
@@ -533,7 +567,13 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
             final EditText mItemEditText;
             mTodoItemsDialog = new BottomSheetDialog(getActivity());
-            mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if(theme == BasicSettings.LIGHT_THEME){
+                mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout_light);
+            }else{
+                mTodoItemsDialog.setContentView(R.layout.dialog_todo_items_layout);
+            }
 
             mItemEditText = mTodoItemsDialog.findViewById(R.id.dialog_todo_new_item_edittext);
             mAddButton = mTodoItemsDialog.findViewById(R.id.dialog_todo_add_new_item_button);

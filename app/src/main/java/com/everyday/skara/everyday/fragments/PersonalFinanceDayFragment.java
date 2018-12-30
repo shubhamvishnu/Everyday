@@ -79,10 +79,11 @@ public class PersonalFinanceDayFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
-        if (theme == BasicSettings.DEFAULT_THEME) {
-            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
-        } else {
+        if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.fragment_personal_finance_layout_light, container, false);
+
+        } else {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
         }
         return view;
     }
@@ -558,11 +559,10 @@ public class PersonalFinanceDayFragment extends Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
-            if (theme == BasicSettings.DEFAULT_THEME) {
+            if (theme == BasicSettings.LIGHT_THEME) {
                 View view = inflator.inflate(R.layout.recyclerview_day_wise_row_layout_light, parent, false);
                 return new PersonalFinanceAdapter.PersonalFinanceViewHolder(view);
-
-            }else{
+            } else {
                 View view = inflator.inflate(R.layout.recyclerview_day_wise_row_layout, parent, false);
                 return new PersonalFinanceAdapter.PersonalFinanceViewHolder(view);
 

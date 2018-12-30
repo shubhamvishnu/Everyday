@@ -82,10 +82,10 @@ public class PersonalFinanceFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
-        if (theme == BasicSettings.DEFAULT_THEME) {
-            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
-        } else {
+        if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.fragment_personal_finance_layout_light, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
         }
         return view;
     }
@@ -875,9 +875,14 @@ public class PersonalFinanceFragment extends Fragment {
 
         void showEditExpenseDialog(int position) {
             final FinanceEntryPOJO expensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).get(position);
-
             mEditExpenseDialog = new BottomSheetDialog(getActivity());
-            mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout);
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout_light);
+            }else{
+                mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout);
+            }
+
             ImageButton mClose = mEditExpenseDialog.findViewById(R.id.close_edit_expense_dialog);
             mDescription = mEditExpenseDialog.findViewById(R.id.expense_description_edittext);
             mExpenseAmount = mEditExpenseDialog.findViewById(R.id.amount_edittext);

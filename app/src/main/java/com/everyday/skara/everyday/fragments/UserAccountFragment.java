@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.LoginTypes;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -69,8 +70,16 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_user_account, container, false);
-        return view;
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            view = inflater.inflate(R.layout.activity_user_account_light, container, false);
+            return view;
+        }else{
+            view = inflater.inflate(R.layout.activity_user_account, container, false);
+            return view;
+        }
+
     }
 
     @Override
@@ -216,7 +225,13 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
 
     void showFeedbackDialog() {
         mFeedbackDialog = new BottomSheetDialog(getActivity());
-        mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout);
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout_light);
+        }else{
+            mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout);
+        }
         selectedIcon = -1;
         final ImageButton sad, happy, inlove;
         final EditText feedbackNote;

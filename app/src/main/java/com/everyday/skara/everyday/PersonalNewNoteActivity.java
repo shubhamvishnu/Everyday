@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.ActionType;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -38,7 +39,15 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal_new_note);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            setContentView(R.layout.activity_personal_new_note_light);
+
+        } else {
+            setContentView(R.layout.activity_personal_new_note);
+
+        }
         if (user != null) {
             init();
         } else {
@@ -48,22 +57,24 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
 
     @Override
     public void onBackPressed() {
-       saveSelected();
+        saveSelected();
 
     }
 
-    void saveSelected(){
+    void saveSelected() {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt("item_selected", 3);
         editor.apply();
         toMainActivity();
     }
-    void toMainActivity(){
+
+    void toMainActivity() {
         Intent intent = new Intent(PersonalNewNoteActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
         Intent intent = getIntent();
@@ -99,7 +110,7 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
 
     void saveNote() {
         mDone.setEnabled(false);
-        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD+ "/notes/");
+        databaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD + "/notes/");
         databaseReference.keepSynced(true);
         DatabaseReference notesReference = databaseReference.push();
         notesReference.keepSynced(true);
@@ -111,7 +122,7 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
             NotePOJO notePOJO = new NotePOJO(notesReference.getKey(), title, content, DateTimeStamp.getDate(), userInfoPOJO);
             notesReference.setValue(notePOJO);
             ActivityPOJO activityPOJO = new ActivityPOJO("New Note Saved", DateTimeStamp.getDate(), ActionType.ACTION_TYPE_NEW_NOTE, userInfoPOJO);
-            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
+            firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
             saveSelected();
         } else {
             // TODO: show field empty alert

@@ -1,8 +1,10 @@
 package com.everyday.skara.everyday.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,7 +27,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.LinkPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -67,9 +71,18 @@ public class PersoanalLinksFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_links_layout, container, false);
-        return view;
-    }
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.LIGHT_THEME) {
+            view = inflater.inflate(R.layout.fragment_links_layout_light, container, false);
+            return view;
+
+        }else{
+            view = inflater.inflate(R.layout.fragment_links_layout, container, false);
+            return view;
+
+        }
+           }
 
     @Override
     public void onStart() {
@@ -235,7 +248,15 @@ public class PersoanalLinksFragment extends Fragment {
         ImageButton mClose;
         Button mDone;
         mEditLinksDialog = new BottomSheetDialog(getActivity());
-        mEditLinksDialog.setContentView(R.layout.dialog_edit_links_layout);
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.LIGHT_THEME) {
+            mEditLinksDialog.setContentView(R.layout.dialog_edit_links_layout_light);
+
+        }else{
+            mEditLinksDialog.setContentView(R.layout.dialog_edit_links_layout);
+
+        }
 
         final EditText mTitle = mEditLinksDialog.findViewById(R.id.title_edit_link);
         final EditText mContent = mEditLinksDialog.findViewById(R.id.link_edit_link);
@@ -330,8 +351,17 @@ public class PersoanalLinksFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_links_view_row_layout, parent, false);
-            return new LinksViewHolder(view);
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if(theme == BasicSettings.LIGHT_THEME) {
+                View view = inflator.inflate(R.layout.recyclerview_links_view_row_layout_light, parent, false);
+                return new LinksViewHolder(view);
+
+            }else{
+                View view = inflator.inflate(R.layout.recyclerview_links_view_row_layout, parent, false);
+                return new LinksViewHolder(view);
+
+            }
         }
 
         @Override

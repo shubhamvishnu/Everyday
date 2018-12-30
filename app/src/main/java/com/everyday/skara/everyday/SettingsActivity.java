@@ -52,9 +52,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mCategoriesButton = findViewById(R.id.categories_setting);
         mThemeSwitch = findViewById(R.id.theme_switch);
 
-        mSetSymbolButton.setText(defaultSettingsPreference.getString("currency", getResources().getString(R.string.inr)));
+        mSymbolTextView.setText(defaultSettingsPreference.getString("currency", getResources().getString(R.string.inr)));
 
-
+        mSymbolTextView.setOnClickListener(this);
         mSetSymbolButton.setOnClickListener(this);
         mCategoriesButton.setOnClickListener(this);
         setThemeState(defaultSettingsPreference.getInt("theme", BasicSettings.DEFAULT_THEME));
@@ -65,19 +65,21 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 if (isChecked) {
                     editor.putInt("theme", BasicSettings.DEFAULT_THEME);
                     editor.apply();
+                    toMainActivity();
                 } else {
                     editor.putInt("theme", BasicSettings.LIGHT_THEME);
                     editor.apply();
+                    toMainActivity();
                 }
             }
         });
     }
 
     void setThemeState(int theme) {
-        if (theme == 0) {
-            mThemeSwitch.setChecked(true);
-        } else if(theme == 1){
+        if (theme == BasicSettings.LIGHT_THEME) {
             mThemeSwitch.setChecked(false);
+        } else if(theme == BasicSettings.DEFAULT_THEME){
+            mThemeSwitch.setChecked(true);
         }
     }
 
@@ -89,6 +91,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.categories_setting:
                 toCategoriesActivity();
+                break;
+            case R.id.symbol_choice_textview:
+                showSymbolsDialog();
                 break;
         }
     }
@@ -174,8 +179,13 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        mSymbolDialog.setCanceledOnTouchOutside(false);
+        mSymbolDialog.setCanceledOnTouchOutside(true);
         mSymbolDialog.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        toMainActivity();
     }
 
     void setSymbol(int currencyId) {
@@ -183,28 +193,28 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         SharedPreferences.Editor editor = sharedPreferences.edit();
         switch (currencyId) {
             case 1:
-                mSetSymbolButton.setText(getResources().getString(R.string.inr));
+                mSymbolTextView.setText(getResources().getString(R.string.inr));
                 editor.putString("currency", getResources().getString(R.string.inr));
                 break;
             case 2:
-                mSetSymbolButton.setText(getResources().getString(R.string.dollar));
+                mSymbolTextView.setText(getResources().getString(R.string.dollar));
                 editor.putString("currency", getResources().getString(R.string.dollar));
                 break;
             case 3:
 
-                mSetSymbolButton.setText(getResources().getString(R.string.pound));
+                mSymbolTextView.setText(getResources().getString(R.string.pound));
                 editor.putString("currency", getResources().getString(R.string.pound));
                 break;
             case 4:
-                mSetSymbolButton.setText(getResources().getString(R.string.euro));
+                mSymbolTextView.setText(getResources().getString(R.string.euro));
                 editor.putString("currency", getResources().getString(R.string.euro));
                 break;
             case 5:
-                mSetSymbolButton.setText(getResources().getString(R.string.yen));
+                mSymbolTextView.setText(getResources().getString(R.string.yen));
                 editor.putString("currency", getResources().getString(R.string.yen));
                 break;
             case 6:
-                mSetSymbolButton.setText(getResources().getString(R.string.bitcoin));
+                mSymbolTextView.setText(getResources().getString(R.string.bitcoin));
                 editor.putString("currency", getResources().getString(R.string.bitcoin));
                 break;
 

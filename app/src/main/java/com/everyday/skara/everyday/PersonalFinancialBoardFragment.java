@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -51,15 +52,15 @@ public class PersonalFinancialBoardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
-        if(theme == BasicSettings.DEFAULT_THEME){
-            view = inflater.inflate(R.layout.activity_personal_financial_board, container, false);
-            }else{
+        SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.activity_personal_financial_board_light, container, false);
-
-
+            return view;
+        } else {
+            view = inflater.inflate(R.layout.activity_personal_financial_board, container, false);
+            return view;
         }
-        return view;
     }
 
     @Override

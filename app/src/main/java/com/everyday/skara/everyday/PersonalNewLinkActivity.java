@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.ActionType;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -44,7 +45,15 @@ public class PersonalNewLinkActivity extends AppCompatActivity implements View.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_personal_new_link);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.LIGHT_THEME) {
+            setContentView(R.layout.activity_personal_new_link_light);
+
+        }else{
+            setContentView(R.layout.activity_personal_new_link);
+
+        }
         if (user != null) {
             init();
         } else {
