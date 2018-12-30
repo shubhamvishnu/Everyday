@@ -2,6 +2,7 @@ package com.everyday.skara.everyday;
 
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,7 +23,9 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.fragments.PersonalFinanceAnalytics;
 import com.everyday.skara.everyday.fragments.PersonalFinanceCategoriesFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinanceDayFragment;
@@ -48,7 +51,14 @@ public class PersonalFinancialBoardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.activity_personal_financial_board, container, false);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if(theme == BasicSettings.DEFAULT_THEME){
+            view = inflater.inflate(R.layout.activity_personal_financial_board, container, false);
+            }else{
+            view = inflater.inflate(R.layout.activity_personal_financial_board_light, container, false);
+
+
+        }
         return view;
     }
 

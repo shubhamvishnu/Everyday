@@ -35,7 +35,7 @@
                     android:gravity="left"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
-                    android:textSize="18dp" />
+                    android:textSize="22sp" />
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/edit_todo_button"
@@ -72,7 +72,7 @@
                     android:textColor="@color/white"
                     android:text="Completed Items: "
                     android:textAllCaps="false"
-                    android:textSize="16dp" />
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/todo_item_stats_textview"
@@ -82,10 +82,9 @@
                     android:background="@android:color/transparent"
                     android:gravity="left"
                     android:textColor="@color/white"
-
                     android:text=""
                     android:textAllCaps="false"
-                    android:textSize="16dp"
+                    android:textSize="22sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -124,6 +123,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="12dp"
+                android:textSize="18sp"
                 android:background="@color/grey" />
 
             <LinearLayout
@@ -140,8 +140,7 @@
                     android:background="@android:color/transparent"
                     android:gravity="left"
                     android:textColor="@color/white"
-                    android:textAllCaps="false"
-                    android:textSize="12dp" />
+                    android:textAllCaps="false" />
 
             </LinearLayout>
         </LinearLayout>

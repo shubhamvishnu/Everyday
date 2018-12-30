@@ -649,7 +649,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             public ImageButton mMore, mEdit, mDelete;
             public TextView mStats;
             public ProgressBar mProgressBar;
-           // public RecyclerView mTodoSnapshotRecyclerview;
+            // public RecyclerView mTodoSnapshotRecyclerview;
 
             public TodoViewHolder(View itemView) {
                 super(itemView);
@@ -660,7 +660,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                 mDelete = itemView.findViewById(R.id.todo_delete_button);
                 mStats = itemView.findViewById(R.id.todo_item_stats_textview);
                 mProgressBar = itemView.findViewById(R.id.todo_progress);
-               // mTodoSnapshotRecyclerview = itemView.findViewById(R.id.todo_items_snapshot_recyclerview);
+                // mTodoSnapshotRecyclerview = itemView.findViewById(R.id.todo_items_snapshot_recyclerview);
 
                 mMore = itemView.findViewById(R.id.todo_more);
                 mTitle.setOnClickListener(new View.OnClickListener() {
@@ -681,7 +681,18 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                         showItems(getPosition());
                     }
                 });
-
+                mDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItems(getPosition());
+                    }
+                });
+                mProgressBar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showItems(getPosition());
+                    }
+                });
                 mEdit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

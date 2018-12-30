@@ -31,6 +31,8 @@
             android:layout_margin="8dp"
             android:background="@android:color/transparent"
             android:hint="Title"
+            android:inputType="text"
+            android:maxLines="1"
             android:textColorHint="@color/dark_grey"
             android:textColor="@color/white"
             android:padding="12dp"
@@ -78,6 +80,8 @@
                 android:background="@android:color/transparent"
                 android:hint="Item"
                 android:textColorHint="@color/dark_grey"
+                android:inputType="text"
+                android:maxLines="1"
                 android:textColor="@color/white"
                 android:padding="12dp"
                 android:textSize="18dp" />

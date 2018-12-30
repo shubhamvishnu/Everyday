@@ -14,13 +14,10 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.classes.BasicSettings;
-import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
-import org.w3c.dom.Text;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -60,27 +57,27 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         mSetSymbolButton.setOnClickListener(this);
         mCategoriesButton.setOnClickListener(this);
-        setThemeState(defaultSettingsPreference.getBoolean("theme", BasicSettings.DEFAULT_THEME));
+        setThemeState(defaultSettingsPreference.getInt("theme", BasicSettings.DEFAULT_THEME));
         mThemeSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 SharedPreferences.Editor editor = defaultSettingsPreference.edit();
                 if (isChecked) {
-                    editor.putBoolean("theme", BasicSettings.DEFAULT_THEME);
+                    editor.putInt("theme", BasicSettings.DEFAULT_THEME);
                     editor.apply();
                 } else {
-                    editor.putBoolean("theme", true);
+                    editor.putInt("theme", BasicSettings.LIGHT_THEME);
                     editor.apply();
                 }
             }
         });
     }
 
-    void setThemeState(boolean isEnabled) {
-        if (isEnabled) {
-            mThemeSwitch.setEnabled(true);
-        } else {
-            mThemeSwitch.setEnabled(false);
+    void setThemeState(int theme) {
+        if (theme == 0) {
+            mThemeSwitch.setChecked(true);
+        } else if(theme == 1){
+            mThemeSwitch.setChecked(false);
         }
     }
 
@@ -224,6 +221,11 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
     void toLoginActivity() {
         Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+    void toMainActivity(){
+        Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

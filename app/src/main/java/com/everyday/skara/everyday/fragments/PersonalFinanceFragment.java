@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -80,7 +81,12 @@ public class PersonalFinanceFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.DEFAULT_THEME) {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout_light, container, false);
+        }
         return view;
     }
 
@@ -288,7 +294,7 @@ public class PersonalFinanceFragment extends Fragment {
                 mMonthBottomSheetDialog.dismiss();
             }
         });
-        mMonthBottomSheetDialog.setCanceledOnTouchOutside(false);
+        mMonthBottomSheetDialog.setCanceledOnTouchOutside(true);
         mMonthBottomSheetDialog.show();
     }
 
@@ -602,16 +608,32 @@ public class PersonalFinanceFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == VIEW_EXPENSE) {
-                View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout, parent, false);
-                return new PersonalFinanceViewHolder(view);
-            } else if (viewType == VIEW_INCOME) {
-                View view = inflator.inflate(R.layout.fragment_personal_finance_income_layout, parent, false);
-                return new PersonalFinanceIncomeViewHolder(view);
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                if (viewType == VIEW_EXPENSE) {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout_light, parent, false);
+                    return new PersonalFinanceViewHolder(view);
+                } else if (viewType == VIEW_INCOME) {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_income_layout_light, parent, false);
+                    return new PersonalFinanceIncomeViewHolder(view);
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout_light, parent, false);
+                    return new PersonalFinanceViewHolder(view);
+                }
             } else {
-                View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout, parent, false);
-                return new PersonalFinanceViewHolder(view);
+                if (viewType == VIEW_EXPENSE) {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout, parent, false);
+                    return new PersonalFinanceViewHolder(view);
+                } else if (viewType == VIEW_INCOME) {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_income_layout, parent, false);
+                    return new PersonalFinanceIncomeViewHolder(view);
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_personal_finance_row_layout, parent, false);
+                    return new PersonalFinanceViewHolder(view);
+                }
             }
+
+
         }
 
         @Override
@@ -637,6 +659,7 @@ public class PersonalFinanceFragment extends Fragment {
             }
 
         }
+
         void setCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
             switch (categories.getColorId()) {
                 case 1:
@@ -863,8 +886,8 @@ public class PersonalFinanceFragment extends Fragment {
             mDoneExpenseEntry = mEditExpenseDialog.findViewById(R.id.done_expense_button);
             mDescription.setText(expensePOJO.getDescription());
             mExpenseAmount.setText(String.format(Locale.getDefault(), "%.2f", expensePOJO.getAmount()));
-            mTransactionId.setText(expensePOJO.getTransactionId());
-            mNote.setText(expensePOJO.getNote());
+            mTransactionId.setText(expensePOJO.getTransactionId().trim());
+            mNote.setText(expensePOJO.getNote().trim());
 
             mDoneExpenseEntry.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -903,7 +926,7 @@ public class PersonalFinanceFragment extends Fragment {
             });
 
 
-            mEditExpenseDialog.setCanceledOnTouchOutside(false);
+            mEditExpenseDialog.setCanceledOnTouchOutside(true);
             mEditExpenseDialog.show();
         }
 
@@ -923,6 +946,7 @@ public class PersonalFinanceFragment extends Fragment {
             public TextView mCurrency;
             public ImageButton mDeleteExpense;
             public ImageButton mCatIcon;
+
             public PersonalFinanceViewHolder(View itemView) {
                 super(itemView);
                 description = itemView.findViewById(R.id.expense_description_text_view);
@@ -941,6 +965,30 @@ public class PersonalFinanceFragment extends Fragment {
                 description.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mAmount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mCurrency.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mCatIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         showEditExpenseDialog(getPosition());
                     }
                 });
@@ -974,6 +1022,30 @@ public class PersonalFinanceFragment extends Fragment {
                 description.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mAmount.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mCurrency.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showEditExpenseDialog(getPosition());
+                    }
+                });
+                mCatIcon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         showEditExpenseDialog(getPosition());
                     }
                 });

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <ScrollView
@@ -36,7 +36,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:text="Outflow" />
@@ -105,7 +105,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
 
                         android:text="Inflow" />
 
@@ -153,7 +153,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
 
                         android:layout_gravity="center_horizontal"
                         android:text="Balance" />
@@ -190,7 +190,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
                             android:id="@+id/max_expense_cat_name_textview"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:text="Category"                android:textColor="@color/white"
+                            android:text="Category"                android:textColor="@color/black"
 
                             android:textSize="22sp" />
                         <LinearLayout
@@ -240,7 +240,7 @@
                                 android:id="@+id/max_expense_day_textview"
                                 android:layout_width="wrap_content"
                                 android:text="Day of Week"
-                                android:textColor="@color/white"
+                                android:textColor="@color/black"
 
                                 android:layout_height="wrap_content" />
                             <TextView
@@ -250,7 +250,7 @@
                                 android:layout_width="0dp"
                                 android:layout_weight="1"
                                 android:layout_height="wrap_content"
-                                android:text="Date"                android:textColor="@color/white"
+                                android:text="Date"                android:textColor="@color/black"
 
                                 android:textSize="14sp" />
                         </LinearLayout>
@@ -294,7 +294,7 @@
             <!-- Hidden -->
             <TextView
                 android:layout_width="match_parent"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
                 android:text="Most expensive spending" />
@@ -303,7 +303,7 @@
                 android:id="@+id/maximum_expense_cat"
                 android:layout_width="match_parent"
                 android:visibility="gone"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
 
                 android:text="--"
                 android:layout_height="wrap_content" />
@@ -313,7 +313,7 @@
                 android:layout_width="match_parent"
                 android:text="--"
                 android:visibility="gone"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
 
                 android:layout_height="wrap_content" />
 

@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
@@ -53,7 +54,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     DatabaseReference databaseReference;
     private GoogleApiClient mGoogleApiClient;
     Button mFeedbackButton;
-    Dialog mFeedbackDialog;
+    BottomSheetDialog mFeedbackDialog;
     SharedPreferences userSharedPreferences;
     UserProfilePOJO userProfilePOJO;
     CircleImageView mUserProfile;
@@ -214,7 +215,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
 
 
     void showFeedbackDialog() {
-        mFeedbackDialog = new Dialog(getActivity());
+        mFeedbackDialog = new BottomSheetDialog(getActivity());
         mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout);
         selectedIcon = -1;
         final ImageButton sad, happy, inlove;
@@ -280,9 +281,6 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
             }
         });
 
-        Window window = mFeedbackDialog.getWindow();
-        window.setLayout(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT);
-        window.setGravity(Gravity.CENTER);
         mFeedbackDialog.setCanceledOnTouchOutside(true);
         mFeedbackDialog.show();
     }

@@ -33,7 +33,7 @@
                     android:gravity="left"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
-                    android:textSize="18dp" />
+                    android:textSize="22dp" />
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/edit_notes_button"

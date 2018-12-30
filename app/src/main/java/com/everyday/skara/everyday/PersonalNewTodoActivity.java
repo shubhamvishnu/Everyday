@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -118,7 +119,6 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
 
         mTodoDone.setOnClickListener(this);
         mCalendar.setOnClickListener(this);
-
         date = new String("");
         time = new String("");
         hours = 0;

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="22dp"
+    android:layout_height="wrap_content"
+    android:background="@color/black"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -11,7 +15,7 @@
         android:layout_margin="8dp"
         android:gravity="center"
         android:text="Feedback"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="18sp" />
     <LinearLayout
         android:layout_width="match_parent"
@@ -68,8 +72,10 @@
             android:maxLines="5"
             android:layout_gravity="center"
             android:gravity="start"
+            android:textColor="@color/white"
             android:id="@+id/feedback_note_edittext"
             android:inputType="textMultiLine"
+            android:textColorHint="@color/grey"
             android:hint="Leave your thoughts here..."
             android:singleLine="true" />
 
@@ -81,5 +87,6 @@
             android:id="@+id/done_feedback_button"
             android:textColor="@color/white"
             android:textAllCaps="false" />
+    </LinearLayout>
     </LinearLayout>
 </LinearLayout>

@@ -21,6 +21,7 @@ import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -93,11 +94,18 @@ public class PersonalFinanceAnalytics extends Fragment {
     DonutProgress mDonutProgress;
     PieChart mPieChart;
     BarChart mExpenseBarChart, mWeekDayWiseBarChart, mCategoryWiseBarChart;
-
+    ImageButton mCatIcon;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout, container, false);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout_light, container, false);
+
+        }else{
+            view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout, container, false);
+
+        }
         return view;
     }
 
@@ -134,6 +142,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCategoryWiseBarChart = view.findViewById(R.id.category_wise_bar_chart);
         mDonutProgress = view.findViewById(R.id.donut_progress);
         mDonutProgress.setProgress(0.0f);
+        mCatIcon = view.findViewById(R.id.expense_cat_icon_analytics_fragment);
 
         mPieChart = view.findViewById(R.id.expense_pie_chart);
 
@@ -337,7 +346,7 @@ public class PersonalFinanceAnalytics extends Fragment {
                 mMonthBottomSheetDialog.dismiss();
             }
         });
-        mMonthBottomSheetDialog.setCanceledOnTouchOutside(false);
+        mMonthBottomSheetDialog.setCanceledOnTouchOutside(true);
         mMonthBottomSheetDialog.show();
     }
 
@@ -1014,7 +1023,15 @@ public class PersonalFinanceAnalytics extends Fragment {
                 }
 
                 mExpenseDateTextView.setText(dayExpensePOJO.getDateOfMaxExpense());
-                mExpenseDayAmount.setText(String.format(Locale.getDefault(), "%.2f", dayExpensePOJO.maxDayExpenseAmount));
+                String dayOfWeek = null;
+                try {
+                    dayOfWeek = new SimpleDateFormat("EE").format(new SimpleDateFormat("dd/MM/yyyy").parse(dayExpensePOJO.getDateOfMaxExpense()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                setCatIconBackground(maxExpensePOJO.getCategories());
+                showCatIcon(maxExpensePOJO.getCategories());
+                mExpenseDayAmount.setText(dayOfWeek);
                 mExpensiveExpenseCatTextView.setText(maxExpensePOJO.getCategories().getCategoryName());
                 mExpensiveExpenseTextView.setText(String.format(Locale.getDefault(), "%.2f", maxExpensePOJO.getAmount()));
             } else {
@@ -1028,7 +1045,208 @@ public class PersonalFinanceAnalytics extends Fragment {
         reflectWeekWiseBarChart();
         reflectCategoryWiseBarChart(categoriesArrayList.get(0).getCategoryKey());
     }
+    
+    void setCatIconBackground(Categories categories) {
+        switch (categories.getColorId()) {
+            case 1:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                break;
+            case 2:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_yellow);
+                break;
+            case 3:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                break;
+            case 4:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                break;
+            case 5:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_green_blue);
+                break;
+            case 6:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
+                break;
+            default:
+                mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                break;
+        }
+    }
 
+
+    void showCatIcon(Categories categories) {
+        switch (categories.getCategoryIconId()) {
+            case 2000:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                break;
+            case 2001:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2001);
+                break;
+            case 2002:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2002);
+                break;
+            case 2003:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2003);
+                break;
+            case 2004:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2004);
+                break;
+            case 2005:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2005);
+                break;
+            case 2006:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2006);
+                break;
+            case 2007:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2007);
+                break;
+
+            case 2008:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2008);
+                break;
+
+            case 2009:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2009);
+                break;
+
+            case 2010:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2010);
+                break;
+
+            case 2011:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2011);
+                break;
+
+            case 2012:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2012);
+                break;
+
+            case 2013:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2013);
+                break;
+
+            case 2014:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2014);
+                break;
+
+            case 2015:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2015);
+                break;
+
+            case 2016:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2016);
+                break;
+
+            case 2017:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2017);
+                break;
+
+            case 2018:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2018);
+                break;
+
+            case 2019:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2019);
+                break;
+
+            case 2020:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2020);
+                break;
+
+            case 2021:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2021);
+                break;
+
+            case 2022:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2022);
+                break;
+
+            case 2023:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2023);
+                break;
+
+            case 2024:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2024);
+                break;
+
+            case 2025:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2025);
+                break;
+
+            case 2026:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2026);
+                break;
+
+            case 2027:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2027);
+                break;
+
+            case 2028:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2028);
+                break;
+
+            case 2029:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2029);
+                break;
+
+            case 2030:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2030);
+                break;
+            case 2031:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2031);
+                break;
+            case 2032:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2032);
+                break;
+            case 2033:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2033);
+                break;
+            case 2034:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2034);
+                break;
+            case 2035:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2035);
+                break;
+            case 2036:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2036);
+                break;
+            case 2037:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2037);
+                break;
+            case 2038:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2038);
+                break;
+            case 2039:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2039);
+                break;
+            case 2040:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2040);
+                break;
+            case 2041:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2041);
+                break;
+            case 2042:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2042);
+                break;
+            case 2043:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2043);
+                break;
+            case 2044:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2044);
+                break;
+            case 2045:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2045);
+                break;
+            case 2046:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2046);
+                break;
+            case 2047:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2047);
+                break;
+            default:
+                mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                break;
+        }
+    }
 
     void reflectCategoryWiseBarChart(String categoryKey) {
         List<BarEntry> entries = new ArrayList<>();

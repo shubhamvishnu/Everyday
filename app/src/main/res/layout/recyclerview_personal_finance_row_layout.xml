@@ -52,7 +52,7 @@
                                 android:id="@+id/expense_description_text_view"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:text="notes"
+                                android:text="Description"
                                 android:textColor="@color/white"
                                 android:textSize="22sp" />
 
@@ -61,6 +61,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:text="date"
+                                android:layout_marginTop="2dp"
+
                                 android:textColor="@color/white"
 
                                 android:textSize="14sp" />

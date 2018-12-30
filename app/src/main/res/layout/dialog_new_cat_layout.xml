@@ -50,9 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:hint="Cat Title"
+        android:hint="Category Name"
         android:padding="8dp"
-        android:textSize="22dp" />
+        android:textSize="22sp" />
     <EditText
         android:id="@+id/new_category_limit"
         android:layout_width="match_parent"

@@ -29,6 +29,8 @@
             android:id="@+id/link_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
             android:hint="Title"
             android:padding="12dp"            android:textColorHint="@color/dark_grey"
 
@@ -45,6 +47,7 @@
             android:textColorHint="@color/dark_grey"
             android:padding="12dp"
             android:background="@android:color/transparent"
+            android:maxLines="1"
             android:inputType="textUri"
             android:textColor="#c0392b"
             android:textSize="18dp" />

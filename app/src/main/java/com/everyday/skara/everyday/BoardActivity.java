@@ -34,12 +34,6 @@ public class BoardActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        boolean themeState = getSharedPreferences(SPNames.DEFAULT_SETTINGS, MODE_PRIVATE).getBoolean("theme", BasicSettings.DEFAULT_THEME);
-        if(!themeState){
-            setTheme(R.style.LightTheme);
-        }else{
-            setTheme(R.style.DarkTheme);
-        }
         setContentView(R.layout.activity_board);
         Toolbar myToolbar = findViewById(R.id.board_view_toolbar);
         setSupportActionBar(myToolbar);

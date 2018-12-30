@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
@@ -77,7 +78,12 @@ public class PersonalFinanceDayFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.DEFAULT_THEME) {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_personal_finance_layout_light, container, false);
+        }
         return view;
     }
 
@@ -324,7 +330,7 @@ public class PersonalFinanceDayFragment extends Fragment {
                 mMonthBottomSheetDialog.dismiss();
             }
         });
-        mMonthBottomSheetDialog.setCanceledOnTouchOutside(false);
+        mMonthBottomSheetDialog.setCanceledOnTouchOutside(true);
         mMonthBottomSheetDialog.show();
     }
 
@@ -551,8 +557,16 @@ public class PersonalFinanceDayFragment extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_day_wise_row_layout, parent, false);
-            return new PersonalFinanceAdapter.PersonalFinanceViewHolder(view);
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.DEFAULT_THEME) {
+                View view = inflator.inflate(R.layout.recyclerview_day_wise_row_layout_light, parent, false);
+                return new PersonalFinanceAdapter.PersonalFinanceViewHolder(view);
+
+            }else{
+                View view = inflator.inflate(R.layout.recyclerview_day_wise_row_layout, parent, false);
+                return new PersonalFinanceAdapter.PersonalFinanceViewHolder(view);
+
+            }
         }
 
         @Override
