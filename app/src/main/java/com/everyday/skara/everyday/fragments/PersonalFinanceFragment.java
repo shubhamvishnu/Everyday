@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetDialog;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,7 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
+import com.everyday.skara.everyday.classes.NewOptionTypes;
+import com.everyday.skara.everyday.fragments.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.ExpenseTypes;
@@ -35,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -154,7 +157,6 @@ public class PersonalFinanceFragment extends Fragment {
             }
         });
     }
-
     void showMonthSelectionDialog() {
         mMonthBottomSheetDialog = new BottomSheetDialog(getActivity());
         mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout);

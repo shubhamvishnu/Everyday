@@ -1,4 +1,4 @@
-package com.everyday.skara.everyday;
+package com.everyday.skara.everyday.fragments;
 
 import android.app.Dialog;
 import android.app.FragmentManager;
@@ -22,9 +22,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.MainActivity;
+import com.everyday.skara.everyday.NewExpenseActivity;
+import com.everyday.skara.everyday.NewIncomeExpenseActivity;
+import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
+import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.NewOptionTypes;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.fragments.PersonalFinanceAnalytics;
@@ -34,13 +41,17 @@ import com.everyday.skara.everyday.fragments.PersonalFinanceFragment;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Calendar;
 
 public class PersonalFinancialBoardFragment extends Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    FirebaseDatabase firebaseDatabase;
     UserInfoPOJO userInfoPOJO;
     public static int optionType;
     public static int mViewCurrentYear, mViewCurrentMonth;
@@ -48,6 +59,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
     TextView mExpensesSelected, mCatSelected, mASelected, mDaySelected, mFilterSelected;
     Toolbar myToolbar;
     View view;
+    LinearLayout mFiananceLinearLayout;
 
     @Nullable
     @Override
@@ -95,7 +107,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mASelected = view.findViewById(R.id.analytics_selected_textview);
         mDaySelected = view.findViewById(R.id.dayview_selected_textview);
         mFilterSelected = view.findViewById(R.id.filter_selected_textview);
-
+        mFiananceLinearLayout = view.findViewById(R.id.fianance_options_linear_layout);
 
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,15 +240,12 @@ public class PersonalFinancialBoardFragment extends Fragment {
         }
     }
 
-
-    void initFragment() {
+    void initFragment(){
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
         selected(optionType);
         myToolbar.setTitle("Finance - Expenses");
-
-        //  clearBackStack();
         PersonalFinanceFragment personalFinanceFragment = new PersonalFinanceFragment();
 
         Bundle bundle = new Bundle();
@@ -249,8 +258,6 @@ public class PersonalFinancialBoardFragment extends Fragment {
         transaction.addToBackStack(null);
 
         transaction.commit();
-
-
     }
 
     void chooseEntryTypeBoard() {

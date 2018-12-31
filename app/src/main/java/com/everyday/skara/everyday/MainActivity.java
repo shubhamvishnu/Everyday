@@ -35,6 +35,7 @@ import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.fragments.PersoanalLinksFragment;
+import com.everyday.skara.everyday.fragments.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.fragments.PersonalNotesFragment;
 import com.everyday.skara.everyday.fragments.PersonalTodoFragment;
 import com.everyday.skara.everyday.fragments.UserAccountFragment;

@@ -19,7 +19,6 @@ import android.widget.TextView;
 
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
