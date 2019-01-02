@@ -865,8 +865,10 @@ public class PersonalFinanceAnalytics extends Fragment {
         if (tempTotal > 0) {
             percentageValue = (tempExpense * 100) / tempTotal;
         }
-        mDonutProgress.setProgress(Float.valueOf(String.valueOf(percentageValue)));
+        ;
+        mDonutProgress.setProgress(Math.round(Float.valueOf(String.valueOf(percentageValue))));
         updateRemainingIncomeView(tempExpense, tempTotal);
+
 
     }
 
