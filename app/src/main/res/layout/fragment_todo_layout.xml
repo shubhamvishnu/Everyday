@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:text="No Todos"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="22sp" />
 
         <!--<TextView-->

@@ -2,6 +2,7 @@ package com.everyday.skara.everyday.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,12 +33,15 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -46,10 +50,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.collection.LLRBNode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -94,6 +101,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     PieChart mPieChart;
     BarChart mExpenseBarChart, mWeekDayWiseBarChart, mCategoryWiseBarChart;
     ImageButton mCatIcon;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -101,7 +109,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout_light, container, false);
 
-        }else{
+        } else {
             view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout, container, false);
 
         }
@@ -603,7 +611,14 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void updateCategorySelected(int position) {
         mCategorySelectionButton.setTitle(categoriesArrayList.get(position).getCategoryName());
-        reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
+
+        } else {
+            reflectCategoryWiseBarChartDark(categoriesArrayList.get(position).getCategoryKey());
+
+        }
     }
 
     void initCategories() {
@@ -1042,11 +1057,19 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         }
 
-        reflectedBarChart();
-        reflectWeekWiseBarChart();
-        reflectCategoryWiseBarChart(categoriesArrayList.get(0).getCategoryKey());
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            reflectedBarChart();
+            reflectWeekWiseBarChart();
+            reflectCategoryWiseBarChart(categoriesArrayList.get(0).getCategoryKey());
+        } else {
+            reflectedBarChartDark();
+            reflectWeekWiseBarChartDark();
+            reflectCategoryWiseBarChartDark(categoriesArrayList.get(0).getCategoryKey());
+        }
+
     }
-    
+
     void setCatIconBackground(Categories categories) {
         switch (categories.getColorId()) {
             case 1:
@@ -1251,6 +1274,9 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void reflectCategoryWiseBarChart(String categoryKey) {
         List<BarEntry> entries = new ArrayList<>();
+        Calendar refCal = new GregorianCalendar();
+        refCal.set(Calendar.YEAR, currentYear);
+        refCal.set(Calendar.MONTH, currentMonth);
         if (catYearMonthExpenseArrayListHashMap.containsKey(categoryKey)) {
             HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> categoryContainerMap = catYearMonthExpenseArrayListHashMap.get(categoryKey);
             if (categoryContainerMap.containsKey(currentYear)) {
@@ -1271,18 +1297,122 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
         }
 
-
+        XAxis xAxis = mCategoryWiseBarChart.getXAxis();
+        YAxis yAxis = mCategoryWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mCategoryWiseBarChart.getAxisRight();
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
         BarData data = new BarData(set);
-        data.setBarWidth(0.9f); // set custom bar width
+        data.setBarWidth(0.9f);// set custom bar width
+        mCategoryWiseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setDrawAxisLine(false);
+        yAxis.setStartAtZero(true);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        yAxis.setDrawGridLines(true);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum((float) refCal.getActualMaximum(Calendar.DAY_OF_MONTH)); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);
+        Description description = new Description();
+        description.setText("Test Text Category Chart");
+
+        mCategoryWiseBarChart.setDescription(description);
+        mCategoryWiseBarChart.setScaleEnabled(false);
+        mCategoryWiseBarChart.setDrawGridBackground(false);
         mCategoryWiseBarChart.setData(data);
-        mCategoryWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mCategoryWiseBarChart.setFitBars(false); // make the x-axis fit exactly all bars
+        mCategoryWiseBarChart.invalidate(); // refresh
+    }
+
+    void reflectCategoryWiseBarChartDark(String categoryKey) {
+        List<BarEntry> entries = new ArrayList<>();
+        Calendar refCal = new GregorianCalendar();
+        refCal.set(Calendar.YEAR, currentYear);
+        refCal.set(Calendar.MONTH, currentMonth);
+        if (catYearMonthExpenseArrayListHashMap.containsKey(categoryKey)) {
+            HashMap<Integer, HashMap<Integer, ArrayList<FinanceEntryPOJO>>> categoryContainerMap = catYearMonthExpenseArrayListHashMap.get(categoryKey);
+            if (categoryContainerMap.containsKey(currentYear)) {
+                if (categoryContainerMap.get(currentYear).containsKey(currentMonth)) {
+                    ArrayList<FinanceEntryPOJO> financeEntryPOJOArrayList = categoryContainerMap.get(currentYear).get(currentMonth);
+                    for (int j = 0; j < financeEntryPOJOArrayList.size(); j++) {
+                        String dayOfWeek = null;
+                        try {
+                            dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(financeEntryPOJOArrayList.get(j).getDate()));
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(financeEntryPOJOArrayList.get(j).getAmount()))));
+
+                    }
+                }
+            }
+        }
+
+        XAxis xAxis = mCategoryWiseBarChart.getXAxis();
+        YAxis yAxis = mCategoryWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mCategoryWiseBarChart.getAxisRight();
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f);// set custom bar width
+
+        mCategoryWiseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        data.setValueTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.WHITE);
+        yAxis.setTextColor(Color.WHITE);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setDrawAxisLine(false);
+        yAxis.setStartAtZero(true);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        yAxis.setDrawGridLines(true);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum((float) refCal.getActualMaximum(Calendar.DAY_OF_MONTH)); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);
+
+        Description description = new Description();
+        description.setText("Test Text Category Chart");
+        description.setTextColor(Color.WHITE);
+        mCategoryWiseBarChart.setDescription(description);
+        mCategoryWiseBarChart.setScaleEnabled(false);
+        mCategoryWiseBarChart.setDrawGridBackground(false);
+        mCategoryWiseBarChart.setData(data);
+        mCategoryWiseBarChart.setFitBars(false); // make the x-axis fit exactly all bars
         mCategoryWiseBarChart.invalidate(); // refresh
     }
 
     void reflectedBarChart() {
 
         List<BarEntry> entries = new ArrayList<>();
+        Calendar refCal = new GregorianCalendar();
+        refCal.set(Calendar.YEAR, currentYear);
+        refCal.set(Calendar.MONTH, currentMonth);
         ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
         if (yearMonthDateHashMap.containsKey(currentYear)) {
             if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
@@ -1319,7 +1449,135 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
         BarData data = new BarData(set);
-        data.setBarWidth(0.9f); // set custom bar width
+        data.setBarWidth(0.9f);
+
+        XAxis xAxis = mExpenseBarChart.getXAxis();
+        YAxis yAxis = mExpenseBarChart.getAxisLeft();
+        YAxis yAxis1 = mExpenseBarChart.getAxisRight();
+
+        data.setBarWidth(0.9f);// set custom bar width
+        mExpenseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setDrawGridLines(true);
+
+
+        yAxis.setStartAtZero(true);
+        yAxis.setDrawAxisLine(false);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum((float) refCal.getActualMaximum(Calendar.DAY_OF_MONTH)); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);// set custom bar width
+
+        Description description = new Description();
+        description.setText("Test Text Expense Chart");
+
+        mExpenseBarChart.setDescription(description);
+        mExpenseBarChart.setScaleEnabled(false);
+        mExpenseBarChart.setDrawGridBackground(false);
+        mExpenseBarChart.setData(data);
+        mExpenseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mExpenseBarChart.invalidate(); // refresh
+
+
+    }
+
+    void reflectedBarChartDark() {
+
+        List<BarEntry> entries = new ArrayList<>();
+        Calendar refCal = new GregorianCalendar();
+        refCal.set(Calendar.YEAR, currentYear);
+        refCal.set(Calendar.MONTH, currentMonth);
+        ArrayList<DateExpenseHolder> dateExpenseHolderArrayList;
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
+                HashMap<String, ArrayList<FinanceEntryPOJO>> expensePOJOHashMapArrayList = yearMonthDateHashMap.get(currentYear).get(currentMonth);
+                dateExpenseHolderArrayList = new ArrayList<>();
+                for (Map.Entry<String, ArrayList<FinanceEntryPOJO>> entry : expensePOJOHashMapArrayList.entrySet()) {
+                    dateExpenseHolderArrayList.add(new DateExpenseHolder(entry.getKey(), entry.getValue()));
+                }
+
+                for (int i = 0; i < dateExpenseHolderArrayList.size(); i++) {
+                    DateExpenseHolder dateExpenseHolder = dateExpenseHolderArrayList.get(i);
+                    ArrayList<FinanceEntryPOJO> expensePOJOArrayList = dateExpenseHolder.getExpensePOJOArrayList();
+                    double dayAmount = 0.0;
+                    for (int j = 0; j < expensePOJOArrayList.size(); j++) {
+                        FinanceEntryPOJO expensePOJO = expensePOJOArrayList.get(j);
+                        dayAmount += expensePOJO.getAmount();
+                    }
+
+                    /**---------------------------------------------------------------------------*/
+                    String dayOfWeek = null;
+                    try {
+                        dayOfWeek = new SimpleDateFormat("d").format(new SimpleDateFormat("dd/MM/yyyy").parse(dateExpenseHolder.getDate()));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+                    entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(dayAmount))));
+                }
+
+            } else {
+            }
+        }
+
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f);
+
+        XAxis xAxis = mExpenseBarChart.getXAxis();
+        YAxis yAxis = mExpenseBarChart.getAxisLeft();
+        YAxis yAxis1 = mExpenseBarChart.getAxisRight();
+
+        data.setBarWidth(0.9f);// set custom bar width
+        mExpenseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setDrawGridLines(true);
+
+        data.setValueTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.WHITE);
+        yAxis.setTextColor(Color.WHITE);
+        yAxis.setStartAtZero(true);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        yAxis.setDrawAxisLine(false);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum((float) refCal.getActualMaximum(Calendar.DAY_OF_MONTH)); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);// set custom bar width
+
+        Description description = new Description();
+        description.setText("Test Text Expense Chart");
+        description.setTextColor(Color.WHITE);
+        mExpenseBarChart.setDescription(description);
+        mExpenseBarChart.setScaleEnabled(false);
+        mExpenseBarChart.setDrawGridBackground(false);
         mExpenseBarChart.setData(data);
         mExpenseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
         mExpenseBarChart.invalidate(); // refresh
@@ -1337,6 +1595,19 @@ public class PersonalFinanceAnalytics extends Fragment {
      */
     void reflectWeekWiseBarChart() {
         List<BarEntry> entries = new ArrayList<>();
+        List<String> labelsList = new ArrayList<>();
+        labelsList.add("");
+        labelsList.add("Mon");
+        labelsList.add("Tue");
+        labelsList.add("Wed");
+        labelsList.add("Thu");
+        labelsList.add("Fri");
+        labelsList.add("Sat");
+        labelsList.add("Sun");
+        labelsList.add("");
+
+
+
 
         if (yearMonthDateHashMap.containsKey(currentYear)) {
             if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
@@ -1362,6 +1633,134 @@ public class PersonalFinanceAnalytics extends Fragment {
         BarDataSet set = new BarDataSet(entries, "BarDataSet");
         BarData data = new BarData(set);
         data.setBarWidth(0.9f); // set custom bar width
+
+        XAxis xAxis = mWeekDayWiseBarChart.getXAxis();
+        YAxis yAxis = mWeekDayWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mWeekDayWiseBarChart.getAxisRight();
+
+        data.setBarWidth(0.9f);// set custom bar width
+        mWeekDayWiseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setStartAtZero(true);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        yAxis.setDrawAxisLine(false);
+        yAxis.setDrawGridLines(true);
+        yAxis1.setDrawGridLines(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum(8f); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);
+
+        Description description = new Description();
+        description.setText("Test Text Weekwise Chart");
+
+        String[] labels = new String[labelsList.size()];
+        labels = labelsList.toArray(labels);
+        mWeekDayWiseBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+
+
+        mWeekDayWiseBarChart.setDescription(description);
+        mWeekDayWiseBarChart.setScaleEnabled(false);
+        mWeekDayWiseBarChart.setDrawGridBackground(false);
+        mWeekDayWiseBarChart.setData(data);
+        mWeekDayWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mWeekDayWiseBarChart.invalidate(); // refresh
+    }
+
+    void reflectWeekWiseBarChartDark() {
+        List<BarEntry> entries = new ArrayList<>();
+        List<String> labelsList = new ArrayList<>();
+        labelsList.add("");
+        labelsList.add("Mon");
+        labelsList.add("Tue");
+        labelsList.add("Wed");
+        labelsList.add("Thu");
+        labelsList.add("Fri");
+        labelsList.add("Sat");
+        labelsList.add("Sun");
+        labelsList.add("");
+
+
+        if (yearMonthDateHashMap.containsKey(currentYear)) {
+            if (yearMonthDateHashMap.get(currentYear).containsKey(currentMonth)) {
+                for (Map.Entry<String, ArrayList<WeekDayWiseExpense>> entry : weekWiseExpenseHashMap.entrySet()) {
+                    ArrayList<WeekDayWiseExpense> weekDayWiseExpensesArrayList = entry.getValue();
+                    double dayWiseTotalExpense = 0.00;
+                    for (int i = 0; i < weekDayWiseExpensesArrayList.size(); i++) {
+                        dayWiseTotalExpense += weekDayWiseExpensesArrayList.get(i).totalWeekDayExpense;
+                    }
+                    String dayOfWeek;
+                    try {
+                        dayOfWeek = new SimpleDateFormat("u").format(new SimpleDateFormat("EE").parse(entry.getKey()));
+                        entries.add(new BarEntry(Float.valueOf(dayOfWeek), Float.valueOf(String.valueOf(dayWiseTotalExpense))));
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            }
+        }
+        BarDataSet set = new BarDataSet(entries, "BarDataSet");
+        BarData data = new BarData(set);
+        data.setBarWidth(0.9f); // set custom bar width
+
+        XAxis xAxis = mWeekDayWiseBarChart.getXAxis();
+        YAxis yAxis = mWeekDayWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mWeekDayWiseBarChart.getAxisRight();
+
+        data.setBarWidth(0.9f);// set custom bar width
+        data.setValueTextSize(7);
+        xAxis.setTextSize(11);
+        yAxis.setTextSize(11);
+        mWeekDayWiseBarChart.getLegend().setEnabled(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1f);
+        xAxis.setDrawGridLines(false);
+        yAxis.setGranularityEnabled(true);
+        yAxis.setGranularity(100f);
+        yAxis.setStartAtZero(true);
+        yAxis1.setStartAtZero(true);
+        yAxis1.setDrawAxisLine(false);
+        yAxis1.setDrawLabels(false);
+        data.setValueTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.WHITE);
+        yAxis.setTextColor(Color.WHITE);
+
+        yAxis.setDrawGridLines(true);
+        yAxis1.setDrawGridLines(false);
+        yAxis.setDrawAxisLine(false);
+        yAxis1.setDrawZeroLine(true);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        // if dates max is greater than 10 then use date, otherwise Calendar.DAY OF MONTH
+        xAxis.setAxisMaximum(8f); //TODO set to maximum date present
+        xAxis.setAxisMinimum(0f);
+
+        Description description = new Description();
+        description.setText("Test Text Weekwise Chart");
+        description.setTextColor(Color.WHITE);
+
+        String[] labels = new String[labelsList.size()];
+        labels = labelsList.toArray(labels);
+        mWeekDayWiseBarChart.getXAxis().setValueFormatter(new IndexAxisValueFormatter(labels));
+
+        mWeekDayWiseBarChart.setDescription(description);
+        mWeekDayWiseBarChart.setScaleEnabled(false);
+        mWeekDayWiseBarChart.setDrawGridBackground(false);
         mWeekDayWiseBarChart.setData(data);
         mWeekDayWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
         mWeekDayWiseBarChart.invalidate(); // refresh
