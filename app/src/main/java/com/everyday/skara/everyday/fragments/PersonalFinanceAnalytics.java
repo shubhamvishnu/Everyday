@@ -50,7 +50,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.collection.LLRBNode;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -99,7 +98,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     TextView mExpensiveExpenseTextView, mExpensiveExpenseCatTextView;
     DonutProgress mDonutProgress;
     PieChart mPieChart;
-    BarChart mExpenseBarChart, mWeekDayWiseBarChart, mCategoryWiseBarChart;
+    BarChart mWeekDayWiseBarChart, mCategoryWiseBarChart;
     ImageButton mCatIcon;
 
     @Nullable
@@ -144,7 +143,6 @@ public class PersonalFinanceAnalytics extends Fragment {
         mRemaining = view.findViewById(R.id.total_remaining);
         mExpensiveExpenseTextView = view.findViewById(R.id.maximum_expense_amount);
         mExpensiveExpenseCatTextView = view.findViewById(R.id.maximum_expense_cat);
-        mExpenseBarChart = view.findViewById(R.id.expense_bar_chart);
         mWeekDayWiseBarChart = view.findViewById(R.id.weekday_wise_bar_chart);
         mCategoryWiseBarChart = view.findViewById(R.id.category_wise_bar_chart);
         mDonutProgress = view.findViewById(R.id.donut_progress);
@@ -361,6 +359,10 @@ public class PersonalFinanceAnalytics extends Fragment {
 
         mCategoriesBottomSheetDialog = new BottomSheetDialog(getActivity());
         mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
+
+        ImageButton mAllCategoryImageButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_image_button);
+        Button mAllCategoryButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_button);
+
         ImageButton mClose = mCategoriesBottomSheetDialog.findViewById(R.id.close_cat_option_dialog);
         RecyclerView mCategoriesRecyclerView = mCategoriesBottomSheetDialog.findViewById(R.id.recyclerview_choose_category);
 
@@ -378,6 +380,40 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
         });
 
+        mAllCategoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+                    reflectedBarChart();
+
+                } else {
+                    reflectedBarChartDark();
+
+                }
+                mCategorySelectionButton.setTitle("All");
+                mCategoriesBottomSheetDialog.dismiss();
+
+            }
+
+        });
+
+        mAllCategoryImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+                    reflectedBarChart();
+
+                } else {
+                    reflectedBarChartDark();
+
+                }
+                mCategorySelectionButton.setTitle("All");
+                mCategoriesBottomSheetDialog.dismiss();
+
+            }
+        });
 
         mCategoriesBottomSheetDialog.setCanceledOnTouchOutside(false);
         mCategoriesBottomSheetDialog.show();
@@ -611,6 +647,7 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void updateCategorySelected(int position) {
         mCategorySelectionButton.setTitle(categoriesArrayList.get(position).getCategoryName());
+        mCategoriesBottomSheetDialog.dismiss();
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
             reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
@@ -619,6 +656,7 @@ public class PersonalFinanceAnalytics extends Fragment {
             reflectCategoryWiseBarChartDark(categoriesArrayList.get(position).getCategoryKey());
 
         }
+
     }
 
     void initCategories() {
@@ -987,6 +1025,7 @@ public class PersonalFinanceAnalytics extends Fragment {
     }
 
     void updateDayExpenses() {
+        mCategorySelectionButton.setTitle("All");
         DayExpensePOJO dayExpensePOJO = new DayExpensePOJO(0.0, "-", new ArrayList<FinanceEntryPOJO>());
         FinanceEntryPOJO maxExpensePOJO = new FinanceEntryPOJO();
         maxExpensePOJO.setAmount(0.0);
@@ -1061,11 +1100,9 @@ public class PersonalFinanceAnalytics extends Fragment {
         if (theme == BasicSettings.LIGHT_THEME) {
             reflectedBarChart();
             reflectWeekWiseBarChart();
-            reflectCategoryWiseBarChart(categoriesArrayList.get(0).getCategoryKey());
         } else {
             reflectedBarChartDark();
             reflectWeekWiseBarChartDark();
-            reflectCategoryWiseBarChartDark(categoriesArrayList.get(0).getCategoryKey());
         }
 
     }
@@ -1451,12 +1488,12 @@ public class PersonalFinanceAnalytics extends Fragment {
         BarData data = new BarData(set);
         data.setBarWidth(0.9f);
 
-        XAxis xAxis = mExpenseBarChart.getXAxis();
-        YAxis yAxis = mExpenseBarChart.getAxisLeft();
-        YAxis yAxis1 = mExpenseBarChart.getAxisRight();
+        XAxis xAxis = mCategoryWiseBarChart.getXAxis();
+        YAxis yAxis = mCategoryWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mCategoryWiseBarChart.getAxisRight();
 
         data.setBarWidth(0.9f);// set custom bar width
-        mExpenseBarChart.getLegend().setEnabled(false);
+        mCategoryWiseBarChart.getLegend().setEnabled(false);
         xAxis.setGranularityEnabled(true);
         xAxis.setGranularity(1f);
         xAxis.setDrawGridLines(false);
@@ -1485,12 +1522,12 @@ public class PersonalFinanceAnalytics extends Fragment {
         Description description = new Description();
         description.setText("Test Text Expense Chart");
 
-        mExpenseBarChart.setDescription(description);
-        mExpenseBarChart.setScaleEnabled(false);
-        mExpenseBarChart.setDrawGridBackground(false);
-        mExpenseBarChart.setData(data);
-        mExpenseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
-        mExpenseBarChart.invalidate(); // refresh
+        mCategoryWiseBarChart.setDescription(description);
+        mCategoryWiseBarChart.setScaleEnabled(false);
+        mCategoryWiseBarChart.setDrawGridBackground(false);
+        mCategoryWiseBarChart.setData(data);
+        mCategoryWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mCategoryWiseBarChart.invalidate(); // refresh
 
 
     }
@@ -1539,12 +1576,12 @@ public class PersonalFinanceAnalytics extends Fragment {
         BarData data = new BarData(set);
         data.setBarWidth(0.9f);
 
-        XAxis xAxis = mExpenseBarChart.getXAxis();
-        YAxis yAxis = mExpenseBarChart.getAxisLeft();
-        YAxis yAxis1 = mExpenseBarChart.getAxisRight();
+        XAxis xAxis = mCategoryWiseBarChart.getXAxis();
+        YAxis yAxis = mCategoryWiseBarChart.getAxisLeft();
+        YAxis yAxis1 = mCategoryWiseBarChart.getAxisRight();
 
         data.setBarWidth(0.9f);// set custom bar width
-        mExpenseBarChart.getLegend().setEnabled(false);
+        mCategoryWiseBarChart.getLegend().setEnabled(false);
         xAxis.setGranularityEnabled(true);
         xAxis.setGranularity(1f);
         xAxis.setDrawGridLines(false);
@@ -1575,12 +1612,12 @@ public class PersonalFinanceAnalytics extends Fragment {
         Description description = new Description();
         description.setText("Test Text Expense Chart");
         description.setTextColor(Color.WHITE);
-        mExpenseBarChart.setDescription(description);
-        mExpenseBarChart.setScaleEnabled(false);
-        mExpenseBarChart.setDrawGridBackground(false);
-        mExpenseBarChart.setData(data);
-        mExpenseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
-        mExpenseBarChart.invalidate(); // refresh
+        mCategoryWiseBarChart.setDescription(description);
+        mCategoryWiseBarChart.setScaleEnabled(false);
+        mCategoryWiseBarChart.setDrawGridBackground(false);
+        mCategoryWiseBarChart.setData(data);
+        mCategoryWiseBarChart.setFitBars(true); // make the x-axis fit exactly all bars
+        mCategoryWiseBarChart.invalidate(); // refresh
 
 
     }
@@ -1605,8 +1642,6 @@ public class PersonalFinanceAnalytics extends Fragment {
         labelsList.add("Sat");
         labelsList.add("Sun");
         labelsList.add("");
-
-
 
 
         if (yearMonthDateHashMap.containsKey(currentYear)) {

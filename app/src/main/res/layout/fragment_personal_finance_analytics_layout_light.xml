@@ -336,10 +336,6 @@
                 android:id="@+id/weekday_wise_bar_chart"
                 android:layout_width="match_parent"
                 android:layout_height="250dp" />
-            <com.github.mikephil.charting.charts.BarChart
-                android:id="@+id/expense_bar_chart"
-                android:layout_width="match_parent"
-                android:layout_height="250dp" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/expense_pie_chart"
