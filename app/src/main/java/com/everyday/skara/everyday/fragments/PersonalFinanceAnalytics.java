@@ -190,7 +190,13 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void showMonthSelectionDialog() {
         mMonthBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout_light);
+
+        } else {
+            mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout);
+        }
         ImageButton mClose = mMonthBottomSheetDialog.findViewById(R.id.close_month_selection_dialog);
         Button mDone = mMonthBottomSheetDialog.findViewById(R.id.month_selection_done);
 
@@ -358,8 +364,12 @@ public class PersonalFinanceAnalytics extends Fragment {
     void showCategoryChartSelectionDialog() {
 
         mCategoriesBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
-
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout_light);
+        } else {
+            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
+        }
         ImageButton mAllCategoryImageButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_image_button);
         Button mAllCategoryButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_button);
 
@@ -419,6 +429,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCategoriesBottomSheetDialog.show();
     }
 
+
     public class CatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
         //ArrayList<Categories> categoriesArrayList;
@@ -435,8 +446,17 @@ public class PersonalFinanceAnalytics extends Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
-            return new CatAdapter.CatViewHolder(view);
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout_light, parent, false);
+                return new CatAdapter.CatViewHolder(view);
+
+            } else {
+                View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
+                return new CatAdapter.CatViewHolder(view);
+
+            }
+
         }
 
         @Override
@@ -444,6 +464,7 @@ public class PersonalFinanceAnalytics extends Fragment {
             Categories categories = categoriesArrayList.get(position);
             ((CatAdapter.CatViewHolder) holder).mCatName.setText(categories.getCategoryName());
             showCatIcon(holder, categories);
+            showRecyclerCatIconBackground(holder, categories);
         }
 
 
@@ -618,6 +639,32 @@ public class PersonalFinanceAnalytics extends Fragment {
                     break;
                 default:
                     ((CatAdapter.CatViewHolder) holder).mCatIcon.setImageResource(R.drawable.ic_cat_2000);
+                    break;
+            }
+        }
+
+        void showRecyclerCatIconBackground(@NonNull RecyclerView.ViewHolder holder, Categories categories) {
+            switch (categories.getColorId()) {
+                case 1:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_red);
+                    break;
+                case 2:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_yellow);
+                    break;
+                case 3:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
+                    break;
+                case 4:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green);
+                    break;
+                case 5:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_green_blue);
+                    break;
+                case 6:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_pink);
+                    break;
+                default:
+                    ((CatAdapter.CatViewHolder) holder).mCatIcon.setBackgroundResource(R.drawable.circle_background_blue);
                     break;
             }
         }
@@ -874,7 +921,9 @@ public class PersonalFinanceAnalytics extends Fragment {
 
     void updateTotalExpense() {
         mDonutProgress.setProgress(0.0f);
+        mRemaining.setText("0.00");
         double tempTotal = 0.0;
+        mTotalExpenseTextView.setText("0.00");
         updateMonthTitle();
         if (yearMonthExpenseArrayListHashMap.containsKey(currentYear)) {
             if (yearMonthExpenseArrayListHashMap.get(currentYear).containsKey(currentMonth)) {

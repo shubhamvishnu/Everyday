@@ -1,0 +1,225 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:text="Month"
+            android:textColor="@android:color/black"
+            android:textSize="18dp" />
+
+        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/close_month_selection_dialog"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_close_24dp" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:textSize="18sp"
+        android:background="@color/grey" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/month_1_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jan"
+                android:layout_weight="1"
+                android:textAllCaps="false"
+                android:background="@color/transparent"
+                android:textColor="@color/black" />
+
+            <Button
+                android:id="@+id/month_2_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:text="Feb"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_3_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:layout_height="wrap_content"
+                android:text="Mar"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_4_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apr"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/month_5_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="May"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_6_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jun"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_7_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Jul"
+
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_8_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Aug"
+
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <Button
+                android:id="@+id/month_9_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Sep"
+
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_10_button"
+                android:layout_width="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:text="Oct"
+
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_11_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nov"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/month_12_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+
+                android:background="@color/transparent"
+                android:textColor="@color/black"
+                android:text="Dec"
+                android:textAllCaps="false" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/month_selection_done"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:text="Done"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:textColor="@color/black" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -164,7 +164,13 @@ public class PersonalFinanceCategoriesFragment extends Fragment {
 
     void showMonthSelectionDialog() {
         mMonthBottomSheetDialog = new BottomSheetDialog(getActivity());
-        mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout);
+        int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout_light);
+
+        } else {
+            mMonthBottomSheetDialog.setContentView(R.layout.dialog_month_selection_layout);
+        }
         ImageButton mClose = mMonthBottomSheetDialog.findViewById(R.id.close_month_selection_dialog);
         Button mDone = mMonthBottomSheetDialog.findViewById(R.id.month_selection_done);
 
