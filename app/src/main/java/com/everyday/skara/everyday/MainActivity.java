@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ChildEventListener childEventListener;
     UserProfilePOJO userProfilePOJO;
     UserInfoPOJO userInfoPOJO;
-    AdView adView;
     // RecyclerView
     //BoardsAdapter boardsAdapter;
     //RecyclerView mBoardsRecyclerView;
@@ -153,8 +152,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
                 } else if (tabId == R.id.todo_item_menu) {
                     OPTION_TYPE = 2;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -175,8 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
                 } else if (tabId == R.id.note_item) {
                     OPTION_TYPE = 3;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -197,8 +192,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
+
                 } else if (tabId == R.id.link_item) {
                     OPTION_TYPE = 4;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -219,8 +213,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
                 } else if (tabId == R.id.user_profile_item) {
                     OPTION_TYPE = 5;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -240,8 +232,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    adView.loadAd(adRequest);
                 }
             }
         });
@@ -336,9 +326,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        initRecyclerView();
         */
 
-        adView = findViewById(R.id.main_activity_ad_view);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
         initBottomBar();
     }
 
