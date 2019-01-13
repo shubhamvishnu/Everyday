@@ -47,6 +47,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/amount_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount"
+                android:background="@android:color/transparent"
+                android:padding="12dp"
+                android:textSize="22sp"
+                android:textColorHint="@color/dark_grey"
+                android:textColor="@color/black"
+                android:inputType="numberDecimal" />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,17 +71,6 @@
                 android:textColorHint="@color/dark_grey"
                 android:textColor="@color/black"
                 android:id="@+id/expense_description_edittext"/>
-            <EditText
-                android:id="@+id/amount_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Amount"
-                android:background="@android:color/transparent"
-                android:padding="12dp"
-                android:textSize="22sp"
-                android:textColorHint="@color/dark_grey"
-                android:textColor="@color/black"
-                android:inputType="numberDecimal" />
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

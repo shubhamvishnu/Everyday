@@ -643,7 +643,16 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
             final TodoInfoPOJO todoInfoPOJO = todo.getTodoInfoPOJO();
 
             mEditTodoDialog = new BottomSheetDialog(getActivity());
-            mEditTodoDialog.setContentView(R.layout.dialog_edit_todo_layout);
+
+            SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                mEditTodoDialog.setContentView(R.layout.dialog_edit_todo_layout_light);
+
+            }else {
+                mEditTodoDialog.setContentView(R.layout.dialog_edit_todo_layout);
+
+            }
 
             mTitle = mEditTodoDialog.findViewById(R.id.title_edit_todo_dialog);
             mClose = mEditTodoDialog.findViewById(R.id.close_todo_edit_dialog);
