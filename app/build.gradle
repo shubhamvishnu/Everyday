@@ -18,6 +18,7 @@ android {
     }
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
 }
 
@@ -39,21 +40,25 @@ dependencies {
         exclude group: 'com.android.support', module: 'gridlayout-v7'
     }
 
+
     // Horizontal calendar view
     implementation 'com.github.jhonnyx2012:horizontal-picker:1.0.6'
 
+    // Firebase Analytics
+    implementation 'com.google.firebase:firebase-core:16.0.6'
+
     // Firebase Authentication
-    implementation 'com.google.firebase:firebase-auth:16.0.1'
-    implementation 'com.google.android.gms:play-services-auth:15.0.1'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
+    implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
     // Firebase real-time database
-    implementation 'com.google.firebase:firebase-database:16.0.1'
-
-    // Firebase Analytics
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.firebase:firebase-database:16.0.5'
 
     // Firebase Cloud Messaging
-    implementation 'com.google.firebase:firebase-messaging:17.1.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+
+    // Admobs
+    implementation 'com.google.firebase:firebase-ads:17.1.2'
 
     // Circle Image View library
     implementation 'de.hdodenhof:circleimageview:2.1.0'

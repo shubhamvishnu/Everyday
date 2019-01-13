@@ -103,6 +103,13 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
 
 
     void init() {
+        userSharedPreferences = getActivity().getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
+        String name = userSharedPreferences.getString("name", null);
+        String email = userSharedPreferences.getString("email", null);
+        String profile_url = userSharedPreferences.getString("url", null);
+        String user_key = userSharedPreferences.getString("user_key", null);
+        String login_type = userSharedPreferences.getString("login_type", null);
+        int user_account_type = userSharedPreferences.getInt("user_account_type", 0);
 
         mUserProfile = (CircleImageView) view.findViewById(R.id.user_profile_circle_image_view);
         mName = (TextView) view.findViewById(R.id.user_profile_name_text_view);
@@ -118,30 +125,16 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         mFeedbackButton.setOnClickListener(this);
         mShareAppLink.setOnClickListener(this);
         mShareAppPlaystore.setOnClickListener(this);
-        mUserProfile.setImageDrawable(null);
         mName.setText(null);
         mEmail.setText(null);
         mLogout.setEnabled(false);
-        initUserProfileDetails();
-    }
-
-    void initUserProfileDetails() {
-        // initializing UserProfilePOJOview.
-        userSharedPreferences = getActivity().getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
-        String name = userSharedPreferences.getString("name", null);
-        String email = userSharedPreferences.getString("email", null);
-        String profile_url = userSharedPreferences.getString("url", null);
-        String user_key = userSharedPreferences.getString("user_key", null);
-        String login_type = userSharedPreferences.getString("login_type", null);
-        int user_account_type = userSharedPreferences.getInt("user_account_type", 0);
-
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
         Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile).onLoadFailed(getResources().getDrawable(R.drawable.default_user));
         mName.setText(userProfilePOJO.getName());
         mEmail.setText(userProfilePOJO.getEmail());
         mLogout.setEnabled(true);
-
     }
+
 
     void toLogin() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
