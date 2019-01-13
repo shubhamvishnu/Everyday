@@ -366,9 +366,11 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCategoriesBottomSheetDialog = new BottomSheetDialog(getActivity());
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
-            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout_light);
+
+            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_analytics_layout_light);
         } else {
-            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_layout);
+            mCategoriesBottomSheetDialog.setContentView(R.layout.dialog_choose_category_analytics_layout_dark);
+
         }
         ImageButton mAllCategoryImageButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_image_button);
         Button mAllCategoryButton = mCategoriesBottomSheetDialog.findViewById(R.id.all_category_button);
@@ -425,7 +427,7 @@ public class PersonalFinanceAnalytics extends Fragment {
             }
         });
 
-        mCategoriesBottomSheetDialog.setCanceledOnTouchOutside(false);
+        mCategoriesBottomSheetDialog.setCanceledOnTouchOutside(true);
         mCategoriesBottomSheetDialog.show();
     }
 

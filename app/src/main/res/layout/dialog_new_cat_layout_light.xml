@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:background="@color/black"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -24,7 +23,7 @@
             android:paddingRight="8dp"
             android:paddingTop="8dp"
             android:text="New Category"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="18dp" />
 
         <android.support.v7.widget.AppCompatImageButton
@@ -52,8 +51,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:hint="Category Name"
-        android:textColorHint="@color/dark_grey"
-        android:textColor="@color/white"
         android:padding="8dp"
         android:textSize="24sp" />
 
@@ -71,12 +68,14 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="6dp"
+            android:background="@color/white"
             android:orientation="horizontal">
 
             <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -100,7 +99,7 @@
                 android:gravity="left|center"
                 android:text="Choose Icon"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="24sp" />
 
         </LinearLayout>

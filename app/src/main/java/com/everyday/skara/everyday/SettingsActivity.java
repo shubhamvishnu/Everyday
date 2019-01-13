@@ -7,6 +7,7 @@ import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -32,7 +33,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            setContentView(R.layout.activity_setting_light);
+
+        } else {
+            setContentView(R.layout.activity_settings);
+
+
+        }
 
         if (user != null) {
             init();
@@ -101,7 +111,16 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     void showSymbolsDialog() {
         Button mCur1, mCur2, mCur3, mCur4, mCur5, mCur6;
         mSymbolDialog = new BottomSheetDialog(SettingsActivity.this);
-        mSymbolDialog.setContentView(R.layout.dialog_symbols_dialog);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mSymbolDialog.setContentView(R.layout.dialog_symbols_layout_light);
+
+        }else{
+            mSymbolDialog.setContentView(R.layout.dialog_symbols_layout);
+
+        }
+
         ImageButton mClose = mSymbolDialog.findViewById(R.id.close_symbols_dialog);
 
         mCur1 = mSymbolDialog.findViewById(R.id.cur1_button);

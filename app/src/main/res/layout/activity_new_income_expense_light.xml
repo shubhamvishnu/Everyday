@@ -70,13 +70,17 @@
                     android:padding="6dp"
                     android:scaleType="fitCenter" />
 
-                <TextView
+                <Button
                     android:id="@+id/cat_name_text_view_new_income"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:text="Income"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_gravity="center"
+                    android:gravity="left|center"
                     android:textAllCaps="false"
                     android:textColor="@color/black"
                     android:textSize="24sp" />

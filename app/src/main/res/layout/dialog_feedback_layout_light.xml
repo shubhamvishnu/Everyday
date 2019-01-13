@@ -32,7 +32,7 @@
                 android:rowCount="1">
 
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/sad_button"
+                    android:id="@+id/in_love_button"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_margin="16dp"
@@ -40,8 +40,7 @@
                     android:background="@color/transparent"
                     android:padding="6dp"
                     android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_sad" />
-
+                    app:srcCompat="@drawable/ic_in_love" />
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/happy_button"
                     android:layout_width="70dp"
@@ -53,8 +52,9 @@
                     android:scaleType="fitCenter"
                     app:srcCompat="@drawable/ic_happy" />
 
+
                 <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/in_love_button"
+                    android:id="@+id/sad_button"
                     android:layout_width="70dp"
                     android:layout_height="70dp"
                     android:layout_margin="16dp"
@@ -62,7 +62,7 @@
                     android:background="@color/transparent"
                     android:padding="6dp"
                     android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_in_love" />
+                    app:srcCompat="@drawable/ic_sad" />
             </GridLayout>
 
             <EditText
@@ -85,7 +85,7 @@
                 android:background="@color/green_selected"
                 android:text="Send"
                 android:id="@+id/done_feedback_button"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textAllCaps="false" />
         </LinearLayout>
     </LinearLayout>

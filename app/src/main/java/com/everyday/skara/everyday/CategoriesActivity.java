@@ -1,6 +1,8 @@
 package com.everyday.skara.everyday;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +23,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -53,7 +57,16 @@ public class CategoriesActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_categories);
+
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            setContentView(R.layout.activity_categories_light);
+
+        } else {
+            setContentView(R.layout.activity_categories);
+
+        }
         Toolbar myToolbar = findViewById(R.id.categories_toolbar);
         setSupportActionBar(myToolbar);
         if (user != null) {
@@ -142,11 +155,33 @@ public class CategoriesActivity extends AppCompatActivity {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
             if (categoriesArrayList.get(position).getCategoryIconId() != 2005) { // 2005 - Default category; Others
-                View view = inflator.inflate(R.layout.recyclerview_expense_custom_categories_row_layout, parent, false);
-                return new CatViewHolder(view);
+
+                SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+                int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+                    View view = inflator.inflate(R.layout.recyclerview_expense_custom_categoroes_row_layout_light, parent, false);
+                    return new CatViewHolder(view);
+
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_expense_custom_categories_row_layout, parent, false);
+                    return new CatViewHolder(view);
+
+                }
+
+
             } else {
-                View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
-                return new DefaultCatViewHolder(view);
+
+                SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+                int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+
+                    View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout_light, parent, false);
+                    return new DefaultCatViewHolder(view);
+                } else {
+
+                    View view = inflator.inflate(R.layout.recyclerview_expense_catgories_row_layout, parent, false);
+                    return new DefaultCatViewHolder(view);
+                }
             }
         }
 
@@ -412,7 +447,7 @@ public class CategoriesActivity extends AppCompatActivity {
         public class CatViewHolder extends RecyclerView.ViewHolder {
             public Button mCatName;
             public ImageButton mCatIcon;
-            public Button mDelete;
+            public ImageButton mDelete;
 
             public CatViewHolder(View itemView) {
                 super(itemView);
@@ -477,7 +512,15 @@ public class CategoriesActivity extends AppCompatActivity {
 
     void addNewCategoryDialog() {
         mAddNewCatDialog = new BottomSheetDialog(this);
-        mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout_light);
+
+        } else {
+            mAddNewCatDialog.setContentView(R.layout.dialog_new_cat_layout);
+
+        }
         choosenIcon = -1;
         choosenColor = -1;
         final EditText mTitle;
@@ -590,7 +633,7 @@ public class CategoriesActivity extends AppCompatActivity {
                 mAddNewCatDialog.dismiss();
             }
         });
-        mAddNewCatDialog.setCanceledOnTouchOutside(false);
+        mAddNewCatDialog.setCanceledOnTouchOutside(true);
         mAddNewCatDialog.show();
     }
 
@@ -599,7 +642,15 @@ public class CategoriesActivity extends AppCompatActivity {
                 m31, m32, m33, m34, m35, m36, m37, m38, m39, m40, m41, m42, m43, m44, m45, m46, m47;
 
         mChooseIconDialog = new BottomSheetDialog(this);
-        mChooseIconDialog.setContentView(R.layout.dialog_choose_cat_icon_layout);
+        SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+        if (theme == BasicSettings.LIGHT_THEME) {
+            mChooseIconDialog.setContentView(R.layout.dialog_choose_cat_icon_layout_light);
+
+        } else {
+            mChooseIconDialog.setContentView(R.layout.dialog_choose_cat_icon_layout);
+
+        }
 
         m7 = mChooseIconDialog.findViewById(R.id.ic_cat_2007);
         m8 = mChooseIconDialog.findViewById(R.id.ic_cat_2008);
@@ -973,7 +1024,7 @@ public class CategoriesActivity extends AppCompatActivity {
             }
         });
 
-        mChooseIconDialog.setCanceledOnTouchOutside(false);
+        mChooseIconDialog.setCanceledOnTouchOutside(true);
         mChooseIconDialog.show();
     }
 

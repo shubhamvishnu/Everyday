@@ -215,7 +215,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     editor.apply();
 
                     myToolbar.setTitle("Profile");
-
                     UserAccountFragment userAccountFragment = new UserAccountFragment();
 
                     Bundle bundle = new Bundle();

@@ -241,14 +241,27 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (viewType == VIEW_NOT_COMPLETE) {
-                View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
-                TodoViewHolder viewHolder = new TodoViewHolder(view);
-                return viewHolder;
-            } else if (viewType == VIEW_COMPLETE) {
-                View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
-                TodoViewHolder viewHolder = new TodoViewHolder(view);
-                return viewHolder;
+            int theme = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                if (viewType == VIEW_NOT_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout_light, parent, false);
+                    TodoViewHolder viewHolder = new TodoViewHolder(view);
+                    return viewHolder;
+                } else if (viewType == VIEW_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout_light, parent, false);
+                    TodoViewHolder viewHolder = new TodoViewHolder(view);
+                    return viewHolder;
+                }
+            } else {
+                if (viewType == VIEW_NOT_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_row_layout, parent, false);
+                    TodoViewHolder viewHolder = new TodoViewHolder(view);
+                    return viewHolder;
+                } else if (viewType == VIEW_COMPLETE) {
+                    View view = inflator.inflate(R.layout.recyclerview_todo_item_view_checked_layout, parent, false);
+                    TodoViewHolder viewHolder = new TodoViewHolder(view);
+                    return viewHolder;
+                }
             }
             return null;
         }

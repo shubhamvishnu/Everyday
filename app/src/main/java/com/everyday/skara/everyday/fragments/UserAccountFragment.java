@@ -49,7 +49,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserAccountFragment extends Fragment implements View.OnClickListener{
+public class UserAccountFragment extends Fragment implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference;
@@ -75,7 +75,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.activity_user_account_light, container, false);
             return view;
-        }else{
+        } else {
             view = inflater.inflate(R.layout.activity_user_account, container, false);
             return view;
         }
@@ -95,7 +95,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         }
     }
 
-    void toLoginActivity(){
+    void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
@@ -118,22 +118,11 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         mFeedbackButton.setOnClickListener(this);
         mShareAppLink.setOnClickListener(this);
         mShareAppPlaystore.setOnClickListener(this);
-        setViewComponents(false);
+        mUserProfile.setImageDrawable(null);
+        mName.setText(null);
+        mEmail.setText(null);
+        mLogout.setEnabled(false);
         initUserProfileDetails();
-    }
-
-    void setViewComponents(boolean action) {
-        if (action) {
-           Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile);
-            mName.setText(userProfilePOJO.getName());
-            mEmail.setText(userProfilePOJO.getEmail());
-            mLogout.setEnabled(true);
-        } else {
-            mUserProfile.setImageDrawable(null);
-            mName.setText(null);
-            mEmail.setText(null);
-            mLogout.setEnabled(false);
-        }
     }
 
     void initUserProfileDetails() {
@@ -147,7 +136,10 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         int user_account_type = userSharedPreferences.getInt("user_account_type", 0);
 
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
-        setViewComponents(true);
+        Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile).onLoadFailed(getResources().getDrawable(R.drawable.default_user));
+        mName.setText(userProfilePOJO.getName());
+        mEmail.setText(userProfilePOJO.getEmail());
+        mLogout.setEnabled(true);
 
     }
 
@@ -222,14 +214,13 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     }
 
 
-
     void showFeedbackDialog() {
         mFeedbackDialog = new BottomSheetDialog(getActivity());
         SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
             mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout_light);
-        }else{
+        } else {
             mFeedbackDialog.setContentView(R.layout.dialog_feedback_layout);
         }
         selectedIcon = -1;

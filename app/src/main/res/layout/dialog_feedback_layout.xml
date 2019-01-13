@@ -30,6 +30,27 @@
             android:columnCount="3"
             android:orientation="horizontal"
             android:rowCount="1">
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/in_love_button"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="16dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_in_love" />
+            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/happy_button"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="16dp"
+                android:adjustViewBounds="true"
+                android:background="@color/transparent"
+                android:padding="6dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_happy" />
+
 
             <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/sad_button"
@@ -42,27 +63,7 @@
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/ic_sad" />
 
-            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/happy_button"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="16dp"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent"
-                android:padding="6dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_happy" />
 
-            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/in_love_button"
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="16dp"
-                android:adjustViewBounds="true"
-                android:background="@color/transparent"
-                android:padding="6dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/ic_in_love" />
         </GridLayout>
 
         <EditText

@@ -55,7 +55,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
     UserInfoPOJO userInfoPOJO;
     public static int optionType;
     public static int mViewCurrentYear, mViewCurrentMonth;
-    ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics;
+    ImageButton mExpenses, mCatExpenses, mDayExpenses, mExpenseAnalytics, mFilterFianance;
     TextView mExpensesSelected, mCatSelected, mASelected, mDaySelected, mFilterSelected;
     Toolbar myToolbar;
     View view;
@@ -101,6 +101,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mCatExpenses = view.findViewById(R.id.category_expenses_icon);
         mDayExpenses = view.findViewById(R.id.day_wise_expense_option);
         mExpenseAnalytics = view.findViewById(R.id.expense_analytics_item);
+        mFilterFianance = view.findViewById(R.id.filter_finance_option_button);
 
         mExpensesSelected = view.findViewById(R.id.expenses_selected_textview);
         mCatSelected = view.findViewById(R.id.category_selected_textview);
@@ -108,10 +109,13 @@ public class PersonalFinancialBoardFragment extends Fragment {
         mDaySelected = view.findViewById(R.id.dayview_selected_textview);
         mFilterSelected = view.findViewById(R.id.filter_selected_textview);
         mFiananceLinearLayout = view.findViewById(R.id.fianance_options_linear_layout);
+        mFilterFianance.setVisibility(View.VISIBLE);
 
         mExpenses.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mFilterFianance.setVisibility(View.VISIBLE);
+
                 optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
                 selected(optionType);
                 myToolbar.setTitle("Finance - Expenses");
@@ -141,6 +145,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
                 myToolbar.setTitle("Finance - Categories");
 
 
+                mFilterFianance.setVisibility(View.INVISIBLE);
                 PersonalFinanceCategoriesFragment personalFinanceCategoriesFragment = new PersonalFinanceCategoriesFragment();
 
                 Bundle bundle = new Bundle();
@@ -159,6 +164,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //   clearBackStack();
+                mFilterFianance.setVisibility(View.VISIBLE);
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_DAY_EXPENSE;
                 selected(optionType);
@@ -183,6 +189,7 @@ public class PersonalFinancialBoardFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //   clearBackStack();
+                mFilterFianance.setVisibility(View.INVISIBLE);
 
                 optionType = NewOptionTypes.TYPE_PERSONAL_ANALYTICS_;
                 selected(optionType);
@@ -243,6 +250,8 @@ public class PersonalFinancialBoardFragment extends Fragment {
     void initFragment(){
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
+        mFilterFianance.setVisibility(View.VISIBLE);
+
         optionType = NewOptionTypes.TYPE_PERSONAL_EXPENSE;
         selected(optionType);
         myToolbar.setTitle("Finance - Expenses");
