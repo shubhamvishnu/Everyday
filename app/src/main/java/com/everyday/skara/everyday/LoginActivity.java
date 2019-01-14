@@ -272,6 +272,11 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         createPersonalBoard(userInfoPOJO);
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     void setKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
