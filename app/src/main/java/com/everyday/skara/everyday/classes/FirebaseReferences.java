@@ -10,6 +10,8 @@ public class FirebaseReferences {
     public final static String FIREBASE_PERSONAL_BOARD_FINANCIAL = "personal_boards/financial_board/";
     public final static String FIREBASE_PERSONAL_BOARD_GRATITUDE = "personal_boards/gratitude_board/";
     public final static String FIREBASE_PERSONAL_BOARD_HABITS = "personal_boards/habit_board/";
+    public final static String FIREBASE_PERSONAL_BOARD_LIFE = "personal_boards/life_board/";
+
 
 
 

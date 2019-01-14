@@ -34,6 +34,7 @@ import com.everyday.skara.everyday.classes.Connectivity;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.fragments.LifeBoardFragment;
 import com.everyday.skara.everyday.fragments.PersoanalLinksFragment;
 import com.everyday.skara.everyday.fragments.PersonalFinancialBoardFragment;
 import com.everyday.skara.everyday.fragments.PersonalNotesFragment;
@@ -234,6 +235,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
                     transaction.replace(R.id.main_content_container, userAccountFragment);
+                    transaction.addToBackStack(null);
+
+                    transaction.commit();
+                }else if(tabId == R.id.life_board_item){
+
+                    myToolbar.setTitle("LifeBoard");
+                    LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("user_profile", userInfoPOJO);
+                    lifeBoardFragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    transaction.replace(R.id.main_content_container, lifeBoardFragment);
                     transaction.addToBackStack(null);
 
                     transaction.commit();

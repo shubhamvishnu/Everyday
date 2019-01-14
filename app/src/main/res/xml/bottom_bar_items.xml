@@ -30,5 +30,10 @@
         icon="@drawable/ic_person_24dp"
         id="@+id/user_profile_item"
         title="Profile" />
+    <tab
+        barColorWhenSelected="#ff0d47a1"
+        icon="@drawable/ic_list_24dp"
+        id="@+id/life_board_item"
+        title="Timeline" />
 
 </tabs>
