@@ -26,8 +26,10 @@ import android.widget.Toast;
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.classes.Todo;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
+import com.everyday.skara.everyday.pojo.TodoInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class CategoriesActivity extends AppCompatActivity {
@@ -444,16 +447,109 @@ public class CategoriesActivity extends AppCompatActivity {
             });
         }
 
+        EditText mEditCatTitleTitle;
+        ImageButton mEditCatTitleClose;
+        Button mEditCatTitleDone;
+        BottomSheetDialog mEditCatTitle;
+
+        void showCatTitleDialog(final int position) {
+            final Categories categories = categoriesArrayList.get(position);
+
+
+            mEditCatTitle = new BottomSheetDialog(CategoriesActivity.this);
+
+            SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+            int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                mEditCatTitle.setContentView(R.layout.dialog_edit_category_title_layout_light);
+
+            } else {
+                mEditCatTitle.setContentView(R.layout.dialog_edit_category_title_layout);
+
+            }
+
+            mEditCatTitleTitle = mEditCatTitle.findViewById(R.id.title_edit_dialog);
+            mEditCatTitleClose = mEditCatTitle.findViewById(R.id.close_edit_dialog);
+            mEditCatTitleDone = mEditCatTitle.findViewById(R.id.done_edit_dialog);
+
+
+            mEditCatTitleTitle.setText(categories.getCategoryName());
+
+            mEditCatTitleClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditCatTitle.dismiss();
+                }
+            });
+            mEditCatTitleDone.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String title = mEditCatTitleTitle.getText().toString().trim();
+                    if (title.isEmpty()) {
+                        mEditCatTitle.dismiss();
+                    } else {
+                        mEditCatTitleDone.setEnabled(false);
+                        editIcon(position, title);
+                    }
+                }
+            });
+
+            mEditCatTitle.setCanceledOnTouchOutside(false);
+            mEditCatTitle.show();
+        }
+
+        void editIcon(final int position, final String title) {
+            final Categories categories = categoriesArrayList.get(position);
+            DatabaseReference catReference = FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses");
+            catReference.keepSynced(true);
+            catReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.hasChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            FinanceEntryPOJO expensePOJO = snapshot.getValue(FinanceEntryPOJO.class);
+                            Categories categories1 = expensePOJO.getCategories();
+                            if (categories1.getCategoryKey().equals(categories.getCategoryKey())) {
+                                categories.setCategoryName(title);
+                                expensePOJO.setCategories(categories);
+                                Map<String, Object> catupdateMap = new HashMap<>();
+                                catupdateMap.put(expensePOJO.getEntryKey(), expensePOJO);
+                                FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/expenses").updateChildren(catupdateMap);
+
+                            }
+                        }
+                        FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories").child(categories.getCategoryKey()).setValue(categories);
+                        categoriesArrayList.set(position, categories);
+                        catAdapter.notifyDataSetChanged();
+                    } else {
+                        FirebaseDatabase.getInstance().getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_FINANCIAL + "/categories").child(categories.getCategoryKey()).setValue(categories);
+                        categoriesArrayList.set(position, categories);
+                        catAdapter.notifyDataSetChanged();
+                    }
+                    if (mEditCatTitle.isShowing()) {
+                        mEditCatTitle.dismiss();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
         public class CatViewHolder extends RecyclerView.ViewHolder {
             public Button mCatName;
             public ImageButton mCatIcon;
-            public ImageButton mDelete;
+            public ImageButton mDelete, mEdit;
 
             public CatViewHolder(View itemView) {
                 super(itemView);
                 mCatName = itemView.findViewById(R.id.category_name_row_textview);
                 mCatIcon = itemView.findViewById(R.id.expense_cat_icon_row);
                 mDelete = itemView.findViewById(R.id.delete_custom_cat_button);
+                mEdit = itemView.findViewById(R.id.edit_custom_cat_button);
+
                 mCatName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -464,6 +560,13 @@ public class CategoriesActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         deleteIcon(getPosition());
+                    }
+                });
+
+                mEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showCatTitleDialog(getPosition());
                     }
                 });
             }

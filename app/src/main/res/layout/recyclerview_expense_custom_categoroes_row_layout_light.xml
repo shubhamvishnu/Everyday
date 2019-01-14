@@ -32,6 +32,15 @@
             android:layout_height="wrap_content"
             android:text="category" />
         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/edit_custom_cat_button"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="6dp"
+            app:srcCompat="@drawable/ic_edit_24dp"
+            android:scaleType="fitCenter" />
+        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/delete_custom_cat_button"
             android:layout_width="42dp"
             android:layout_height="42dp"

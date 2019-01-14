@@ -699,10 +699,10 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCategoriesBottomSheetDialog.dismiss();
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
-            reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey());
+            reflectCategoryWiseBarChart(categoriesArrayList.get(position).getCategoryKey(), categoriesArrayList.get(position).getCategoryName());
 
         } else {
-            reflectCategoryWiseBarChartDark(categoriesArrayList.get(position).getCategoryKey());
+            reflectCategoryWiseBarChartDark(categoriesArrayList.get(position).getCategoryKey(), categoriesArrayList.get(position).getCategoryName());
 
         }
 
@@ -1360,7 +1360,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         }
     }
 
-    void reflectCategoryWiseBarChart(String categoryKey) {
+    void reflectCategoryWiseBarChart(String categoryKey, String catName) {
         List<BarEntry> entries = new ArrayList<>();
         Calendar refCal = new GregorianCalendar();
         refCal.set(Calendar.YEAR, currentYear);
@@ -1415,7 +1415,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMaximum((float) refCal.getActualMaximum(Calendar.DAY_OF_MONTH)); //TODO set to maximum date present
         xAxis.setAxisMinimum(0f);
         Description description = new Description();
-        description.setText("Test Text Category Chart");
+        description.setText(catName + "Expenses");
 
         mCategoryWiseBarChart.setDescription(description);
         mCategoryWiseBarChart.setScaleEnabled(false);
@@ -1425,7 +1425,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         mCategoryWiseBarChart.invalidate(); // refresh
     }
 
-    void reflectCategoryWiseBarChartDark(String categoryKey) {
+    void reflectCategoryWiseBarChartDark(String categoryKey, String catName) {
         List<BarEntry> entries = new ArrayList<>();
         Calendar refCal = new GregorianCalendar();
         refCal.set(Calendar.YEAR, currentYear);
@@ -1485,7 +1485,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMinimum(0f);
 
         Description description = new Description();
-        description.setText("Test Text Category Chart");
+        description.setText(catName + "Expenses");
         description.setTextColor(Color.WHITE);
         mCategoryWiseBarChart.setDescription(description);
         mCategoryWiseBarChart.setScaleEnabled(false);
@@ -1571,7 +1571,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMinimum(0f);// set custom bar width
 
         Description description = new Description();
-        description.setText("Test Text Expense Chart");
+        description.setText("All Expenses in Month");
 
         mCategoryWiseBarChart.setDescription(description);
         mCategoryWiseBarChart.setScaleEnabled(false);
@@ -1661,7 +1661,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMinimum(0f);// set custom bar width
 
         Description description = new Description();
-        description.setText("Test Text Expense Chart");
+        description.setText("All Expenses in Month");
         description.setTextColor(Color.WHITE);
         mCategoryWiseBarChart.setDescription(description);
         mCategoryWiseBarChart.setScaleEnabled(false);

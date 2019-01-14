@@ -759,7 +759,6 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
 
             }
         }
-
 /*
         public class TodoSnapshotAdapter extends RecyclerView.Adapter<TodoSnapshotAdapter.TodoSnapshotViewHolder> {
             private LayoutInflater inflator;

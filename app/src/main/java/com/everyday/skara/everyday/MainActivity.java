@@ -115,6 +115,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        finish();
+    }
+
     void initBottomBar() {
         sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         if(sharedPreferences.contains("item_selected")){
