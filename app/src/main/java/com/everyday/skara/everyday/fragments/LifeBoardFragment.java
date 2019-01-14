@@ -15,17 +15,17 @@ import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
-import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.pojo.LifeBoardPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +37,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,11 +45,11 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     View view;
     UserInfoPOJO userInfoPOJO;
     DatabaseReference mEntriesDatabaseReference;
-    ChildEventListener mEntriesChildEventListener;
+    ValueEventListener mEntriesValueEventListener;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     RecyclerView mDatesRecyclerView;
-
-
+    HashMap<String, LifeBoardPOJO> lifeBoardPOJOMap;
+    HabitDurationAdapter datesAdapter;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,12 +68,10 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
             }
         }
     }
+
     void init() {
         //Intent intent = getActivity().getIntent();
         userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
-        mEntriesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
-        mEntriesDatabaseReference.keepSynced(true);
-
 
         mDatesRecyclerView = view.findViewById(R.id.recyclerview_date_textview);
 
@@ -86,14 +83,39 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         Calendar endCalendar = todayCalendar;
         endCalendar.add(Calendar.DATE, -1);
 
+        initDateChecks();
+
         initDatesAdapter(startCalendar, endCalendar);
     }
-    void initDatesAdapter(Calendar startDate, Calendar endDate){
+
+    void initDateChecks() {
+        lifeBoardPOJOMap = new HashMap<>();
+        mEntriesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
+        mEntriesDatabaseReference.keepSynced(true);
+        mEntriesValueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChildren()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        LifeBoardPOJO lifeBoardPOJO = snapshot.getValue(LifeBoardPOJO.class);
+                        lifeBoardPOJOMap.put(lifeBoardPOJO.getDate(), lifeBoardPOJO);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        };
+    }
+
+    void initDatesAdapter(Calendar startDate, Calendar endDate) {
         mDatesRecyclerView.invalidate();
         mDatesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mDatesRecyclerView.setLayoutManager(linearLayoutManager);
-        HabitDurationAdapter datesAdapter = new HabitDurationAdapter(getDaysBetweenDates(startDate, endDate));
+         datesAdapter = new HabitDurationAdapter(getDaysBetweenDates(startDate, endDate));
         mDatesRecyclerView.setAdapter(datesAdapter);
 
     }
@@ -102,7 +124,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         HashMap<String, MonthDates> monthDatesHashMap = new HashMap<>();
 
         while (startdate.before(enddate)) {
-            String key = String.valueOf(startdate.get(Calendar.YEAR))+ String.valueOf(startdate.get(Calendar.MONTH));
+            String key = String.valueOf(startdate.get(Calendar.YEAR)) + String.valueOf(startdate.get(Calendar.MONTH));
             if (monthDatesHashMap.containsKey(key)) {
                 Date result = startdate.getTime();
                 monthDatesHashMap.get(key).getDates().add(result);
@@ -115,13 +137,14 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 monthDatesHashMap.put(key, monthDates);
 
             }
-            Log.d("DATESLOG", "MONTH: " + startdate.get(Calendar.MONTH) + " YEAR: " +startdate.get(Calendar.YEAR)  + " key: " + key );
-            Log.d("DATESLOG","--------------------------");
+            Log.d("DATESLOG", "MONTH: " + startdate.get(Calendar.MONTH) + " YEAR: " + startdate.get(Calendar.YEAR) + " key: " + key);
+            Log.d("DATESLOG", "--------------------------");
             startdate.add(Calendar.DATE, 1);
         }
         return monthDatesHashMap;
 
     }
+
     public class HabitDurationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
         Map<String, MonthDates> datesHashMap;
@@ -212,6 +235,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(monthDates.getDates().get(position));
+//            if(lifeBoardPOJOMap.containsKey(calendar.getTime().toString())){
+//
+//            }
             SimpleDateFormat formatter = new SimpleDateFormat("dd");
             String format = formatter.format(calendar.getTime());
             ((HabitDurationDatesViewHolder) holder).mDateValue.setText(format);
@@ -235,13 +261,15 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         }
 
     }
+
     public class MonthDates {
         String monthDatesKey; // year+month
         int year;
         int month;
         ArrayList<Date> dates;
 
-        public MonthDates(){}
+        public MonthDates() {
+        }
 
         public MonthDates(String monthDatesKey, int year, int month, ArrayList<Date> dates) {
             this.monthDatesKey = monthDatesKey;
@@ -282,6 +310,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
             this.dates = dates;
         }
     }
+
     public static ArrayList<String> getKeysList(Map<String, MonthDates> mp) {
         ArrayList<String> keysArrayList = new ArrayList<>();
         Iterator it = mp.entrySet().iterator();
@@ -291,6 +320,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         }
         return keysArrayList;
     }
+
     void toLoginActivity() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -310,7 +340,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         // Here I am copying the sorted list in HashMap
         // using LinkedHashMap to preserve the insertion order
         HashMap sortedHashMap = new LinkedHashMap();
-        for (Iterator it = list.iterator(); it.hasNext();) {
+        for (Iterator it = list.iterator(); it.hasNext(); ) {
             Map.Entry entry = (Map.Entry) it.next();
             sortedHashMap.put(entry.getKey(), entry.getValue());
         }
