@@ -3,12 +3,14 @@ package com.everyday.skara.everyday;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.BasicSettings;
@@ -55,14 +57,25 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private GoogleApiClient mGoogleApiClient;
+    TextView mEverydayTextView, mTodo, mLinks, mNotes, mExpenses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        initView();
         initGoogleSignIn();
         init();
     }
+    void initView(){
+        mEverydayTextView = findViewById(R.id.everyday_textview);
+        mExpenses = findViewById(R.id.expenses_textview_login);
+        mNotes= findViewById(R.id.notes_textview_login);
+        mLinks = findViewById(R.id.links_textview_login);
+        mTodo= findViewById(R.id.todo_textview_login);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "pacifico.ttf");
+        mEverydayTextView.setTypeface(typeface);
+        }
 
     void init() {
         // initializing auth
