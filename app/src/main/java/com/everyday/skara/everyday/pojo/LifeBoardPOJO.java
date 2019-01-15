@@ -2,14 +2,14 @@ package com.everyday.skara.everyday.pojo;
 
 public class LifeBoardPOJO {
     String key;
-    String dateUniqueId;
-    String day, month, year;
+    int dateUniqueId;
+    int day, month, year;
     String date;
     String rating;
-    boolean isYes;
+    int choice;
 
     public LifeBoardPOJO(){}
-    public LifeBoardPOJO(String key, String dateUniqueId, String day, String month, String year, String date, String rating, boolean isYes) {
+    public LifeBoardPOJO(String key, int dateUniqueId, int day, int month, int year, String date, String rating, int choice) {
         this.key = key;
         this.dateUniqueId = dateUniqueId;
         this.day = day;
@@ -17,7 +17,7 @@ public class LifeBoardPOJO {
         this.year = year;
         this.date = date;
         this.rating = rating;
-        this.isYes = isYes;
+        this.choice = choice;
     }
 
     public String getKey() {
@@ -28,35 +28,35 @@ public class LifeBoardPOJO {
         this.key = key;
     }
 
-    public String getDateUniqueId() {
+    public int getDateUniqueId() {
         return dateUniqueId;
     }
 
-    public void setDateUniqueId(String dateUniqueId) {
+    public void setDateUniqueId(int dateUniqueId) {
         this.dateUniqueId = dateUniqueId;
     }
 
-    public String getDay() {
+    public int getDay() {
         return day;
     }
 
-    public void setDay(String day) {
+    public void setDay(int day) {
         this.day = day;
     }
 
-    public String getMonth() {
+    public int getMonth() {
         return month;
     }
 
-    public void setMonth(String month) {
+    public void setMonth(int month) {
         this.month = month;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(int year) {
         this.year = year;
     }
 
@@ -76,11 +76,25 @@ public class LifeBoardPOJO {
         this.rating = rating;
     }
 
-    public boolean isYes() {
-        return isYes;
+    public int getChoice() {
+        return choice;
     }
 
-    public void setYes(boolean yes) {
-        isYes = yes;
+    public void setChoice(int choice) {
+        this.choice = choice;
+    }
+
+    @Override
+    public String toString() {
+        return "LifeBoardPOJO{" +
+                "key='" + key + '\'' +
+                ", dateUniqueId=" + dateUniqueId +
+                ", day=" + day +
+                ", month=" + month +
+                ", year=" + year +
+                ", date='" + date + '\'' +
+                ", rating='" + rating + '\'' +
+                ", choice=" + choice +
+                '}';
     }
 }

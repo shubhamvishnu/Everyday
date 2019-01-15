@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.everyday.skara.everyday.LoginActivity;
@@ -48,8 +50,11 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     ValueEventListener mEntriesValueEventListener;
     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     RecyclerView mDatesRecyclerView;
-    HashMap<String, LifeBoardPOJO> lifeBoardPOJOMap;
+    HashMap<Integer, LifeBoardPOJO> lifeBoardPOJOMap;
     HabitDurationAdapter datesAdapter;
+    RatingBar mRatingBar;
+    ImageButton mDayThumbsUp, mDayThumsbDown;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -74,6 +79,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         userInfoPOJO = (UserInfoPOJO) getArguments().getSerializable("user_profile");
 
         mDatesRecyclerView = view.findViewById(R.id.recyclerview_date_textview);
+        mRatingBar = view.findViewById(R.id.rating_bar);
+        mDayThumbsUp = view.findViewById(R.id.day_thumbs_up);
+        mDayThumsbDown = view.findViewById(R.id.day_thumbs_down);
 
         Calendar todayCalendar = Calendar.getInstance();
         Calendar startCalendar = Calendar.getInstance();
@@ -83,9 +91,61 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         Calendar endCalendar = todayCalendar;
         endCalendar.add(Calendar.DATE, -1);
 
+        mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                Log.d("ratingbar", rating + "boolean" + fromUser);
+            }
+        });
+
+        mDayThumbsUp.setColorFilter(getResources().getColor(R.color.grey));
+        mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+
+        mDayThumbsUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDayThumbsUp.setColorFilter(getResources().getColor(R.color.green_));
+                mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+                mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+
+                updateToday(1);
+            }
+        });
+        mDayThumsbDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDayThumsbDown.setColorFilter(getResources().getColor(R.color.green_));
+                mDayThumbsUp.setColorFilter(getResources().getColor(R.color.grey));
+                mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                updateToday(0);
+            }
+        });
         initDateChecks();
 
         initDatesAdapter(startCalendar, endCalendar);
+    }
+
+    void updateToday(int choice) {
+        //String key, String dateUniqueId, String day, String month, String year, String date, String rating, int choice
+        Calendar todayCalendar = Calendar.getInstance();
+        Integer key = Integer.parseInt(String.valueOf(todayCalendar.get(Calendar.YEAR)) + String.valueOf(todayCalendar.get(Calendar.MONTH)));
+
+        DatabaseReference todaysReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
+        todaysReference.keepSynced(true);
+        DatabaseReference pushForTodayReference = todaysReference.push();
+        LifeBoardPOJO lifeBoardPOJO = new LifeBoardPOJO(pushForTodayReference.getKey(), Integer.valueOf(key), todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.DAY_OF_MONTH), String.valueOf(todayCalendar.get(Calendar.DATE)), "null", choice);
+        pushForTodayReference.setValue(lifeBoardPOJO);
+        Log.d("dateipdatedvalue", lifeBoardPOJO.getDate());
+        switch (choice) {
+            case 0:
+                break;
+            case 1:
+                break;
+
+        }
+
     }
 
     void initDateChecks() {
@@ -98,7 +158,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 if (dataSnapshot.hasChildren()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         LifeBoardPOJO lifeBoardPOJO = snapshot.getValue(LifeBoardPOJO.class);
-                        lifeBoardPOJOMap.put(lifeBoardPOJO.getDate(), lifeBoardPOJO);
+                        lifeBoardPOJOMap.put(lifeBoardPOJO.getDateUniqueId(), lifeBoardPOJO);
                     }
                 }
             }
@@ -115,16 +175,16 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mDatesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         mDatesRecyclerView.setLayoutManager(linearLayoutManager);
-         datesAdapter = new HabitDurationAdapter(getDaysBetweenDates(startDate, endDate));
+        datesAdapter = new HabitDurationAdapter(getDaysBetweenDates(startDate, endDate));
         mDatesRecyclerView.setAdapter(datesAdapter);
 
     }
 
-    public HashMap<String, MonthDates> getDaysBetweenDates(Calendar startdate, Calendar enddate) {
-        HashMap<String, MonthDates> monthDatesHashMap = new HashMap<>();
+    public HashMap<Integer, MonthDates> getDaysBetweenDates(Calendar startdate, Calendar enddate) {
+        HashMap<Integer, MonthDates> monthDatesHashMap = new HashMap<>();
 
         while (startdate.before(enddate)) {
-            String key = String.valueOf(startdate.get(Calendar.YEAR)) + String.valueOf(startdate.get(Calendar.MONTH));
+            Integer key = Integer.parseInt(String.valueOf(startdate.get(Calendar.YEAR)) + String.valueOf(startdate.get(Calendar.MONTH)));
             if (monthDatesHashMap.containsKey(key)) {
                 Date result = startdate.getTime();
                 monthDatesHashMap.get(key).getDates().add(result);
@@ -147,13 +207,13 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
     public class HabitDurationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         private LayoutInflater inflator;
-        Map<String, MonthDates> datesHashMap;
-        ArrayList<String> keysArrayList;
+        Map<Integer, MonthDates> datesHashMap;
+        ArrayList<Integer> keysArrayList;
 
-        public HabitDurationAdapter(HashMap<String, MonthDates> datesHashMap) {
+        public HabitDurationAdapter(HashMap<Integer, MonthDates> datesHashMap) {
             try {
                 this.inflator = LayoutInflater.from(getActivity());
-                Map<String, MonthDates> map = new TreeMap<>(datesHashMap).descendingMap();
+                Map<Integer, MonthDates> map = new TreeMap<>(datesHashMap).descendingMap();
                 this.datesHashMap = map;
                 keysArrayList = getKeysList(this.datesHashMap);
             } catch (NullPointerException e) {
@@ -235,7 +295,11 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(monthDates.getDates().get(position));
-//            if(lifeBoardPOJOMap.containsKey(calendar.getTime().toString())){
+
+//            if (lifeBoardPOJOMap.containsKey()) {
+//                LifeBoardPOJO lifeBoardPOJO = lifeBoardPOJOMap.get(calendar.getTime().toString());
+//                Log.d("OOOOOOO", lifeBoardPOJO.toString());
+//                Log.d("OOOOOOO", "-------------------");
 //
 //            }
             SimpleDateFormat formatter = new SimpleDateFormat("dd");
@@ -263,7 +327,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     }
 
     public class MonthDates {
-        String monthDatesKey; // year+month
+        int monthDatesKey; // year+month
         int year;
         int month;
         ArrayList<Date> dates;
@@ -271,18 +335,18 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         public MonthDates() {
         }
 
-        public MonthDates(String monthDatesKey, int year, int month, ArrayList<Date> dates) {
+        public MonthDates(int monthDatesKey, int year, int month, ArrayList<Date> dates) {
             this.monthDatesKey = monthDatesKey;
             this.year = year;
             this.month = month;
             this.dates = dates;
         }
 
-        public String getMonthDatesKey() {
+        public int getMonthDatesKey() {
             return monthDatesKey;
         }
 
-        public void setMonthDatesKey(String monthDatesKey) {
+        public void setMonthDatesKey(int monthDatesKey) {
             this.monthDatesKey = monthDatesKey;
         }
 
@@ -311,12 +375,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         }
     }
 
-    public static ArrayList<String> getKeysList(Map<String, MonthDates> mp) {
-        ArrayList<String> keysArrayList = new ArrayList<>();
+    public static ArrayList<Integer> getKeysList(Map<Integer, MonthDates> mp) {
+        ArrayList<Integer> keysArrayList = new ArrayList<>();
         Iterator it = mp.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            keysArrayList.add((String) pair.getKey());
+            keysArrayList.add((Integer) pair.getKey());
         }
         return keysArrayList;
     }
