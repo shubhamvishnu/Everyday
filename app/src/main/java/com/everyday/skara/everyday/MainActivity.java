@@ -282,9 +282,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String user_key = sharedPreferences.getString("user_key", null);
         String login_type = sharedPreferences.getString("login_type", null);
         int user_account_type = sharedPreferences.getInt("user_account_type", 0);
+        int day = sharedPreferences.getInt("dob_day", 1);
+        int month = sharedPreferences.getInt("dob_month", 0);
+        int year = sharedPreferences.getInt("dob_year", 1990);
 
-        userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
-        userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key);
+
+        userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type, day, month, year);
+        userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key, day, month, year);
 
         /*
         mPersonalFinanceTitle.setOnClickListener(new View.OnClickListener() {

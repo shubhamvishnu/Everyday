@@ -101,7 +101,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/Android%20Studio/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_thumb_down_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/Android%20Studio/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_info_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -112,7 +112,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="f9fefe" />
-                            <entry key="outputName" value="ic_thumb_down_24dp" />
+                            <entry key="outputName" value="ic_info_black_24dp" />
                             <entry key="sourceFile" value="C:\Users\sh395048\Desktop\leaf_icon.svg" />
                           </map>
                         </option>

@@ -110,7 +110,9 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         String user_key = userSharedPreferences.getString("user_key", null);
         String login_type = userSharedPreferences.getString("login_type", null);
         int user_account_type = userSharedPreferences.getInt("user_account_type", 0);
-
+        int day = userSharedPreferences.getInt("dob_day", 1);
+        int month = userSharedPreferences.getInt("dob_month", 0);
+        int year = userSharedPreferences.getInt("dob_year", 1990);
         mUserProfile = (CircleImageView) view.findViewById(R.id.user_profile_circle_image_view);
         mName = (TextView) view.findViewById(R.id.user_profile_name_text_view);
         mEmail = (TextView) view.findViewById(R.id.user_profile_email_text_view);
@@ -128,7 +130,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         mName.setText(null);
         mEmail.setText(null);
         mLogout.setEnabled(false);
-        userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type);
+        userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type, day, month, year);
         Glide.with(this).load(userProfilePOJO.getProfile_url()).into(mUserProfile).onLoadFailed(getResources().getDrawable(R.drawable.default_user));
         mName.setText(userProfilePOJO.getName());
         mEmail.setText(userProfilePOJO.getEmail());

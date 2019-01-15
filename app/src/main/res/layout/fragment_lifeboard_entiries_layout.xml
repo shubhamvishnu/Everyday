@@ -6,7 +6,6 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#e6e6e6"
         android:orientation="vertical">
 
 
@@ -22,17 +21,17 @@
                 android:padding="8dp"
                 app:cardElevation="1dp">
 
-                <LinearLayout
+                <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="8dp">
-
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="8dp">
+                        android:orientation="horizontal"
+                        android:layout_gravity="left|center"
+                        android:gravity="center"
+                        android:padding="4dp">
 
 
                         <TextView
@@ -40,80 +39,201 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:text="Today"
+                            android:padding="8dp"
+                            android:textSize="22sp"
                             android:textColor="@color/black" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:padding="8dp"
+
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/today_date_textview"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@color/transparent"
+                                android:text="25"
+                                android:padding="8dp"
+                                android:textSize="22sp"
+                                android:textColor="@color/black"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/today_day_textview"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textSize="18sp"
+                                android:background="@color/transparent"
+                                android:text="25"
+                                android:textColor="@color/black" />
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="1dp" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <TextView
+                            <RatingBar
+                                android:id="@+id/rating_bar"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:background="@color/transparent"
-                                android:text="25"
-                                android:id="@+id/today_date_textview"
-                                android:textColor="@color/black"
-                                android:textStyle="bold" />
+                                android:layout_gravity="center"
+                                android:numStars="5"
+                                android:stepSize="1"
+                                android:theme="@style/RatingBar"
+                                android:visibility="gone" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:background="@color/transparent"
-                                android:text="25"
-                                android:id="@+id/today_day_textview"
-                                android:textColor="@color/black" />
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/day_thumbs_up"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:adjustViewBounds="true"
+                                    android:background="@color/transparent"
+                                    android:padding="6dp"
+                                    android:scaleType="fitCenter"
+                                    app:srcCompat="@drawable/ic_thumb_up_24dp" />
+
+                                <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/day_thumbs_down"
+                                    android:layout_width="56dp"
+                                    android:layout_height="56dp"
+                                    android:adjustViewBounds="true"
+                                    android:background="@color/transparent"
+                                    android:padding="6dp"
+                                    android:scaleType="fitCenter"
+                                    app:srcCompat="@drawable/ic_thumb_down_24dp" />
+                            </LinearLayout>
+
+
                         </LinearLayout>
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:orientation="horizontal"
+                        android:padding="8dp">
 
-                        <RatingBar
-                            android:id="@+id/rating_bar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:numStars="5"
-                            android:stepSize="1"
-                            android:theme="@style/RatingBar"
-                            android:visibility="gone" />
+
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:gravity="center"
-                            android:orientation="horizontal">
-
-                            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                                android:id="@+id/day_thumbs_up"
-                                android:layout_width="56dp"
-                                android:layout_height="56dp"
-                                android:adjustViewBounds="true"
-                                android:background="@color/transparent"
-                                android:padding="6dp"
-                                android:scaleType="fitCenter"
-                                app:srcCompat="@drawable/ic_thumb_up_24dp" />
-
-                            <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                                android:id="@+id/day_thumbs_down"
-                                android:layout_width="56dp"
-                                android:layout_height="56dp"
-                                android:adjustViewBounds="true"
-                                android:background="@color/transparent"
-                                android:padding="6dp"
-                                android:scaleType="fitCenter"
-                                app:srcCompat="@drawable/ic_thumb_down_24dp" />
+                            android:orientation="vertical"
+                            >
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Years Elapsed"
+                                android:textColor="@color/black"
+                                android:layout_gravity="center"
+                                android:gravity="center"/>
+                        <com.everyday.skara.everyday.DonutProgress
+                            android:id="@+id/life_donut"
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            app:donut_finished_color="@color/red"
+                            app:donut_progress="30"
+                            app:donut_text_color="@color/red" />
                         </LinearLayout>
+
+
+                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:id="@+id/info_life_board"
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:background="@color/transparent"
+                            android:padding="6dp"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_info_black_24dp" />
+
+
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp"
+                        android:orientation="horizontal">
+
+                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="6dp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/circle_background_yes"
+                            android:padding="6dp"
+                            android:scaleType="fitCenter" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:text="Useful"
+                            android:layout_margin="6dp"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:layout_margin="6dp"
+
+                            android:background="@drawable/circle_background_red"
+                            android:padding="6dp"
+                            android:scaleType="fitCenter" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:text="Waste"
+                            android:layout_margin="6dp"
+
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="6dp"
+
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/circle_background_nothing"
+                            android:padding="6dp"
+                            android:scaleType="fitCenter" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/transparent"
+                            android:text="Nothing"
+                            android:layout_margin="6dp"
+
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -124,7 +244,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_date_textview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:layout_margin="6dp" />
 
     </LinearLayout>
 </RelativeLayout>

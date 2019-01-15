@@ -7,13 +7,43 @@ public class UserInfoPOJO implements Serializable{
     String email;
     String profile_url;
     String user_key;
+    int month;
+    int year;
+    int day;
     public UserInfoPOJO(){}
 
-    public UserInfoPOJO(String name, String email, String profile_url, String user_key) {
+    public UserInfoPOJO(String name, String email, String profile_url, String user_key, int day, int month, int year) {
         this.name = name;
         this.email = email;
         this.profile_url = profile_url;
         this.user_key = user_key;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+    }
+
+    public int getMonth() {
+        return month;
+    }
+
+    public void setMonth(int month) {
+        this.month = month;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public int getDay() {
+        return day;
+    }
+
+    public void setDay(int day) {
+        this.day = day;
     }
 
     public String getName() {

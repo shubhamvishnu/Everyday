@@ -1,6 +1,5 @@
 package com.everyday.skara.everyday.fragments;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,20 +16,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.NewHabitActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.DateTimeStamp;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.MonthDates;
 import com.everyday.skara.everyday.classes.NotificationTypes;
-import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.pojo.HabitCheckedPOJO;
 import com.everyday.skara.everyday.pojo.HabitPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
@@ -44,18 +40,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
 
-import org.joda.time.DateTime;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -877,7 +869,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
 
             public HabitDurationViewHolder(View itemView) {
                 super(itemView);
-                mMonthTitle = itemView.findViewById(R.id.month_title_textview);
+                mMonthTitle = itemView.findViewById(R.id.month_title_button);
                 mHabitDatesDurationRecyclerview = itemView.findViewById(R.id.habits_duration_dates_recyclerview);
 
             }
@@ -931,7 +923,7 @@ public class HabitsFragment extends android.support.v4.app.Fragment implements c
             public HabitDurationDatesViewHolder(View itemView) {
                 super(itemView);
 
-                mDateValue = itemView.findViewById(R.id.date_value_textview);
+                mDateValue = itemView.findViewById(R.id.date_value_button);
 
             }
         }

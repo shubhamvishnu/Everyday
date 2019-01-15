@@ -228,7 +228,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
                     if (snapshot.child("email").getValue().toString().equals(email)) {
                         alreadyExists = true;
                         UserProfilePOJO userProfilePOJO = snapshot.getValue(UserProfilePOJO.class);
-                        setKey(userProfilePOJO.getUser_key(), userProfilePOJO.getEmail(), userProfilePOJO.getName(), userProfilePOJO.getProfile_url(), userProfilePOJO.getLogin_type(), userProfilePOJO.getUser_account_type());
+                        setKey(userProfilePOJO.getUser_key(), userProfilePOJO.getEmail(), userProfilePOJO.getName(), userProfilePOJO.getProfile_url(), userProfilePOJO.getLogin_type(), userProfilePOJO.getUser_account_type(), userProfilePOJO.getDay(),userProfilePOJO.getMonth(), userProfilePOJO.getYear());
                         break;
                     }
                 }
@@ -237,11 +237,11 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
                     alreadyExists = true;
                     final DatabaseReference referenceKey = databaseReference.push();
 
-                    UserProfilePOJO userProfilePOJO = new UserProfilePOJO(name, email, photoUrl.toString(), referenceKey.getKey(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER);
+                    UserProfilePOJO userProfilePOJO = new UserProfilePOJO(name, email, photoUrl.toString(), referenceKey.getKey(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER, 1, 0, 1990);
                     referenceKey.setValue(userProfilePOJO, new DatabaseReference.CompletionListener() {
                         @Override
                         public void onComplete(DatabaseError databaseError, DatabaseReference databaseReferenceChild) {
-                            setNewUserKey(referenceKey.getKey(), email, name, photoUrl.toString(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER);
+                            setNewUserKey(referenceKey.getKey(), email, name, photoUrl.toString(), LoginTypes.LOGIN_TYPE_GOOGLE, UserAccountType.FREE_USER, 1, 0, 1990);
                         }
                     });
 
@@ -258,7 +258,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
 
     }
 
-    void setNewUserKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
+    void setNewUserKey(String userKey, String email, String name, String url, String loginType, int userAccountType, int day, int month, int year) {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("name", name);
@@ -267,8 +267,11 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         editor.putString("user_key", userKey);
         editor.putString("login_type", loginType);
         editor.putInt("user_account_type", userAccountType);
+        editor.putInt("dob_month", month);
+        editor.putInt("dob_year", year);
+        editor.putInt("dob_day", day);
         editor.apply();
-        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey);
+        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey, day, month, year);
         createPersonalBoard(userInfoPOJO);
     }
 
@@ -277,7 +280,7 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         finish();
     }
 
-    void setKey(String userKey, String email, String name, String url, String loginType, int userAccountType) {
+    void setKey(String userKey, String email, String name, String url, String loginType, int userAccountType, int day, int month, int year) {
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("name", name);
@@ -286,8 +289,11 @@ public class LoginActivity extends FragmentActivity implements GoogleApiClient.O
         editor.putString("user_key", userKey);
         editor.putString("login_type", loginType);
         editor.putInt("user_account_type", userAccountType);
+        editor.putInt("dob_month", month);
+        editor.putInt("dob_year", year);
+        editor.putInt("dob_day", day);
         editor.apply();
-        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey);
+        UserInfoPOJO userInfoPOJO = new UserInfoPOJO(name, email, url, userKey, day, month, year);
         initBasicSettings();
     }
 

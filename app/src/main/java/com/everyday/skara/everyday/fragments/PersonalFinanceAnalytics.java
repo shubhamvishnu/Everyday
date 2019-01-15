@@ -107,7 +107,6 @@ public class PersonalFinanceAnalytics extends Fragment {
         int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
             view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout_light, container, false);
-
         } else {
             view = inflater.inflate(R.layout.fragment_personal_finance_analytics_layout, container, false);
 

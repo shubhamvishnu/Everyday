@@ -4,23 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.BottomSheetDialog;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.classes.TimeDateStamp;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.philliphsu.bottomsheetpickers.BottomSheetPickerDialog;
+import com.philliphsu.bottomsheetpickers.time.grid.GridTimePickerDialog;
 
-public class SettingsActivity extends AppCompatActivity implements View.OnClickListener {
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, com.philliphsu.bottomsheetpickers.date.DatePickerDialog.OnDateSetListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     Button mSetSymbolButton;
@@ -29,6 +39,8 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     BottomSheetDialog mSymbolDialog;
     UserInfoPOJO userInfoPOJO;
     Switch mThemeSwitch;
+    TextView mDobTextView;
+    String date = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +52,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 
         } else {
             setContentView(R.layout.activity_settings);
-
-
         }
 
         if (user != null) {
@@ -61,9 +71,12 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         mSymbolTextView = findViewById(R.id.symbol_choice_textview);
         mCategoriesButton = findViewById(R.id.categories_setting);
         mThemeSwitch = findViewById(R.id.theme_switch);
+        mDobTextView = findViewById(R.id.dob_textview);
 
         mSymbolTextView.setText(defaultSettingsPreference.getString("currency", getResources().getString(R.string.inr)));
 
+        mDobTextView.setText(userInfoPOJO.getDay() + "/" + (userInfoPOJO.getMonth() + 1) + "/" + userInfoPOJO.getYear());
+        mDobTextView.setOnClickListener(this);
         mSymbolTextView.setOnClickListener(this);
         mSetSymbolButton.setOnClickListener(this);
         mCategoriesButton.setOnClickListener(this);
@@ -88,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
     void setThemeState(int theme) {
         if (theme == BasicSettings.LIGHT_THEME) {
             mThemeSwitch.setChecked(false);
-        } else if(theme == BasicSettings.DEFAULT_THEME){
+        } else if (theme == BasicSettings.DEFAULT_THEME) {
             mThemeSwitch.setChecked(true);
         }
     }
@@ -105,6 +118,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
             case R.id.symbol_choice_textview:
                 showSymbolsDialog();
                 break;
+            case R.id.dob_textview:
+                DialogFragment dialog = createDialog();
+                dialog.show(getSupportFragmentManager(), "date");
+                break;
         }
     }
 
@@ -116,7 +133,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         if (theme == BasicSettings.LIGHT_THEME) {
             mSymbolDialog.setContentView(R.layout.dialog_symbols_layout_light);
 
-        }else{
+        } else {
             mSymbolDialog.setContentView(R.layout.dialog_symbols_layout);
 
         }
@@ -190,7 +207,6 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         });
 
 
-
         mClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -253,9 +269,73 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-    void toMainActivity(){
+
+    void toMainActivity() {
         Intent intent = new Intent(SettingsActivity.this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+    /**
+     * Bottom sheet picker for date and time
+     * [STARTS HERE]
+     */
+
+    @Override
+    public void onDateSet(com.philliphsu.bottomsheetpickers.date.DatePickerDialog dialog, int year, int monthOfYear, int dayOfMonth) {
+        Calendar cal = new java.util.GregorianCalendar();
+        cal.set(Calendar.YEAR, year);
+        cal.set(Calendar.MONTH, monthOfYear);
+        cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+        date = DateFormat.getDateFormat(this).format(cal.getTime());
+
+        if (!(date.isEmpty() || date.equals(""))) {
+            SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("dob_month", monthOfYear);
+            editor.putInt("dob_year", year);
+            editor.putInt("dob_day", dayOfMonth);
+            editor.apply();
+
+            userInfoPOJO.setDay(dayOfMonth);
+            userInfoPOJO.setMonth(monthOfYear);
+            userInfoPOJO.setYear(year);
+            mDobTextView.setText(userInfoPOJO.getDay() + "/" + (userInfoPOJO.getMonth() + 1) + "/" + userInfoPOJO.getYear());
+
+
+        }
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }
+
+    private DialogFragment createDialog() {
+        return createDialogWithSetters();
+    }
+
+    private DialogFragment createDialogWithSetters() {
+        BottomSheetPickerDialog dialog = null;
+        boolean themeDark = true;
+        Calendar now = Calendar.getInstance();
+        dialog = com.philliphsu.bottomsheetpickers.date.DatePickerDialog.newInstance(
+                SettingsActivity.this,
+                now.get(Calendar.YEAR),
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH));
+
+        com.philliphsu.bottomsheetpickers.date.DatePickerDialog dateDialog = (com.philliphsu.bottomsheetpickers.date.DatePickerDialog) dialog;
+        Calendar maxCalendar = Calendar.getInstance();
+        Calendar minCalendar = Calendar.getInstance();
+        minCalendar.add(Calendar.YEAR, -100);
+        dateDialog.setMinDate(minCalendar);
+        dateDialog.setMaxDate(maxCalendar);
+        dateDialog.setYearRange(Calendar.YEAR, 2050);
+        dialog.setThemeDark(themeDark);
+
+        return dialog;
+    }
+    //[ENDS HERE]
 }

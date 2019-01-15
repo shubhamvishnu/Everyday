@@ -3,33 +3,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_margin="6dp"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:orientation="vertical">
-        <TextView
-            android:id="@+id/year_title_textview"
+        <Button
+            android:id="@+id/month_title_button"
             android:layout_width="wrap_content"
+            android:textAllCaps="false"
             android:layout_height="match_parent"
-            android:text="lsdkclk" />
-        <TextView
-            android:id="@+id/month_title_textview"
+
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:background="@color/transparent"
+            android:text="Date" />
+        <Button
+            android:id="@+id/year_title_button"
             android:layout_width="wrap_content"
+            android:textAllCaps="false"
             android:layout_height="match_parent"
-            android:text="lsdkclk" />
+
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:background="@color/transparent"
+            android:text="Year" />
 
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/habits_duration_dates_recyclerview"
         android:layout_width="match_parent"
+        android:layout_margin="8dp"
         android:layout_height="wrap_content" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/black"/>
 
 </LinearLayout>
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:background="@color/grey"/></LinearLayout>
