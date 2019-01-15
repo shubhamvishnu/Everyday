@@ -55,6 +55,7 @@
                                 android:layout_height="wrap_content"
                                 android:background="@color/transparent"
                                 android:text="25"
+                                android:id="@+id/today_date_textview"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
 
@@ -63,6 +64,7 @@
                                 android:layout_height="wrap_content"
                                 android:background="@color/transparent"
                                 android:text="25"
+                                android:id="@+id/today_day_textview"
                                 android:textColor="@color/black" />
                         </LinearLayout>
                     </LinearLayout>

@@ -7,9 +7,10 @@ public class LifeBoardPOJO {
     String date;
     String rating;
     int choice;
+    UserInfoPOJO userInfoPOJO;
 
     public LifeBoardPOJO(){}
-    public LifeBoardPOJO(String key, int dateUniqueId, int day, int month, int year, String date, String rating, int choice) {
+    public LifeBoardPOJO(String key, int dateUniqueId, int day, int month, int year, String date, String rating, int choice,    UserInfoPOJO userInfoPOJO) {
         this.key = key;
         this.dateUniqueId = dateUniqueId;
         this.day = day;
@@ -18,6 +19,15 @@ public class LifeBoardPOJO {
         this.date = date;
         this.rating = rating;
         this.choice = choice;
+        this.userInfoPOJO = userInfoPOJO;
+    }
+
+    public UserInfoPOJO getUserInfoPOJO() {
+        return userInfoPOJO;
+    }
+
+    public void setUserInfoPOJO(UserInfoPOJO userInfoPOJO) {
+        this.userInfoPOJO = userInfoPOJO;
     }
 
     public String getKey() {
@@ -84,17 +94,4 @@ public class LifeBoardPOJO {
         this.choice = choice;
     }
 
-    @Override
-    public String toString() {
-        return "LifeBoardPOJO{" +
-                "key='" + key + '\'' +
-                ", dateUniqueId=" + dateUniqueId +
-                ", day=" + day +
-                ", month=" + month +
-                ", year=" + year +
-                ", date='" + date + '\'' +
-                ", rating='" + rating + '\'' +
-                ", choice=" + choice +
-                '}';
-    }
 }
