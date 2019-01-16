@@ -1,9 +1,11 @@
 package com.everyday.skara.everyday.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,13 +17,16 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
+import com.everyday.skara.everyday.classes.SPNames;
+import com.everyday.skara.everyday.pojo.FinanceEntryPOJO;
 import com.everyday.skara.everyday.pojo.LifeBoardPOJO;
-import com.everyday.skara.everyday.pojo.LinkPOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -32,7 +37,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -43,9 +47,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
 
 public class LifeBoardFragment extends android.support.v4.app.Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -61,6 +65,17 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     ImageButton mDayThumbsUp, mDayThumsbDown;
     TextView mTodayDateTextView, mTodayDayTextView;
     DonutProgress mDonutProgress;
+    TextView mDaysElapsed, mUseful, mWaste;
+    HabitDurationDatesAdapter habitDurationAdapter;
+    static String[] suffixes =
+            //    0     1     2     3     4     5     6     7     8     9
+            {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
+                    //    10    11    12    13    14    15    16    17    18    19
+                    "th", "th", "th", "th", "th", "th", "th", "th", "th", "th",
+                    //    20    21    22    23    24    25    26    27    28    29
+                    "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
+                    //    30    31
+                    "th", "st"};
 
     @Nullable
     @Override
@@ -91,13 +106,22 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mDayThumsbDown = view.findViewById(R.id.day_thumbs_down);
         mTodayDateTextView = view.findViewById(R.id.today_date_textview);
         mTodayDayTextView = view.findViewById(R.id.today_day_textview);
+
+        mDaysElapsed = view.findViewById(R.id.days_elapsed);
+        mUseful = view.findViewById(R.id.useful_days);
+        mWaste = view.findViewById(R.id.wasted_days);
+
+        mDaysElapsed.setText("--");
+        mUseful.setText("--");
+        mWaste.setText("--");
+
         mDonutProgress = view.findViewById(R.id.life_donut);
         mDonutProgress.setProgress(0.0f);
 
         Calendar todayCalendar = Calendar.getInstance();
         Log.d("sdklcjsdklcj", userInfoPOJO.getYear() + "");
         int difference = todayCalendar.get(Calendar.YEAR) - userInfoPOJO.getYear();
-        mDonutProgress.setText(""+difference);
+        mDonutProgress.setText("" + difference);
         mDonutProgress.setProgress(difference);
 
 
@@ -105,7 +129,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         SimpleDateFormat formatter1 = new SimpleDateFormat("E");
         String format = formatter.format(todayCalendar.getTime());
         String format1 = formatter1.format(todayCalendar.getTime());
-        mTodayDateTextView.setText(format);
+        mTodayDateTextView.setText(format + "" + suffixes[Integer.parseInt(format)]);
         mTodayDayTextView.setText(format1);
 
 
@@ -172,14 +196,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, userInfoPOJO);
                         pushForTodayReference.setValue(lifeBoardPOJO1);
                         Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
-                        notAvailable = false;
                     }
                 } else {
                     DatabaseReference pushForTodayReference = todaysReference.push();
                     LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, userInfoPOJO);
                     pushForTodayReference.setValue(lifeBoardPOJO1);
                     Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
-                    notAvailable = false;
                 }
             }
 
@@ -189,18 +211,23 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
             }
         });
 
+
     }
 
     void initDateChecks() {
         final Calendar todayCalendar = Calendar.getInstance();
 
         lifeBoardPOJOMap = new HashMap<>();
+
         mEntriesDatabaseReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
         mEntriesDatabaseReference.keepSynced(true);
         mEntriesValueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int useFulCount = 0;
+                int wastedCount = 0;
                 if (dataSnapshot.hasChildren()) {
+                    lifeBoardPOJOMap = new HashMap<>();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         LifeBoardPOJO lifeBoardPOJO = snapshot.getValue(LifeBoardPOJO.class);
                         if ((lifeBoardPOJO.getYear() == todayCalendar.get(Calendar.YEAR)) && (lifeBoardPOJO.getMonth() == todayCalendar.get(Calendar.MONTH)) && (lifeBoardPOJO.getDay() == todayCalendar.get(Calendar.DAY_OF_MONTH))) {
@@ -210,17 +237,38 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                                     mDayThumbsUp.setColorFilter(getResources().getColor(R.color.grey));
                                     mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
                                     mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
-
+                                    ++wastedCount;
                                     break;
                                 case 1:
                                     mDayThumbsUp.setColorFilter(getResources().getColor(R.color.green_));
                                     mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
                                     mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
                                     mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                                    ++useFulCount;
                                     break;
 
                             }
+                            if (lifeBoardPOJOMap.containsKey(lifeBoardPOJO.getDateUniqueId())) {
+                                ArrayList<LifeBoardPOJO> lifeBoardPOJOS = lifeBoardPOJOMap.get(lifeBoardPOJO.getDateUniqueId());
+                                lifeBoardPOJOS.add(lifeBoardPOJO);
+                                lifeBoardPOJOMap.put(lifeBoardPOJO.getDateUniqueId(), lifeBoardPOJOS);
+                            } else {
+                                ArrayList<LifeBoardPOJO> lifeBoardPOJOS = new ArrayList<>();
+                                lifeBoardPOJOS.add(lifeBoardPOJO);
+                                lifeBoardPOJOS.add(lifeBoardPOJO);
+                                lifeBoardPOJOMap.put(lifeBoardPOJO.getDateUniqueId(), lifeBoardPOJOS);
+                            }
                         } else {
+                            switch (lifeBoardPOJO.getChoice()) {
+                                case 0:
+                                    ++wastedCount;
+                                    break;
+                                case 1:
+                                    ++useFulCount;
+                                    break;
+
+                            }
+
                             if (lifeBoardPOJOMap.containsKey(lifeBoardPOJO.getDateUniqueId())) {
                                 ArrayList<LifeBoardPOJO> lifeBoardPOJOS = lifeBoardPOJOMap.get(lifeBoardPOJO.getDateUniqueId());
                                 lifeBoardPOJOS.add(lifeBoardPOJO);
@@ -233,9 +281,11 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         }
 
                     }
+                } else {
+                    lifeBoardPOJOMap = new HashMap<>();
                 }
-
-
+                mUseful.setText(useFulCount + "");
+                mWaste.setText(wastedCount + "");
                 initDatesAdapter();
 
             }
@@ -274,14 +324,35 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         Calendar endCalendar = Calendar.getInstance();
 
 
+        HashMap<Integer, MonthDates> monthDatesHashMap = getDaysBetweenDates(startCalendar, endCalendar);
+        Map<Integer, MonthDates> map = new TreeMap<>(monthDatesHashMap).descendingMap();
+        int size = getSize(map);
+        mDaysElapsed.setText("" + size);
+
+
         mDatesRecyclerView.invalidate();
         mDatesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         mDatesRecyclerView.setLayoutManager(linearLayoutManager);
-        datesAdapter = new HabitDurationAdapter(getDaysBetweenDates(startCalendar, endCalendar));
+        datesAdapter = new HabitDurationAdapter(monthDatesHashMap);
         mDatesRecyclerView.setAdapter(datesAdapter);
+
+
+    }
+
+    int getSize(Map<Integer, MonthDates> datesHashMap) {
+        int size = 0;
+        Iterator it = datesHashMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            MonthDates monthDates = (MonthDates) pair.getValue();
+            for (int i = 0; i < monthDates.getDates().size(); i++) {
+                ++size;
+            }
+        }
+        return size;
     }
 
     public class DatesViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -296,24 +367,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 Map<Integer, MonthDates> map = new TreeMap<>(datesHashMap).descendingMap();
                 this.datesHashMap = map;
                 keysArrayList = getKeysList(this.datesHashMap);
-                size = getSize();
+                size = getSize(this.datesHashMap);
             } catch (NullPointerException e) {
 
             }
         }
 
-        int getSize() {
-            int size = 0;
-            Iterator it = this.datesHashMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                MonthDates monthDates = (MonthDates) pair.getValue();
-                for (int i = 0; i < monthDates.getDates().size(); i++) {
-                    ++size;
-                }
-            }
-            return size;
-        }
 
         @NonNull
         @Override
@@ -351,7 +410,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     public HashMap<Integer, MonthDates> getDaysBetweenDates(Calendar startdate, Calendar enddate) {
         HashMap<Integer, MonthDates> monthDatesHashMap = new HashMap<>();
 
-        while (startdate.before(enddate)) {
+        while (startdate.before(enddate) || startdate.equals(enddate)) {
             Integer key = Integer.parseInt(String.valueOf(startdate.get(Calendar.YEAR)) + String.valueOf(startdate.get(Calendar.MONTH)));
             if (monthDatesHashMap.containsKey(key)) {
                 Date result = startdate.getTime();
@@ -432,10 +491,13 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
 
             RecyclerView recyclerView = ((HabitDurationViewHolder) holder).mHabitDatesDurationRecyclerview;
+            recyclerView.invalidate();
             recyclerView.setHasFixedSize(true);
             //LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 15));
-            HabitDurationDatesAdapter habitDurationAdapter = new HabitDurationDatesAdapter(monthDates, keysArrayList.get(position));
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 15);
+            recyclerView.setLayoutManager(gridLayoutManager);
+            gridLayoutManager.setReverseLayout(true);
+            habitDurationAdapter = new HabitDurationDatesAdapter(monthDates, keysArrayList.get(position));
             recyclerView.setAdapter(habitDurationAdapter);
 
 
@@ -456,6 +518,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 mMonthTitle = itemView.findViewById(R.id.month_title_button);
                 mYearTitle = itemView.findViewById(R.id.year_title_button);
                 mHabitDatesDurationRecyclerview = itemView.findViewById(R.id.habits_duration_dates_recyclerview);
+                mMonthTitle.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getActivity(), "" + getPosition(), Toast.LENGTH_SHORT).show();
+                    }
+                });
 
             }
         }
@@ -489,20 +557,27 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public int getItemViewType(int position) {
             Date date = monthDates.getDates().get(position);
-            if (lifeBoardPOJOMap.containsKey(keys)) {
-                ArrayList<LifeBoardPOJO> lifeBoardPOJOArrayList = lifeBoardPOJOMap.get(keys);
+            if (lifeBoardPOJOMap.containsKey(this.keys)) {
+                boolean isAvailable = false;
+                ArrayList<LifeBoardPOJO> lifeBoardPOJOArrayList = lifeBoardPOJOMap.get(this.keys);
                 for (int i = 0; i < lifeBoardPOJOArrayList.size(); i++) {
                     int year = lifeBoardPOJOArrayList.get(i).getYear();
                     int month = lifeBoardPOJOArrayList.get(i).getMonth();
                     int day = lifeBoardPOJOArrayList.get(i).getDay();
-
-                    if ((year == date.getYear()) && (month == date.getMonth()) && (day == date.getDay())) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(date);
+                    if ((year == calendar.get(Calendar.YEAR)) && (month == calendar.get(Calendar.MONTH)) && (day == calendar.get(Calendar.DAY_OF_MONTH))) {
+                        Toast.makeText(getActivity(), "" + year + ":" + month + ":" + day + "", Toast.LENGTH_SHORT).show();
+                        isAvailable = true;
                         if (lifeBoardPOJOArrayList.get(i).getChoice() == 1) {
                             return VIEW_TYPE_YES;
                         } else if (lifeBoardPOJOArrayList.get(i).getChoice() == 0) {
                             return VIEW_TYPE_NO;
                         }
                     }
+                }
+                if (!isAvailable) {
+                    return VIEW_TYPE_NO_INPUT;
                 }
             } else {
                 return VIEW_TYPE_NO_INPUT;
@@ -513,14 +588,14 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if (getItemCount() == VIEW_TYPE_NO_INPUT) {
+            if (viewType == VIEW_TYPE_NO_INPUT) {
                 View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
-            } else if (getItemCount() == VIEW_TYPE_YES) {
+            } else if (viewType == VIEW_TYPE_YES) {
                 View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_yes_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
-            } else if (getItemCount() == VIEW_TYPE_NO) {
-                View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
+            } else if (viewType == VIEW_TYPE_NO) {
+                View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_no_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
             } else {
                 View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
@@ -550,6 +625,117 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
             return monthDates.getDates().size();
         }
 
+        BottomSheetDialog mEditDateChoiceDialog;
+        ImageButton dialogThumbsUp, dialogThumbsDown;
+        Button mDoneDate;
+        void updateDateDialog(final int position) {
+
+
+            mEditDateChoiceDialog = new BottomSheetDialog(getActivity());
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                mEditDateChoiceDialog.setContentView(R.layout.dialog_update_date_choice_dialog_light);
+            } else {
+                mEditDateChoiceDialog.setContentView(R.layout.dialog_update_date_choice_dialog);
+            }
+
+            ImageButton mClose = mEditDateChoiceDialog.findViewById(R.id.close_edit_date_dialog);
+            dialogThumbsUp = mEditDateChoiceDialog.findViewById(R.id.date_thumbs_up);
+            dialogThumbsDown = mEditDateChoiceDialog.findViewById(R.id.date_thumbs_down);
+            mDoneDate = mEditDateChoiceDialog.findViewById(R.id.done_date_update);
+
+            dialogThumbsUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDayThumbsUp.setColorFilter(getResources().getColor(R.color.green_));
+                    mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+                    mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    updateDate(position, 1);
+                }
+            });
+            dialogThumbsDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDayThumbsUp.setColorFilter(getResources().getColor(R.color.red));
+                    mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+                    mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    updateDate(position, 0);
+
+                }
+            });
+
+
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditDateChoiceDialog.dismiss();
+                }
+            });
+
+            mDoneDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditDateChoiceDialog.dismiss();
+                }
+            });
+
+
+            mEditDateChoiceDialog.setCanceledOnTouchOutside(true);
+            mEditDateChoiceDialog.show();
+        }
+
+        void updateDate(final int position, final int choice) {
+            final DatabaseReference todaysReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
+            todaysReference.keepSynced(true);
+            todaysReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(monthDates.getDates().get(position));
+                    final Integer key = Integer.parseInt(String.valueOf(calendar.get(Calendar.YEAR)) + String.valueOf(calendar.get(Calendar.MONTH)));
+
+                    boolean notAvailable = true;
+                    if (dataSnapshot.hasChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            LifeBoardPOJO lifeBoardPOJO = snapshot.getValue(LifeBoardPOJO.class);
+                            if ((lifeBoardPOJO.getYear() == calendar.get(Calendar.YEAR)) && (lifeBoardPOJO.getMonth() == calendar.get(Calendar.MONTH)) && (lifeBoardPOJO.getDay() == calendar.get(Calendar.DAY_OF_MONTH))) {
+                                lifeBoardPOJO.setChoice(choice);
+                                Map<String, Object> map = new HashMap<>();
+                                map.put(lifeBoardPOJO.getKey(), lifeBoardPOJO);
+                                todaysReference.updateChildren(map);
+                                notAvailable = false;
+                            }
+                        }
+                        if (notAvailable) {
+                            DatabaseReference pushForTodayReference = todaysReference.push();
+                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
+                            pushForTodayReference.setValue(lifeBoardPOJO1);
+                            Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
+                        }
+
+                        if (mEditDateChoiceDialog.isShowing()) {
+                            mEditDateChoiceDialog.dismiss();
+                        }
+                    } else {
+                        DatabaseReference pushForTodayReference = todaysReference.push();
+                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
+                        pushForTodayReference.setValue(lifeBoardPOJO1);
+                        Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
+                        if (mEditDateChoiceDialog.isShowing()) {
+                            mEditDateChoiceDialog.dismiss();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         public class HabitDurationDatesViewHolder extends RecyclerView.ViewHolder {
             public TextView mDateValue;
@@ -558,11 +744,18 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 super(itemView);
 
                 mDateValue = itemView.findViewById(R.id.date_value_button);
+                mDateValue.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateDateDialog(getPosition());
+                    }
+                });
 
             }
         }
 
     }
+
 
     public class MonthDates {
         int monthDatesKey; // year+month

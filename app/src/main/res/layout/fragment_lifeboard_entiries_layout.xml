@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -12,6 +13,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:padding="8dp"
             android:orientation="horizontal">
 
             <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -25,33 +27,33 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical">
+
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
                         android:layout_gravity="left|center"
                         android:gravity="center"
-                        android:padding="4dp">
+                        android:orientation="horizontal"
+                       >
 
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="Today"
-                            android:padding="8dp"
-                            android:textSize="22sp"
-                            android:textColor="@color/black" />
+                        <!--<TextView-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:layout_gravity="center"-->
+                            <!--android:text="Today"-->
+                            <!--android:textColor="@color/black"-->
+                            <!--android:textSize="22sp" />-->
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:padding="8dp"
-
                             android:gravity="center"
-                            android:orientation="horizontal">
+                            android:padding="6dp"
+                            android:orientation="vertical"
+                            >
 
                             <TextView
                                 android:id="@+id/today_date_textview"
@@ -59,24 +61,36 @@
                                 android:layout_height="wrap_content"
                                 android:background="@color/transparent"
                                 android:text="25"
-                                android:padding="8dp"
-                                android:textSize="22sp"
+                                android:layout_gravity="center"
+                                android:gravity="center"
                                 android:textColor="@color/black"
+                                android:textSize="22sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/today_day_textview"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:textSize="18sp"
                                 android:background="@color/transparent"
                                 android:text="25"
-                                android:textColor="@color/black" />
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:textColor="@color/black"
+                                android:textSize="18sp" />
                         </LinearLayout>
+
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="1dp" />
+                            android:layout_height="1dp"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:textStyle="bold"
+                            android:textSize="22sp"
+                            android:textColor="@color/black"
+                            android:layout_height="wrap_content"
+                            android:text="Carpe Diem?"/>
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -94,6 +108,7 @@
                                 android:stepSize="1"
                                 android:theme="@style/RatingBar"
                                 android:visibility="gone" />
+
 
                             <LinearLayout
                                 android:layout_width="match_parent"
@@ -134,106 +149,188 @@
                         android:padding="8dp">
 
 
-
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            >
+                            android:orientation="vertical">
+
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Years Elapsed"
-                                android:textColor="@color/black"
                                 android:layout_gravity="center"
-                                android:gravity="center"/>
-                        <com.everyday.skara.everyday.DonutProgress
-                            android:id="@+id/life_donut"
-                            android:layout_width="100dp"
-                            android:layout_height="100dp"
-                            app:donut_finished_color="@color/red"
-                            app:donut_progress="30"
-                            app:donut_text_color="@color/red" />
+                                android:gravity="center"
+                                android:text="Years Lived"
+                                android:textColor="@color/black"
+                                android:textSize="16sp" />
+
+                            <com.everyday.skara.everyday.DonutProgress
+                                android:id="@+id/life_donut"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                app:donut_finished_color="@color/red"
+                                app:donut_finished_stroke_width="12dp"
+                                app:donut_progress="30"
+                                app:donut_text_color="@color/red"
+                                app:donut_unfinished_color="@color/green_" />
+
                         </LinearLayout>
 
 
-                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:id="@+id/info_life_board"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_gravity="center"
-                            android:adjustViewBounds="true"
-                            android:background="@color/transparent"
-                            android:padding="6dp"
-                            android:scaleType="fitCenter"
-                            app:srcCompat="@drawable/ic_info_black_24dp" />
+
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="Days Lived"
+                                    android:textColor="@color/black"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:id="@+id/days_elapsed"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:gravity="center"
+                                    android:text="sdcljsdc"
+                                    android:textColor="@color/black"
+                                    android:textSize="18sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:orientation="horizontal">
+
+                                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_gravity="center"
+                                            android:layout_margin="1dp"
+                                            android:adjustViewBounds="true"
+                                            android:layout_marginEnd="2dp"
+                                            android:layout_marginRight="2dp"
+                                            android:background="@drawable/circle_background_yes"
+                                            android:padding="6dp"
+                                            android:scaleType="fitCenter" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:gravity="center"
+
+                                            android:text="Useful Days"
+                                            android:textColor="@color/black"
+                                            android:textSize="16sp" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        android:id="@+id/useful_days"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:text="sdcljsdc"
+                                        android:textColor="@color/black"
+                                        android:textSize="18sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_weight="1"
+                                    android:gravity="center"
+                                    android:orientation="vertical">
+
+                                    <LinearLayout
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:orientation="horizontal">
+
+                                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                                            android:layout_width="14dp"
+                                            android:layout_height="14dp"
+                                            android:layout_gravity="center"
+                                            android:layout_margin="1dp"
+                                            android:layout_marginEnd="2dp"
+                                            android:layout_marginRight="2dp"
+                                            android:adjustViewBounds="true"
+                                            android:background="@drawable/circle_background_red"
+                                            android:padding="6dp"
+                                            android:scaleType="fitCenter" />
+
+                                        <TextView
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="center"
+                                            android:gravity="center"
+                                            android:text="Wasted Days"
+                                            android:textColor="@color/black"
+                                            android:textSize="16sp" />
+                                    </LinearLayout>
+
+                                    <TextView
+                                        android:id="@+id/wasted_days"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center"
+                                        android:gravity="center"
+                                        android:text="sdcljsdc"
+                                        android:textColor="@color/black"
+                                        android:textSize="18sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
 
 
                     </LinearLayout>
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/info_life_board"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:layout_gravity="right"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_info_black_24dp" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="8dp"
-                        android:orientation="horizontal">
-
-                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="6dp"
-                            android:adjustViewBounds="true"
-                            android:background="@drawable/circle_background_yes"
-                            android:padding="6dp"
-                            android:scaleType="fitCenter" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/transparent"
-                            android:text="Useful"
-                            android:layout_margin="6dp"
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:adjustViewBounds="true"
-                            android:layout_margin="6dp"
-
-                            android:background="@drawable/circle_background_red"
-                            android:padding="6dp"
-                            android:scaleType="fitCenter" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/transparent"
-                            android:text="Waste"
-                            android:layout_margin="6dp"
-
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-                        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
-                            android:layout_width="22dp"
-                            android:layout_height="22dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="6dp"
-
-                            android:adjustViewBounds="true"
-                            android:background="@drawable/circle_background_nothing"
-                            android:padding="6dp"
-                            android:scaleType="fitCenter" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:background="@color/transparent"
-                            android:text="Nothing"
-                            android:layout_margin="6dp"
-
-                            android:textColor="@color/black"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

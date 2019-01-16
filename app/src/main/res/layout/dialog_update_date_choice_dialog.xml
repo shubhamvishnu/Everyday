@@ -1,0 +1,113 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:background="@android:color/transparent"
+            android:padding="12dp"
+            android:textSize="22sp"
+            android:textColorHint="@color/dark_grey"
+            android:textColor="@color/black"
+            android:paddingTop="8dp"
+            android:text="Edit Expense" />
+
+        <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/close_edit_date_dialog"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:adjustViewBounds="true"
+            android:background="@android:color/transparent"
+            android:padding="2dp"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_close_24dp" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/new_expense_toolbar">
+
+        <LinearLayout
+            android:id="@+id/expense_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RatingBar
+                    android:id="@+id/rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:numStars="5"
+                    android:stepSize="1"
+                    android:theme="@style/RatingBar"
+                    android:visibility="gone" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/date_thumbs_up"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_thumb_up_24dp" />
+
+                    <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/date_thumbs_down"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:adjustViewBounds="true"
+                        android:background="@color/transparent"
+                        android:padding="6dp"
+                        android:scaleType="fitCenter"
+                        app:srcCompat="@drawable/ic_thumb_down_24dp" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/done_date_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/blue"
+        android:text="Done"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white" />
+
+</LinearLayout>
