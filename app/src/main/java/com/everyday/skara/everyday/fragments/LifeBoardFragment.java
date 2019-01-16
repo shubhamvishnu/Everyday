@@ -14,21 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bumptech.glide.signature.ObjectKey;
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
-import com.everyday.skara.everyday.MainActivity;
 import com.everyday.skara.everyday.NewObjectiveActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
-import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.LifeBoardPOJO;
@@ -56,7 +51,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 
 public class LifeBoardFragment extends android.support.v4.app.Fragment {
@@ -466,6 +460,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
 
     void initDatesAdapter() {
+        int datesViewType = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
+
         isLoaded = true;
         Calendar startCalendar = Calendar.getInstance();
         startCalendar.set(Calendar.YEAR, userInfoPOJO.getYear());
@@ -473,7 +469,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         startCalendar.set(Calendar.DAY_OF_MONTH, userInfoPOJO.getDay());
         Calendar endCalendar = Calendar.getInstance();
 
-
+        if (datesViewType == BasicSettings.DEFAULT_DATES_VIEW) {
+            endCalendar.add(Calendar.MONTH, 1);
+        }
         HashMap<Integer, MonthDates> monthDatesHashMap = getDaysBetweenDates(startCalendar, endCalendar);
         Map<Integer, MonthDates> map = new TreeMap<>(monthDatesHashMap).descendingMap();
         int size = getSize(map);
@@ -484,7 +482,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
 
 
-        int datesViewType = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
         if (datesViewType == BasicSettings.ALL_DATES_VIEW) {
             GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 10);
             gridLayoutManager.setReverseLayout(true);
@@ -631,7 +628,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                                 int month = lifeBoardPOJOArrayList.get(k).getMonth();
                                 int day = lifeBoardPOJOArrayList.get(k).getDay();
                                 if ((year == calendar.get(Calendar.YEAR)) && (month == calendar.get(Calendar.MONTH)) && (day == calendar.get(Calendar.DAY_OF_MONTH))) {
-                                    Toast.makeText(getActivity(), "" + year + ":" + month + ":" + day + "", Toast.LENGTH_SHORT).show();
                                     if (lifeBoardPOJOArrayList.get(k).getChoice() == 1) {
                                         allDatesHolder.setChoice(1);
                                         break;
@@ -758,7 +754,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
 
                     if ((year == calendar.get(Calendar.YEAR)) && (month == calendar.get(Calendar.MONTH)) && (day == calendar.get(Calendar.DAY_OF_MONTH))) {
-                        Toast.makeText(getActivity(), "" + year + ":" + month + ":" + day + "", Toast.LENGTH_SHORT).show();
                         isAvailable = true;
                         if (lifeBoardPOJOArrayList.get(i).getChoice() == 1) {
                             return VIEW_TYPE_YES;
@@ -1036,7 +1031,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 mMonthTitle.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getActivity(), "" + getPosition(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -1056,6 +1050,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         public int VIEW_TYPE_NO_INPUT = 1;
         public int VIEW_TYPE_YES = 2;
         public int VIEW_TYPE_NO = 3;
+        public int VIEW_TYPE_TODAY = 4;
         int viewTypeCount = -1;
         int keys = 0;
 
@@ -1072,7 +1067,14 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public int getItemViewType(int position) {
             viewTypeCount = position;
+            Calendar todCal = Calendar.getInstance();
             Date date = monthDates.getDates().get(position);
+            Calendar customCal = Calendar.getInstance();
+            customCal.setTime(date);
+
+            if ((customCal.get(Calendar.YEAR) == todCal.get(Calendar.YEAR)) && (customCal.get(Calendar.MONTH) == todCal.get(Calendar.MONTH)) && (customCal.get(Calendar.DAY_OF_MONTH) == todCal.get(Calendar.DAY_OF_MONTH))) {
+                return VIEW_TYPE_TODAY;
+            }
             if (lifeBoardPOJOMap.containsKey(this.keys)) {
                 boolean isAvailable = false;
                 ArrayList<LifeBoardPOJO> lifeBoardPOJOArrayList = lifeBoardPOJOMap.get(this.keys);
@@ -1083,7 +1085,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(date);
                     if ((year == calendar.get(Calendar.YEAR)) && (month == calendar.get(Calendar.MONTH)) && (day == calendar.get(Calendar.DAY_OF_MONTH))) {
-                        Toast.makeText(getActivity(), "" + year + ":" + month + ":" + day + "", Toast.LENGTH_SHORT).show();
                         isAvailable = true;
                         if (lifeBoardPOJOArrayList.get(i).getChoice() == 1) {
                             return VIEW_TYPE_YES;
@@ -1104,6 +1105,10 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            if(viewType == VIEW_TYPE_TODAY){
+                View view = inflator.inflate(R.layout.recyclerview_today_row_layout, parent, false);
+                return new HabitDurationDatesViewHolder(view);
+            }
             if (viewType == VIEW_TYPE_NO_INPUT) {
                 if (objective.isObjectiveSet) {
                     Date date = monthDates.getDates().get(viewTypeCount);

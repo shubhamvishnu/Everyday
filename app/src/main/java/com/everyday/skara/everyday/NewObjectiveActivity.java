@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.BasicSettings;
@@ -39,6 +40,7 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
     UserInfoPOJO userInfoPOJO;
+    ImageButton mCalenderStart, mCalenderEnd;
 
     int mSDay, mSMonth, mSYear;
     int mEDay, mEMonth, mEYear;
@@ -47,6 +49,7 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
     int dateTypeSelected = -1;
 
     Button mStartButton, mEndButton;
+    Button mDone, mReset;
 
     @Override
     public void onBackPressed() {
@@ -69,7 +72,7 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
         SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, MODE_PRIVATE);
         int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
-            setContentView(R.layout.activity_new_objective);
+            setContentView(R.layout.activity_new_objective_light);
 
         } else {
             setContentView(R.layout.activity_new_objective);
@@ -93,7 +96,19 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
 
         mStartButton = findViewById(R.id.start_select_date);
         mEndButton = findViewById(R.id.end_select_date);
+        mCalenderStart = findViewById(R.id.start_select_date_image_button);
+        mCalenderEnd = findViewById(R.id.end_select_date_image_button);
+        mReset = findViewById(R.id.reset_button);
 
+        mDone = findViewById(R.id.done_objective);
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(NewObjectiveActivity.this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_OBJECTIVE, Context.MODE_PRIVATE);
         if (sharedPreferences.contains("start_date_day")) {
@@ -107,7 +122,9 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
             mStartButton.setText("" + d + "/" + m + "/" + y);
             mEndButton.setText("" + ed + "/" + em + "/" + ey);
         }
-
+        mReset.setOnClickListener(this);
+        mCalenderStart.setOnClickListener(this);
+        mCalenderEnd.setOnClickListener(this);
         mStartButton.setOnClickListener(this);
         mEndButton.setOnClickListener(this);
 
@@ -132,6 +149,36 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
                 dateTypeSelected = 2;
                 DialogFragment dialog1 = createDialog();
                 dialog1.show(getSupportFragmentManager(), "End Date");
+                break;
+
+            case R.id.start_select_date_image_button:
+                dateTypeSelected = 1;
+                DialogFragment dialog3 = createDialog();
+                dialog3.show(getSupportFragmentManager(), "Start Date");
+                break;
+            case R.id.end_select_date_image_button:
+                dateTypeSelected = 2;
+                DialogFragment dialog4 = createDialog();
+                dialog4.show(getSupportFragmentManager(), "End Date");
+                break;
+            case R.id.reset_button:
+                SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_OBJECTIVE, Context.MODE_PRIVATE);
+                if (sharedPreferences.contains("start_date_day")) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.remove("start_date_day");
+                    editor.remove("start_date_month");
+                    editor.remove("start_date_year");
+                    editor.remove("end_date_day");
+                    editor.remove("end_date_month");
+                    editor.remove("end_date_year");
+                    editor.apply();
+                }
+
+                mSDay = mSMonth = mSYear = -1;
+                mEDay = mEMonth = mEYear = -1;
+                dateTypeSelected = -1;
+                mStartButton.setText("Start Date");
+                mEndButton.setText("End Date");
                 break;
         }
     }
@@ -167,24 +214,27 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
                 dateTypeSelected = -1;
             }
         } else if (dateTypeSelected == 2) {
-            String date = DateFormat.getDateFormat(this).format(cal.getTime());
+            if (startSelected) {
+                String date = DateFormat.getDateFormat(this).format(cal.getTime());
 
-            if (!(date.isEmpty() || date.equals(""))) {
-                SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_OBJECTIVE, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                if (!(date.isEmpty() || date.equals(""))) {
+                    SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_OBJECTIVE, Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
 //                    editor.putInt("start_date_day", dayOfMonth);
 //                    editor.putInt("start_date_month", monthOfYear);
 //                    editor.putInt("start_date_year", year);
-                editor.putInt("end_date_day", dayOfMonth);
-                editor.putInt("end_date_month", monthOfYear);
-                editor.putInt("end_date_year", year);
-                editor.apply();
-                endSelected = true;
-                mEndButton.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
-                dateTypeSelected = -1;
+                    editor.putInt("end_date_day", dayOfMonth);
+                    editor.putInt("end_date_month", monthOfYear);
+                    editor.putInt("end_date_year", year);
+                    editor.apply();
+                    endSelected = true;
+                    mEndButton.setText(dayOfMonth + "/" + monthOfYear + "/" + year);
+                    dateTypeSelected = -1;
+                }
+
+            }else{
+                Toast.makeText(this, "Select Start Date", Toast.LENGTH_SHORT).show();
             }
-
-
         }
     }
 
@@ -211,7 +261,17 @@ public class NewObjectiveActivity extends AppCompatActivity implements View.OnCl
         Calendar maxCalendar = Calendar.getInstance();
         Calendar minCalendar = Calendar.getInstance();
         minCalendar.add(Calendar.YEAR, -100);
-        dateDialog.setMinDate(minCalendar);
+        maxCalendar.add(Calendar.YEAR, 100);
+        if(startSelected){
+            minCalendar.set(Calendar.DAY_OF_MONTH, mSDay);
+            minCalendar.set(Calendar.MONTH, mSMonth);
+            minCalendar.set(Calendar.YEAR, mSYear);
+            minCalendar.add(Calendar.DATE, 1);
+            dateDialog.setMinDate(minCalendar);
+
+        }else{
+            dateDialog.setMinDate(minCalendar);
+        }
         dateDialog.setMaxDate(maxCalendar);
         dateDialog.setYearRange(Calendar.YEAR, 2050);
         dialog.setThemeDark(themeDark);

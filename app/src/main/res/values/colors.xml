@@ -8,7 +8,8 @@
     <!--<color name="red_">#b40000</color>-->
     <color name="white">#FFFFFF</color>
     <color name="green_selected">#1edf98</color>
-    <color name="green_">#037231</color>
+    <color name="green_">#1ac285</color>
+    <!--<color name="green_">#037231</color>-->
     <color name="yellow">#ffb303</color>
     <color name="black">#000000</color>
     <color name="blue">#ff0d47a1</color>
