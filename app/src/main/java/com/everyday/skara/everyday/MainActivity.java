@@ -46,9 +46,6 @@ import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -239,12 +236,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     transaction.commit();
                 } else if (tabId == R.id.life_board_item) {
+
+
                     OPTION_TYPE = 5;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putInt("item_selected", 5);
                     editor.apply();
 
-                    myToolbar.setTitle("Life Board");
+                    myToolbar.setTitle("LifeBoard");
                     LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
 
                     Bundle bundle = new Bundle();
@@ -479,6 +478,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);
     }
 
+    void toNewObjectiveActivity(){
+        Intent intent = new Intent(MainActivity.this, NewObjectiveActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
+    }
     void newItemClicked() {
         if (OPTION_TYPE == 1) {
             chooseEntryTypeBoard();
@@ -489,8 +494,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (OPTION_TYPE == 4) {
             toNewLinkActivity();
         } else if (OPTION_TYPE == 5) {
-
-        } else if (OPTION_TYPE == 6) {
+            toNewObjectiveActivity();
+        }else if(OPTION_TYPE == 6){
 
         }
     }

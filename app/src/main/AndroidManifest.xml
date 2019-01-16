@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--android:theme="@style/Theme.AppCompat.Light.NoActionBar">-->
+
+        <!-- android:theme="@style/Theme.AppCompat.Light.NoActionBar"> -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
@@ -22,7 +23,7 @@
             android:value="@string/google_maps_key" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2940427582515935~3482302447"/>
+            android:value="ca-app-pub-2940427582515935~3482302447" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -67,6 +68,7 @@
         <activity android:name=".NewHabitActivity" />
         <activity android:name=".NewBoardExpenseActivity" />
         <activity android:name=".NewIncomeExpenseActivity" />
+        <activity android:name=".NewObjectiveActivity"></activity>
     </application>
 
 </manifest>

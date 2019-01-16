@@ -40,7 +40,6 @@ dependencies {
         exclude group: 'com.android.support', module: 'gridlayout-v7'
     }
 
-
     // Horizontal calendar view
     implementation 'com.github.jhonnyx2012:horizontal-picker:1.0.6'
 

@@ -21,6 +21,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.signature.ObjectKey;
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
@@ -53,6 +54,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
 
 public class LifeBoardFragment extends android.support.v4.app.Fragment {
@@ -74,6 +76,48 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     ImageButton mScrollUpButton, mChangeView;
     DatesViewAdapter datesViewAdapter;
     boolean isLoaded = false;
+    Objective objective;
+
+    class Objective {
+
+        Calendar objectiveStartCal;
+        Calendar objectiveEndCal;
+        boolean isObjectiveSet = false;
+
+        public Objective() {
+        }
+
+        public Objective(Calendar objectiveStartCal, Calendar objectiveEndCal, boolean isObjectiveSet) {
+            this.objectiveStartCal = objectiveStartCal;
+            this.objectiveEndCal = objectiveEndCal;
+            this.isObjectiveSet = isObjectiveSet;
+        }
+
+        public Calendar getObjectiveStartCal() {
+            return objectiveStartCal;
+        }
+
+        public void setObjectiveStartCal(Calendar objectiveStartCal) {
+            this.objectiveStartCal = objectiveStartCal;
+        }
+
+        public Calendar getObjectiveEndCal() {
+            return objectiveEndCal;
+        }
+
+        public void setObjectiveEndCal(Calendar objectiveEndCal) {
+            this.objectiveEndCal = objectiveEndCal;
+        }
+
+        public boolean isObjectiveSet() {
+            return isObjectiveSet;
+        }
+
+        public void setObjectiveSet(boolean objectiveSet) {
+            isObjectiveSet = objectiveSet;
+        }
+    }
+
     static String[] suffixes =
             //    0     1     2     3     4     5     6     7     8     9
             {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th",
@@ -221,6 +265,35 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 updateToday(0);
             }
         });
+
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(SPNames.USER_OBJECTIVE, Context.MODE_PRIVATE);
+        if (sharedPreferences.contains("start_date_day")) {
+            int d = sharedPreferences.getInt("start_date_day", 0);
+            int m = sharedPreferences.getInt("start_date_month", 0);
+            int y = sharedPreferences.getInt("start_date_year", 0);
+            int ed = sharedPreferences.getInt("end_date_day", 0);
+            int em = sharedPreferences.getInt("end_date_month", 0);
+            int ey = sharedPreferences.getInt("end_date_year", 0);
+
+            Calendar tempStartCal = Calendar.getInstance();
+            tempStartCal.set(Calendar.DAY_OF_MONTH, d);
+            tempStartCal.set(Calendar.MONTH, m);
+            tempStartCal.set(Calendar.YEAR, y);
+
+
+            Calendar tempEndCal = Calendar.getInstance();
+            tempEndCal.set(Calendar.DAY_OF_MONTH, ed);
+            tempEndCal.set(Calendar.MONTH, em);
+            tempEndCal.set(Calendar.YEAR, ey);
+
+
+            objective = new Objective(tempStartCal, tempEndCal, true);
+        } else {
+            objective = new Objective(null, null, false);
+        }
+
+
         initDateChecks();
 
     }
@@ -479,6 +552,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         private LayoutInflater inflator;
         Map<Integer, MonthDates> datesHashMap;
         ArrayList<Integer> keysArrayList;
+        int viewTypeCount = -1;
+
         ArrayList<AllDatesHolder> allDatesHoldersArrayList = new ArrayList<>();
         public int VIEW_TYPE_NO_INPUT = 1;
         public int VIEW_TYPE_YES = 2;
@@ -585,13 +660,38 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == VIEW_TYPE_NO_INPUT) {
+
                 int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
-                if (theme == BasicSettings.LIGHT_THEME) {
-                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout_light, parent, false);
-                    return new DatesViewHolder(view);
+
+                if (objective.isObjectiveSet) {
+                    AllDatesHolder allDatesHolder = allDatesHoldersArrayList.get(viewTypeCount);
+                    Calendar curr = Calendar.getInstance();
+                    curr.set(Calendar.DAY_OF_MONTH, allDatesHolder.getDay());
+                    curr.set(Calendar.MONTH, allDatesHolder.getMonth());
+                    curr.set(Calendar.YEAR, allDatesHolder.getYear());
+
+
+                    if (curr.after(objective.getObjectiveStartCal()) && curr.before(objective.objectiveEndCal)) {
+                        View view = inflator.inflate(R.layout.recyclerview_dates_objective_view_no_input_fixed_layout, parent, false);
+                        return new DatesViewHolder(view);
+                    } else {
+                        if (theme == BasicSettings.LIGHT_THEME) {
+                            View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout_light, parent, false);
+                            return new DatesViewHolder(view);
+                        } else {
+                            View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout, parent, false);
+                            return new DatesViewHolder(view);
+                        }
+                    }
                 } else {
-                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout, parent, false);
-                    return new DatesViewHolder(view);
+
+                    if (theme == BasicSettings.LIGHT_THEME) {
+                        View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout_light, parent, false);
+                        return new DatesViewHolder(view);
+                    } else {
+                        View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout, parent, false);
+                        return new DatesViewHolder(view);
+                    }
                 }
 
             } else if (viewType == VIEW_TYPE_YES) {
@@ -622,6 +722,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
         @Override
         public int getItemViewType(int position) {
+            viewTypeCount = position;
             AllDatesHolder allDatesHolder = allDatesHoldersArrayList.get(position);
             final Integer key = Integer.parseInt(String.valueOf(allDatesHolder.getYear()) + String.valueOf(allDatesHolder.getMonth()));
             if (lifeBoardPOJOMap.containsKey(key)) {
@@ -937,7 +1038,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         public int VIEW_TYPE_NO_INPUT = 1;
         public int VIEW_TYPE_YES = 2;
         public int VIEW_TYPE_NO = 3;
-
+        int viewTypeCount = -1;
         int keys = 0;
 
         public HabitDurationDatesAdapter(MonthDates monthDates, int keys) {
@@ -952,6 +1053,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
         @Override
         public int getItemViewType(int position) {
+            viewTypeCount = position;
             Date date = monthDates.getDates().get(position);
             if (lifeBoardPOJOMap.containsKey(this.keys)) {
                 boolean isAvailable = false;
@@ -985,8 +1087,24 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == VIEW_TYPE_NO_INPUT) {
-                View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
-                return new HabitDurationDatesViewHolder(view);
+                if (objective.isObjectiveSet) {
+                    Date date = monthDates.getDates().get(viewTypeCount);
+                    Calendar curr = Calendar.getInstance();
+                    curr.setTime(date);
+
+                    if (curr.after(objective.getObjectiveStartCal()) && curr.before(objective.objectiveEndCal)) {
+                        View view = inflator.inflate(R.layout.recyclerview_dates_objective_view_no_input_layout, parent, false);
+                        return new HabitDurationDatesViewHolder(view);
+                    } else {
+                        View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
+                        return new HabitDurationDatesViewHolder(view);
+                    }
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
+                    return new HabitDurationDatesViewHolder(view);
+                }
+
+
             } else if (viewType == VIEW_TYPE_YES) {
                 View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_yes_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
@@ -997,7 +1115,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 View view = inflator.inflate(R.layout.recyclerview_month_dates_snapshot_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
             }
-
         }
 
         @Override
