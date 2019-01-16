@@ -24,6 +24,8 @@ import android.widget.Toast;
 import com.bumptech.glide.signature.ObjectKey;
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.MainActivity;
+import com.everyday.skara.everyday.NewObjectiveActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.DateExpenseHolder;
@@ -77,6 +79,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     DatesViewAdapter datesViewAdapter;
     boolean isLoaded = false;
     Objective objective;
+    Button objectiveButton;
 
     class Objective {
 
@@ -164,6 +167,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mTodayDateTextView = view.findViewById(R.id.today_date_textview);
         mTodayDayTextView = view.findViewById(R.id.today_day_textview);
         mScrollUpButton = view.findViewById(R.id.scroll_up_image);
+        objectiveButton = view.findViewById(R.id.objective_button);
 
         mChangeView = view.findViewById(R.id.change_view_lifeboard);
         mChangeView.setOnClickListener(new View.OnClickListener() {
@@ -289,13 +293,27 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
 
             objective = new Objective(tempStartCal, tempEndCal, true);
+            objectiveButton.setText("" + d + "/" + m + "/" + y + " to " + ed + "/" + em + "/" + ey);
         } else {
             objective = new Objective(null, null, false);
+            objectiveButton.setText("Set a timeline");
         }
 
-
+        objectiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toNewObjectiveActivity();
+            }
+        });
         initDateChecks();
 
+    }
+
+    void toNewObjectiveActivity() {
+        Intent intent = new Intent(getActivity(), NewObjectiveActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     void updateToday(final int choice) {
