@@ -120,7 +120,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
                 break;
             case R.id.dob_textview:
                 DialogFragment dialog = createDialog();
-                dialog.show(getSupportFragmentManager(), "date");
+                dialog.show(getSupportFragmentManager(), "Date");
                 break;
         }
     }

@@ -243,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     editor.putInt("item_selected", 5);
                     editor.apply();
 
-                    myToolbar.setTitle("LifeBoard");
+                    myToolbar.setTitle("Lifetime");
                     LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
 
                     Bundle bundle = new Bundle();

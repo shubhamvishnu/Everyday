@@ -21,8 +21,10 @@ import android.widget.TextView;
 
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
+import com.everyday.skara.everyday.MainActivity;
 import com.everyday.skara.everyday.NewObjectiveActivity;
 import com.everyday.skara.everyday.R;
+import com.everyday.skara.everyday.SettingsActivity;
 import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
@@ -74,6 +76,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
     boolean isLoaded = false;
     Objective objective;
     Button objectiveButton;
+    Button fromStartDate;
 
     class Objective {
 
@@ -162,8 +165,17 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mTodayDayTextView = view.findViewById(R.id.today_day_textview);
         mScrollUpButton = view.findViewById(R.id.scroll_up_image);
         objectiveButton = view.findViewById(R.id.objective_button);
+        fromStartDate = view.findViewById(R.id.from_start_date);
 
         mChangeView = view.findViewById(R.id.change_view_lifeboard);
+
+        fromStartDate.setText("From "+ userInfoPOJO.getDay() + "/" + userInfoPOJO.getMonth() + "/" + userInfoPOJO.getYear());
+        fromStartDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toSettingActivity();
+            }
+        });
         mChangeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -287,10 +299,10 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
 
             objective = new Objective(tempStartCal, tempEndCal, true);
-            objectiveButton.setText("" + d + "/" + m + "/" + y + " to " + ed + "/" + em + "/" + ey);
+            objectiveButton.setText("Target Duration:" + d + "/" + m + "/" + y + " to " + ed + "/" + em + "/" + ey);
         } else {
             objective = new Objective(null, null, false);
-            objectiveButton.setText("Set a timeline");
+            objectiveButton.setText("Set a target duration");
         }
 
         objectiveButton.setOnClickListener(new View.OnClickListener() {
@@ -301,6 +313,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         });
         initDateChecks();
 
+    }
+    void toSettingActivity(){
+        Intent intent = new Intent(getActivity(), SettingsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("user_profile", userInfoPOJO);
+        startActivity(intent);
     }
 
     void toNewObjectiveActivity() {
@@ -730,7 +748,12 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             int pos = position + 1;
-            ((DatesViewHolder) holder).mDate.setText("" + pos);
+            if(pos == allDatesHoldersArrayList.size()){
+                ((DatesViewHolder) holder).mDate.setText("Today");
+            }else{
+                ((DatesViewHolder) holder).mDate.setText("" + pos);
+
+            }
 
         }
 

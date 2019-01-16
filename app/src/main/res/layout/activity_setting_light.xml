@@ -37,6 +37,31 @@
                 android:layout_height="match_parent"
                 android:layout_margin="16dp"
                 android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/edit_theme_button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
+                        android:background="@color/transparent"
+                        android:gravity="left|center"
+                        android:text="Theme"
+                        android:textAllCaps="false"
+                        android:textSize="18sp" />
+
+                    <Switch
+                        android:id="@+id/theme_switch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="8dp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -79,41 +104,29 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/edit_theme_button"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:background="@color/transparent"
-                        android:gravity="left|center"
-                        android:text="Theme"
-                        android:textAllCaps="false"
-                        android:textSize="18sp" />
-
-                    <Switch
-                        android:id="@+id/theme_switch"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_margin="8dp" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/set_dob_button"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@color/transparent"
-                        android:gravity="left|center"
-                        android:text="Date of Birth"
-                        android:textAllCaps="false"
-                        android:textSize="18sp" />
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:text="Lifetime:"
+                            android:minHeight="1dp"
+                            android:textColor="@color/dark_grey"/>
+                        <Button
+                            android:id="@+id/set_dob_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@color/transparent"
+                            android:gravity="left|center"
+                            android:text="Start Date"
+                            android:textColor="@color/black"
+                            android:textAllCaps="false"
+                            android:textSize="18sp" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/dob_textview"
