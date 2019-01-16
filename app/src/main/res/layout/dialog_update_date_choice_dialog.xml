@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:background="@color/black"
     android:orientation="vertical">
 
     <LinearLayout
@@ -23,9 +23,9 @@
             android:padding="12dp"
             android:textSize="22sp"
             android:textColorHint="@color/dark_grey"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:paddingTop="8dp"
-            android:text="Edit Expense" />
+            android:text="Edit Day" />
 
         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/close_edit_date_dialog"

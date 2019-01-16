@@ -16,16 +16,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="1"
+            android:background="@android:color/transparent"
             android:gravity="center"
+            android:padding="12dp"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
-            android:background="@android:color/transparent"
-            android:padding="12dp"
-            android:textSize="22sp"
-            android:textColorHint="@color/dark_grey"
-            android:textColor="@color/black"
             android:paddingTop="8dp"
-            android:text="Edit Expense" />
+            android:text="Edit Day"
+            android:textColor="@color/black"
+            android:textColorHint="@color/dark_grey"
+            android:textSize="22sp" />
 
         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/close_edit_date_dialog"
@@ -37,6 +37,7 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/ic_close_24dp" />
     </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -101,7 +102,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/done_expense_button"
+        android:id="@+id/done_date_update"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

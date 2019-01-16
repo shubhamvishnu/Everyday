@@ -94,21 +94,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton mTodo, mLink, mNotes, mFinance;
     public static int OPTION_TYPE = 1;
     SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MobileAds.initialize(this, "ca-app-pub-2940427582515935~3482302447");
         SharedPreferences sp = getSharedPreferences(SPNames.DEFAULT_SETTINGS, MODE_PRIVATE);
         int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
-        if(theme == BasicSettings.LIGHT_THEME){
+        if (theme == BasicSettings.LIGHT_THEME) {
             setContentView(R.layout.activity_main_layout_light);
-        }else{
+        } else {
             setContentView(R.layout.activity_main_layout);
         }
         myToolbar = findViewById(R.id.boards_toolbar);
         myToolbar.setTitle("Finance");
         setSupportActionBar(myToolbar);
-         sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
         if (user != null) {
             init();
         } else {
@@ -123,9 +124,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     void initBottomBar() {
         sharedPreferences = getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
-        if(sharedPreferences.contains("item_selected")){
+        if (sharedPreferences.contains("item_selected")) {
             OPTION_TYPE = sharedPreferences.getInt("item_selected", 1);
-        }else {
+        } else {
             OPTION_TYPE = 1;
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putInt("item_selected", 1);
@@ -220,11 +221,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     transaction.commit();
                 } else if (tabId == R.id.user_profile_item) {
-                    OPTION_TYPE = 5;
+                    OPTION_TYPE = 6;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("item_selected", 5);
+                    editor.putInt("item_selected", 6);
                     editor.apply();
-
                     myToolbar.setTitle("Profile");
                     UserAccountFragment userAccountFragment = new UserAccountFragment();
 
@@ -238,9 +238,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                }else if(tabId == R.id.life_board_item){
+                } else if (tabId == R.id.life_board_item) {
+                    OPTION_TYPE = 5;
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putInt("item_selected", 5);
+                    editor.apply();
 
-                    myToolbar.setTitle("LifeBoard");
+                    myToolbar.setTitle("Life Board");
                     LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
 
                     Bundle bundle = new Bundle();
@@ -427,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int theme = sp.getInt("theme", BasicSettings.DEFAULT_THEME);
         if (theme == BasicSettings.LIGHT_THEME) {
             mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout_light);
-        }else {
+        } else {
             mEntryTypeDialog.setContentView(R.layout.dialog_financial_entry_type_option_layout);
         }
         Button mIncomeType, mExpenseType;
@@ -485,6 +489,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (OPTION_TYPE == 4) {
             toNewLinkActivity();
         } else if (OPTION_TYPE == 5) {
+
+        } else if (OPTION_TYPE == 6) {
 
         }
     }
