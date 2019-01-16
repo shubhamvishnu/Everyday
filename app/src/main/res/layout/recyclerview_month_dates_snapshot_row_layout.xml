@@ -11,7 +11,9 @@
         android:background="@drawable/date_background"
         android:padding="4dp"
         android:layout_margin="1dp"
+        android:layout_gravity="center"
+        android:gravity="center"
         android:textColor="@color/white"
         android:id="@+id/date_value_button"
-        android:text="date"/>
+        android:text="99999999"/>
 </LinearLayout>

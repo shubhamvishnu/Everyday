@@ -6,9 +6,9 @@
     android:id="@+id/date_value_linear_layout"
     android:orientation="vertical">
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="72dp"
         android:layout_height="wrap_content"
-        android:background="@drawable/dates_no_input_background"
+        android:background="@drawable/dates_yes_input_background"
         android:padding="4dp"
         android:layout_margin="1dp"
         android:layout_gravity="center"

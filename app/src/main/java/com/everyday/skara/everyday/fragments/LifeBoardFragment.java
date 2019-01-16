@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
@@ -24,6 +25,7 @@ import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.R;
 import com.everyday.skara.everyday.classes.BasicSettings;
+import com.everyday.skara.everyday.classes.DateExpenseHolder;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.LifeBoardPOJO;
@@ -36,6 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,6 +51,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -115,28 +120,29 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mTodayDateTextView = view.findViewById(R.id.today_date_textview);
         mTodayDayTextView = view.findViewById(R.id.today_day_textview);
         mScrollUpButton = view.findViewById(R.id.scroll_up_image);
+
         mChangeView = view.findViewById(R.id.change_view_lifeboard);
         mChangeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
-                if(sp.contains("dates_view")){
+                if (sp.contains("dates_view")) {
                     int type = sp.getInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
-                    if(type == BasicSettings.ALL_DATES_VIEW){
+                    if (type == BasicSettings.ALL_DATES_VIEW) {
                         type = BasicSettings.DEFAULT_DATES_VIEW;
-                    }else{
+                    } else {
                         type = BasicSettings.ALL_DATES_VIEW;
                     }
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putInt("dates_view", type);
                     editor.apply();
-                }else{
+                } else {
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
                     editor.apply();
                 }
 
-                if(isLoaded){
+                if (isLoaded) {
                     initDatesAdapter();
                 }
 
@@ -145,8 +151,15 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mScrollUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (datesAdapter != null) {
-                    mDatesRecyclerView.smoothScrollToPosition(datesAdapter.getItemCount());
+                int datesViewType = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
+                if (datesViewType == BasicSettings.ALL_DATES_VIEW) {
+                    if (datesViewAdapter != null) {
+                        mDatesRecyclerView.scrollToPosition(datesViewAdapter.getItemCount() - 1);
+                    }
+                } else {
+                    if (datesAdapter != null) {
+                        mDatesRecyclerView.smoothScrollToPosition(datesAdapter.getItemCount());
+                    }
                 }
             }
         });
@@ -378,15 +391,21 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         mDatesRecyclerView.invalidate();
         mDatesRecyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
-        linearLayoutManager.setReverseLayout(true);
-        linearLayoutManager.setStackFromEnd(true);
-        mDatesRecyclerView.setLayoutManager(linearLayoutManager);
+
 
         int datesViewType = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("dates_view", BasicSettings.DEFAULT_DATES_VIEW);
         if (datesViewType == BasicSettings.ALL_DATES_VIEW) {
+            GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 10);
+            gridLayoutManager.setReverseLayout(true);
+            mDatesRecyclerView.setLayoutManager(gridLayoutManager);
             datesViewAdapter = new DatesViewAdapter(monthDatesHashMap);
             mDatesRecyclerView.setAdapter(datesViewAdapter);
-        }else{
+            mDatesRecyclerView.scrollToPosition(datesViewAdapter.getItemCount() - 1);
+
+        } else {
+            linearLayoutManager.setReverseLayout(true);
+            linearLayoutManager.setStackFromEnd(true);
+            mDatesRecyclerView.setLayoutManager(linearLayoutManager);
             datesAdapter = new HabitDurationAdapter(monthDatesHashMap);
             mDatesRecyclerView.setAdapter(datesAdapter);
 
@@ -461,6 +480,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         Map<Integer, MonthDates> datesHashMap;
         ArrayList<Integer> keysArrayList;
         ArrayList<AllDatesHolder> allDatesHoldersArrayList = new ArrayList<>();
+        public int VIEW_TYPE_NO_INPUT = 1;
+        public int VIEW_TYPE_YES = 2;
+        public int VIEW_TYPE_NO = 3;
 
         public HashMap<Integer, MonthDates> sortByValue(HashMap<Integer, MonthDates> hm) {
             // Create a list from elements of HashMap
@@ -533,27 +555,106 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                     }
                 }
 
+                allDatesHoldersArrayList = sortDateAscending(allDatesHoldersArrayList);
+
 
             } catch (NullPointerException e) {
 
             }
         }
 
+        ArrayList<AllDatesHolder> sortDateAscending(ArrayList<AllDatesHolder> dateExpenseHolderArrayList) {
+            ArrayList<AllDatesHolder> sortDateExpenseHolder = dateExpenseHolderArrayList;
+
+            Collections.sort(sortDateExpenseHolder, new Comparator<AllDatesHolder>() {
+                DateFormat f = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
+
+                @Override
+                public int compare(AllDatesHolder o1, AllDatesHolder o2) {
+                    try {
+                        return f.parse(o1.getDay() + "/" + o1.getMonth() + "/" + o1.getYear()).compareTo(f.parse(o2.getDay() + "/" + o2.getMonth() + "/" + o2.getYear()));
+                    } catch (ParseException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                }
+            });
+            return sortDateExpenseHolder;
+        }
 
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = inflator.inflate(R.layout.recyclerview_dates_view_row_layout, parent, false);
-            return new DatesViewHolder(view);
+            if (viewType == VIEW_TYPE_NO_INPUT) {
+                int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout_light, parent, false);
+                    return new DatesViewHolder(view);
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout, parent, false);
+                    return new DatesViewHolder(view);
+                }
+
+            } else if (viewType == VIEW_TYPE_YES) {
+                View view = inflator.inflate(R.layout.recyclerview_all_dates_yes_snapshot_row_layout, parent, false);
+                return new DatesViewHolder(view);
+            } else if (viewType == VIEW_TYPE_NO) {
+                View view = inflator.inflate(R.layout.recyclerview_all_dates_no_snapshot_row_layout, parent, false);
+                return new DatesViewHolder(view);
+            } else {
+                int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+                if (theme == BasicSettings.LIGHT_THEME) {
+                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout_light, parent, false);
+                    return new DatesViewHolder(view);
+                } else {
+                    View view = inflator.inflate(R.layout.recyclerview_all_date_snapshot_row_layout, parent, false);
+                    return new DatesViewHolder(view);
+                }
+            }
+
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-//            MonthDates monthDates = datesHashMap.get(keysArrayList.get(position));
-            AllDatesHolder allDatesHolder = allDatesHoldersArrayList.get(position);
             int pos = position + 1;
-            ((DatesViewHolder) holder).mDate.setText("" + pos + " -- Day:" + allDatesHolder.getDay() + "--Mon:" + allDatesHolder.getMonth() + "--Year:" + allDatesHolder.getYear());
+            ((DatesViewHolder) holder).mDate.setText("" + pos);
 
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            AllDatesHolder allDatesHolder = allDatesHoldersArrayList.get(position);
+            final Integer key = Integer.parseInt(String.valueOf(allDatesHolder.getYear()) + String.valueOf(allDatesHolder.getMonth()));
+            if (lifeBoardPOJOMap.containsKey(key)) {
+                boolean isAvailable = false;
+                ArrayList<LifeBoardPOJO> lifeBoardPOJOArrayList = lifeBoardPOJOMap.get(key);
+                for (int i = 0; i < lifeBoardPOJOArrayList.size(); i++) {
+                    int year = lifeBoardPOJOArrayList.get(i).getYear();
+                    int month = lifeBoardPOJOArrayList.get(i).getMonth();
+                    int day = lifeBoardPOJOArrayList.get(i).getDay();
+
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.DAY_OF_MONTH, allDatesHolder.getDay());
+                    calendar.set(Calendar.MONTH, allDatesHolder.getMonth());
+                    calendar.set(Calendar.YEAR, allDatesHolder.getYear());
+
+
+                    if ((year == calendar.get(Calendar.YEAR)) && (month == calendar.get(Calendar.MONTH)) && (day == calendar.get(Calendar.DAY_OF_MONTH))) {
+                        Toast.makeText(getActivity(), "" + year + ":" + month + ":" + day + "", Toast.LENGTH_SHORT).show();
+                        isAvailable = true;
+                        if (lifeBoardPOJOArrayList.get(i).getChoice() == 1) {
+                            return VIEW_TYPE_YES;
+                        } else if (lifeBoardPOJOArrayList.get(i).getChoice() == 0) {
+                            return VIEW_TYPE_NO;
+                        }
+                    }
+                }
+                if (!isAvailable) {
+                    return VIEW_TYPE_NO_INPUT;
+                }
+            } else {
+                return VIEW_TYPE_NO_INPUT;
+            }
+            return super.getItemViewType(position);
         }
 
         @Override
@@ -561,13 +662,133 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
             return allDatesHoldersArrayList.size();
         }
 
+        BottomSheetDialog mEditDateChoiceDialog;
+        ImageButton dialogThumbsUp, dialogThumbsDown;
+        Button mDoneDate;
+
+        void updateDateDialog(final int position) {
+            mEditDateChoiceDialog = new BottomSheetDialog(getActivity());
+            int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
+            if (theme == BasicSettings.LIGHT_THEME) {
+                mEditDateChoiceDialog.setContentView(R.layout.dialog_update_date_choice_dialog_light);
+            } else {
+                mEditDateChoiceDialog.setContentView(R.layout.dialog_update_date_choice_dialog);
+            }
+
+            ImageButton mClose = mEditDateChoiceDialog.findViewById(R.id.close_edit_date_dialog);
+            dialogThumbsUp = mEditDateChoiceDialog.findViewById(R.id.date_thumbs_up);
+            dialogThumbsDown = mEditDateChoiceDialog.findViewById(R.id.date_thumbs_down);
+            mDoneDate = mEditDateChoiceDialog.findViewById(R.id.done_date_update);
+
+            dialogThumbsUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDayThumbsUp.setColorFilter(getResources().getColor(R.color.green_));
+                    mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+                    mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    updateDate(position, 1);
+                }
+            });
+            dialogThumbsDown.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mDayThumbsUp.setColorFilter(getResources().getColor(R.color.red));
+                    mDayThumsbDown.setColorFilter(getResources().getColor(R.color.grey));
+                    mDayThumbsUp.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    mDayThumsbDown.setBackgroundColor(getResources().getColor(R.color.transparent));
+                    updateDate(position, 0);
+
+                }
+            });
+
+
+            mClose.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditDateChoiceDialog.dismiss();
+                }
+            });
+
+            mDoneDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mEditDateChoiceDialog.dismiss();
+                }
+            });
+
+
+            mEditDateChoiceDialog.setCanceledOnTouchOutside(true);
+            mEditDateChoiceDialog.show();
+        }
+
+        void updateDate(final int position, final int choice) {
+            final DatabaseReference todaysReference = firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_LIFE + "/lifeboard/");
+            todaysReference.keepSynced(true);
+            todaysReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    AllDatesHolder allDatesHolder = allDatesHoldersArrayList.get(position);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.set(Calendar.DAY_OF_MONTH, allDatesHolder.getDay());
+                    calendar.set(Calendar.MONTH, allDatesHolder.getMonth());
+                    calendar.set(Calendar.YEAR, allDatesHolder.getYear());
+
+                    final Integer key = Integer.parseInt(String.valueOf(calendar.get(Calendar.YEAR)) + String.valueOf(calendar.get(Calendar.MONTH)));
+
+                    boolean notAvailable = true;
+                    if (dataSnapshot.hasChildren()) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            LifeBoardPOJO lifeBoardPOJO = snapshot.getValue(LifeBoardPOJO.class);
+                            if ((lifeBoardPOJO.getYear() == calendar.get(Calendar.YEAR)) && (lifeBoardPOJO.getMonth() == calendar.get(Calendar.MONTH)) && (lifeBoardPOJO.getDay() == calendar.get(Calendar.DAY_OF_MONTH))) {
+                                lifeBoardPOJO.setChoice(choice);
+                                Map<String, Object> map = new HashMap<>();
+                                map.put(lifeBoardPOJO.getKey(), lifeBoardPOJO);
+                                todaysReference.updateChildren(map);
+                                notAvailable = false;
+                            }
+                        }
+                        if (notAvailable) {
+                            DatabaseReference pushForTodayReference = todaysReference.push();
+                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
+                            pushForTodayReference.setValue(lifeBoardPOJO1);
+                            Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
+                        }
+
+                        if (mEditDateChoiceDialog.isShowing()) {
+                            mEditDateChoiceDialog.dismiss();
+                        }
+                    } else {
+                        DatabaseReference pushForTodayReference = todaysReference.push();
+                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
+                        pushForTodayReference.setValue(lifeBoardPOJO1);
+                        Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
+                        if (mEditDateChoiceDialog.isShowing()) {
+                            mEditDateChoiceDialog.dismiss();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
 
         public class DatesViewHolder extends RecyclerView.ViewHolder {
             public TextView mDate;
 
             public DatesViewHolder(View itemView) {
                 super(itemView);
-                mDate = itemView.findViewById(R.id.date_count_textview);
+                mDate = itemView.findViewById(R.id.date_value_button);
+                mDate.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        updateDateDialog(getPosition());
+                    }
+                });
 
             }
         }
@@ -805,8 +1026,6 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         Button mDoneDate;
 
         void updateDateDialog(final int position) {
-
-
             mEditDateChoiceDialog = new BottomSheetDialog(getActivity());
             int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
             if (theme == BasicSettings.LIGHT_THEME) {

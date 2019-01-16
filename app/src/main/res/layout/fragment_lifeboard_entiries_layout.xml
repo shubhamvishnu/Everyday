@@ -333,20 +333,24 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:gravity="right"
+                        android:gravity="left"
                         android:orientation="horizontal">
+
                         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/change_view_lifeboard"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:layout_gravity="right"
                             android:adjustViewBounds="true"
                             android:background="@color/transparent"
                             android:padding="6dp"
                             android:scaleType="fitCenter"
                             app:srcCompat="@drawable/ic_view_module_black_24dp" />
-
-
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="1dp"
+                            android:layout_weight="1"
+                            />
                         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/info_life_board"
                             android:layout_width="32dp"
@@ -358,17 +362,17 @@
                             android:scaleType="fitCenter"
                             app:srcCompat="@drawable/ic_info_black_24dp" />
 
+
                         <android.support.v7.widget.AppCompatImageButton xmlns:app="http://schemas.android.com/apk/res-auto"
                             android:id="@+id/scroll_up_image"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
+                            android:layout_width="42dp"
+                            android:layout_height="42dp"
                             android:layout_gravity="right"
                             android:adjustViewBounds="true"
                             android:background="@color/transparent"
                             android:padding="6dp"
                             android:scaleType="fitCenter"
                             app:srcCompat="@drawable/ic_keyboard_arrow_up_black_24dp" />
-
                     </LinearLayout>
 
                 </LinearLayout>
