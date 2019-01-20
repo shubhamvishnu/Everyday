@@ -15,10 +15,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.everyday.skara.everyday.DonutProgress;
 import com.everyday.skara.everyday.LoginActivity;
 import com.everyday.skara.everyday.MainActivity;
@@ -29,6 +31,7 @@ import com.everyday.skara.everyday.classes.BasicSettings;
 import com.everyday.skara.everyday.classes.FirebaseReferences;
 import com.everyday.skara.everyday.classes.SPNames;
 import com.everyday.skara.everyday.pojo.LifeBoardPOJO;
+import com.everyday.skara.everyday.pojo.NotePOJO;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -54,6 +57,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class LifeBoardFragment extends android.support.v4.app.Fragment {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -169,7 +174,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
         mChangeView = view.findViewById(R.id.change_view_lifeboard);
 
-        fromStartDate.setText("From "+ userInfoPOJO.getDay() + "/" + userInfoPOJO.getMonth() + "/" + userInfoPOJO.getYear());
+        fromStartDate.setText("From " + userInfoPOJO.getDay() + "/" + userInfoPOJO.getMonth() + "/" + userInfoPOJO.getYear());
         fromStartDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -314,7 +319,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         initDateChecks();
 
     }
-    void toSettingActivity(){
+
+    void toSettingActivity() {
         Intent intent = new Intent(getActivity(), SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("user_profile", userInfoPOJO);
@@ -353,14 +359,14 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                     }
                     if (notAvailable) {
                         DatabaseReference pushForTodayReference = todaysReference.push();
-                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, userInfoPOJO);
-                        pushForTodayReference.setValue(lifeBoardPOJO1);
+                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, " ", userInfoPOJO);
+                        showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
                         Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                     }
                 } else {
                     DatabaseReference pushForTodayReference = todaysReference.push();
-                    LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, userInfoPOJO);
-                    pushForTodayReference.setValue(lifeBoardPOJO1);
+                    LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, todayCalendar.get(Calendar.DAY_OF_MONTH), todayCalendar.get(Calendar.MONTH), todayCalendar.get(Calendar.YEAR), todayCalendar.getTime().toString(), "null", choice, " ", userInfoPOJO);
+                    showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
                     Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                 }
             }
@@ -372,6 +378,48 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         });
 
 
+    }
+
+    LifeBoardPOJO tempLifeBoard;
+
+    void showAddNotesDialog(final DatabaseReference pushRef, final LifeBoardPOJO lifeBoardPOJO) {
+        tempLifeBoard = lifeBoardPOJO;
+        ImageButton mClose;
+        Button mDone;
+
+        final BottomSheetDialog mEditNotesDialog = new BottomSheetDialog(getActivity());
+        mEditNotesDialog.setContentView(R.layout.dialog_edit_lifeboard_notes_layout);
+
+        final EditText mContent = mEditNotesDialog.findViewById(R.id.content_edit_notes);
+
+        mClose = mEditNotesDialog.findViewById(R.id.close_edit_notes);
+        mDone = mEditNotesDialog.findViewById(R.id.done_edit_notes);
+
+        String existingContent = tempLifeBoard.getNote().trim();
+        mContent.setText(existingContent);
+
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditNotesDialog.dismiss();
+            }
+        });
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String content = mContent.getText().toString().trim();
+
+                if (content.isEmpty()) {
+                    content = " ";
+                }
+                tempLifeBoard.setNote(content);
+                pushRef.setValue(tempLifeBoard);
+                mEditNotesDialog.dismiss();
+            }
+        });
+
+        mEditNotesDialog.setCanceledOnTouchOutside(false);
+        mEditNotesDialog.show();
     }
 
     void initDateChecks() {
@@ -748,9 +796,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
             int pos = position + 1;
-            if(pos == allDatesHoldersArrayList.size()){
+            if (pos == allDatesHoldersArrayList.size()) {
                 ((DatesViewHolder) holder).mDate.setText("Today");
-            }else{
+            } else {
                 ((DatesViewHolder) holder).mDate.setText("" + pos);
 
             }
@@ -887,8 +935,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         }
                         if (notAvailable) {
                             DatabaseReference pushForTodayReference = todaysReference.push();
-                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
-                            pushForTodayReference.setValue(lifeBoardPOJO1);
+                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, " ", userInfoPOJO);
+                            showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
                             Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                         }
 
@@ -897,8 +945,9 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         }
                     } else {
                         DatabaseReference pushForTodayReference = todaysReference.push();
-                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
-                        pushForTodayReference.setValue(lifeBoardPOJO1);
+                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, " ", userInfoPOJO);
+                        showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
+
                         Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                         if (mEditDateChoiceDialog.isShowing()) {
                             mEditDateChoiceDialog.dismiss();
@@ -913,6 +962,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                 }
             });
         }
+
 
         public class DatesViewHolder extends RecyclerView.ViewHolder {
             public TextView mDate;
@@ -1128,7 +1178,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
         @NonNull
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            if(viewType == VIEW_TYPE_TODAY){
+            if (viewType == VIEW_TYPE_TODAY) {
                 View view = inflator.inflate(R.layout.recyclerview_today_row_layout, parent, false);
                 return new HabitDurationDatesViewHolder(view);
             }
@@ -1268,8 +1318,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         }
                         if (notAvailable) {
                             DatabaseReference pushForTodayReference = todaysReference.push();
-                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
-                            pushForTodayReference.setValue(lifeBoardPOJO1);
+                            LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, "", userInfoPOJO);
+                            showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
                             Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                         }
 
@@ -1278,8 +1328,8 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
                         }
                     } else {
                         DatabaseReference pushForTodayReference = todaysReference.push();
-                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, userInfoPOJO);
-                        pushForTodayReference.setValue(lifeBoardPOJO1);
+                        LifeBoardPOJO lifeBoardPOJO1 = new LifeBoardPOJO(pushForTodayReference.getKey(), key, calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.MONTH), calendar.get(Calendar.YEAR), calendar.getTime().toString(), "null", choice, "", userInfoPOJO);
+                        showAddNotesDialog(pushForTodayReference, lifeBoardPOJO1);
                         Log.d("dateipdatedvalue", lifeBoardPOJO1.getDate());
                         if (mEditDateChoiceDialog.isShowing()) {
                             mEditDateChoiceDialog.dismiss();
