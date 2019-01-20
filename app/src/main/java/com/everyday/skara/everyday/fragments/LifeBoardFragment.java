@@ -382,6 +382,7 @@ public class LifeBoardFragment extends android.support.v4.app.Fragment {
 
     LifeBoardPOJO tempLifeBoard;
 
+
     void showAddNotesDialog(final DatabaseReference pushRef, final LifeBoardPOJO lifeBoardPOJO) {
         tempLifeBoard = lifeBoardPOJO;
         ImageButton mClose;
