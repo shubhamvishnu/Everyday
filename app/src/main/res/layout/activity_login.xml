@@ -148,7 +148,7 @@
         android:id="@+id/sign_in_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/red"
+        android:background="@color/blue"
         android:text="Login with Google"
         android:textAllCaps="false"
         android:textColor="@color/white" />
