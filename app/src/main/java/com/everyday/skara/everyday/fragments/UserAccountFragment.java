@@ -209,6 +209,7 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
     }
 
 
+
     void showFeedbackDialog() {
         mFeedbackDialog = new BottomSheetDialog(getActivity());
         SharedPreferences sp = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE);
