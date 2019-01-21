@@ -23,6 +23,22 @@
           }
         },
         {
+          "client_id": "622153174323-vp5f62606aliu9sk3ed12oj8p1ji4khb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.com.everyday.skara.everyday",
+            "certificate_hash": "7693d92fb7fccf6985798ee48776a4b85ae9acdc"
+          }
+        },
+        {
+          "client_id": "622153174323-t6pk6pv5tdj6ejkk3g6srn1d3g77bavk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.com.everyday.skara.everyday",
+            "certificate_hash": "51203cae91fcf894ba0a91af22aca293b8284003"
+          }
+        },
+        {
           "client_id": "622153174323-mq31sobv435khvf86t176tg2ehvnl9bf.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -48,7 +64,8 @@
         "ads_service": {
           "status": 2
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-2940427582515935~3482302447"
     },
     {
       "client_info": {

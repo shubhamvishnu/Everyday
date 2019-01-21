@@ -25,14 +25,16 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-2940427582515935~3482302447" />
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:noHistory="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".LoginActivity"
+            android:noHistory="true"/>
         <activity android:name=".BoardActivity" />
         <activity android:name=".NewNoteActivity" />
         <activity android:name=".LinkActivity" />
