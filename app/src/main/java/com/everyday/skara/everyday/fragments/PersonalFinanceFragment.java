@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,7 +77,7 @@ public class PersonalFinanceFragment extends Fragment {
     int currentYear;
     int currentMonth;
 
-
+    LinearLayout mEmptyLinearLayout,mFragmentLinearLayout;
     BottomSheetDialog mEditExpenseDialog;
     TextView mRemaining;
 
@@ -116,6 +117,10 @@ public class PersonalFinanceFragment extends Fragment {
 
         mFilterButton = getActivity().findViewById(R.id.filter_finance_option_button);
 
+        mEmptyLinearLayout = view.findViewById(R.id.board_no_entries_linear_layout);
+        mEmptyLinearLayout.setVisibility(View.INVISIBLE);
+        mFragmentLinearLayout = view.findViewById(R.id.entries_linear_layout);
+
         mCurencyTextView = view.findViewById(R.id.currency_textview);
         mPositiveCurrency = view.findViewById(R.id.positive_currency_all_textview);
         String currency = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getString("currency", getResources().getString(R.string.inr));
@@ -142,6 +147,7 @@ public class PersonalFinanceFragment extends Fragment {
             }
         });
 
+        setEmptyVisibility(0);
         initFinanceRecyclerView();
         mFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -156,6 +162,18 @@ public class PersonalFinanceFragment extends Fragment {
                 }
             }
         });
+    }
+    void setEmptyVisibility(int action) {
+        switch (action) {
+            case 0:
+                mFragmentLinearLayout.setVisibility(LinearLayout.GONE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                break;
+            case 1:
+                mFragmentLinearLayout.setVisibility(LinearLayout.VISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.GONE);
+                break;
+        }
     }
     void showMonthSelectionDialog() {
         mMonthBottomSheetDialog = new BottomSheetDialog(getActivity());
@@ -487,7 +505,9 @@ public class PersonalFinanceFragment extends Fragment {
                 if (yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth).size() == 0) {
                     mTotalExpenseTextView.setText("0.00");
                     mTotalIncomeTextView.setText("0.00");
+                    setEmptyVisibility(0);
                 } else {
+                    setEmptyVisibility(1);
                     ArrayList<FinanceEntryPOJO> tempExpensePOJO = yearMonthExpenseArrayListHashMap.get(currentYear).get(currentMonth);
                     double tempTotal = 0.0;
                     double tempIncome = 0.0;
@@ -504,7 +524,12 @@ public class PersonalFinanceFragment extends Fragment {
                     mTotalIncomeTextView.setText(String.format(Locale.getDefault(), "%.2f", tempIncome));
                     updateRemainingIncomeView(tempTotal, tempIncome);
                 }
+            }else{
+                setEmptyVisibility(0);
             }
+        }else{
+
+            setEmptyVisibility(0);
         }
         mPersonalFinanceAdapter.notifyDataSetChanged();
     }
@@ -887,7 +912,7 @@ public class PersonalFinanceFragment extends Fragment {
             int theme = getActivity().getSharedPreferences(SPNames.DEFAULT_SETTINGS, Context.MODE_PRIVATE).getInt("theme", BasicSettings.DEFAULT_THEME);
             if (theme == BasicSettings.LIGHT_THEME) {
                 mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout_light);
-            }else{
+            } else {
                 mEditExpenseDialog.setContentView(R.layout.dialog_edit_expense_layout);
             }
 
@@ -910,10 +935,10 @@ public class PersonalFinanceFragment extends Fragment {
                     String transactionId = mTransactionId.getText().toString().trim();
                     String notes = mNote.getText().toString().trim();
                     if (description.isEmpty()) {
-                        Toast.makeText(getActivity(), "description empty", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Write Description", Toast.LENGTH_SHORT).show();
                     } else {
                         if (amount.isEmpty()) {
-                            Toast.makeText(getActivity(), "amount empty", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Enter Amount", Toast.LENGTH_SHORT).show();
                         } else {
                             if (transactionId.isEmpty()) {
                                 transactionId = " ";

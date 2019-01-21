@@ -1749,7 +1749,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMinimum(0f);
 
         Description description = new Description();
-        description.setText("Test Text Weekwise Chart");
+        description.setText("Weekday Wise Expenses (Month)");
 
         String[] labels = new String[labelsList.size()];
         labels = labelsList.toArray(labels);
@@ -1836,7 +1836,7 @@ public class PersonalFinanceAnalytics extends Fragment {
         xAxis.setAxisMinimum(0f);
 
         Description description = new Description();
-        description.setText("Test Text Weekwise Chart");
+        description.setText("Weekday Wise Expenses (Month)");
         description.setTextColor(Color.WHITE);
 
         String[] labels = new String[labelsList.size()];

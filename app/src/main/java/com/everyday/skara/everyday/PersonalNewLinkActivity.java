@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.BasicSettings;
@@ -158,7 +159,7 @@ public class PersonalNewLinkActivity extends AppCompatActivity implements View.O
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() +"/"+FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
             toPersonalProdBoard();
         }else{
-            // TODO: fields empty alert
+            Toast.makeText(this, "Enter Link", Toast.LENGTH_SHORT).show();
         }
     }
     void toPersonalProdBoard(){

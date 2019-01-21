@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.everyday.skara.everyday.classes.ActionType;
 import com.everyday.skara.everyday.classes.BasicSettings;
@@ -125,8 +126,8 @@ public class PersonalNewNoteActivity extends AppCompatActivity implements View.O
             firebaseDatabase.getReference(FirebaseReferences.FIREBASE_USER_DETAILS + userInfoPOJO.getUser_key() + "/" + FirebaseReferences.FIREBASE_PERSONAL_BOARD_PROD).child("activity").push().setValue(activityPOJO);
             saveSelected();
         } else {
+            Toast.makeText(this, "Write Something", Toast.LENGTH_SHORT).show();
             saveSelected();
-            // TODO: show field empty alert
         }
     }
 

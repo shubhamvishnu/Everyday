@@ -109,7 +109,7 @@ public class PersoanalLinksFragment extends Fragment {
         //mFilterButton = getActivity().findViewById(R.id.filter_option_button);
 
         mEmptyLinearLayout = (LinearLayout) getActivity().findViewById(R.id.board_no_link_linear_layout);
-        mEmptyLinearLayout.setVisibility(View.INVISIBLE);
+        mEmptyLinearLayout.setVisibility(View.GONE);
 
         mFragmentLinearLayout = (LinearLayout) getActivity().findViewById(R.id.linear_layout_links_fragment);
 
@@ -134,12 +134,12 @@ public class PersoanalLinksFragment extends Fragment {
     void setEmptyVisibility(int action) {
         switch (action) {
             case 0:
-                mFragmentLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                mFragmentLinearLayout.setVisibility(LinearLayout.GONE);
                 mEmptyLinearLayout.setVisibility(LinearLayout.VISIBLE);
                 break;
             case 1:
                 mFragmentLinearLayout.setVisibility(LinearLayout.VISIBLE);
-                mEmptyLinearLayout.setVisibility(LinearLayout.INVISIBLE);
+                mEmptyLinearLayout.setVisibility(LinearLayout.GONE);
                 break;
         }
     }

@@ -187,8 +187,11 @@ public class PersonalNewTodoActivity extends AppCompatActivity implements View.O
 
             todoPOJOArrayList.add(todoPOJO);
             todoListAdapter.notifyItemInserted(todoPOJOArrayList.size());
-            Toast.makeText(PersonalNewTodoActivity.this, "Item added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(PersonalNewTodoActivity.this, "Item Added", Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "No Item", Toast.LENGTH_SHORT).show();
         }
+        mItemEditText.setText(null);
     }
 
     void showInternetAlerter() {

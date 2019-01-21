@@ -46,6 +46,8 @@ import com.everyday.skara.everyday.pojo.BoardPOJO;
 import com.everyday.skara.everyday.pojo.Categories;
 import com.everyday.skara.everyday.pojo.UserInfoPOJO;
 import com.everyday.skara.everyday.pojo.UserProfilePOJO;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton mTodo, mLink, mNotes, mFinance;
     public static int OPTION_TYPE = 1;
     SharedPreferences sharedPreferences;
-
+    private AdView mAdView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
                 } else if (tabId == R.id.todo_item_menu) {
                     OPTION_TYPE = 2;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -176,6 +180,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
                 } else if (tabId == R.id.note_item) {
                     OPTION_TYPE = 3;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -196,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
 
                 } else if (tabId == R.id.link_item) {
                     OPTION_TYPE = 4;
@@ -217,10 +225,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
                 } else if (tabId == R.id.user_profile_item) {
-                    OPTION_TYPE = 6;
+                    OPTION_TYPE = 5;
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("item_selected", 6);
+                    editor.putInt("item_selected", 5);
                     editor.apply();
                     myToolbar.setTitle("Profile");
                     UserAccountFragment userAccountFragment = new UserAccountFragment();
@@ -235,49 +245,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     transaction.addToBackStack(null);
 
                     transaction.commit();
-                } else if (tabId == R.id.life_board_item) {
-
-
-                    OPTION_TYPE = 5;
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putInt("item_selected", 5);
-                    editor.apply();
-
-                    myToolbar.setTitle("Lifetime");
-                    LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("user_profile", userInfoPOJO);
-                    lifeBoardFragment.setArguments(bundle);
-
-                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                    transaction.replace(R.id.main_content_container, lifeBoardFragment);
-                    transaction.addToBackStack(null);
-
-                    transaction.commit();
+                    AdRequest adRequest = new AdRequest.Builder().build();
+                    mAdView.loadAd(adRequest);
                 }
+//                else if (tabId == R.id.life_board_item) {
+//
+//
+//                    OPTION_TYPE = 5;
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putInt("item_selected", 5);
+//                    editor.apply();
+//
+//                    myToolbar.setTitle("Lifetime");
+//                    LifeBoardFragment lifeBoardFragment = new LifeBoardFragment();
+//
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("user_profile", userInfoPOJO);
+//                    lifeBoardFragment.setArguments(bundle);
+//
+//                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+//
+//                    transaction.replace(R.id.main_content_container, lifeBoardFragment);
+//                    transaction.addToBackStack(null);
+//
+//                    transaction.commit();
+//                }
             }
         });
     }
 
     void init() {
         firebaseDatabase = FirebaseDatabase.getInstance();
-/*
-        mBoardsRecyclerView = findViewById(R.id.recyclerview_boards);
 
-        mTodo = findViewById(R.id.todo_board_image);
-        mLink = findViewById(R.id.link_board_image);
-        mNotes = findViewById(R.id.notes_board_image);
-        mFinance = findViewById(R.id.finance_board_image);
-
-        mPersonalFinanceTitle = findViewById(R.id.personal_financial_cardview_title);
-        mPersoanlProdTitle = findViewById(R.id.personal_prod_cardview_title);
-        mPersonalGratitudeTitle = findViewById(R.id.personal_gratitude_cardview_title);
-        mPersonalHabitTitle = findViewById(R.id.personal_habits_cardview_title);
-        mPersonalLsTitle = findViewById(R.id.personal_ls_cardview_title);
-*/
-        // initializing UserProfilePOJO
         SharedPreferences sharedPreferences = getSharedPreferences(SPNames.USER_DETAILS, MODE_PRIVATE);
         String name = sharedPreferences.getString("name", null);
         String email = sharedPreferences.getString("email", null);
@@ -293,66 +292,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userProfilePOJO = new UserProfilePOJO(name, email, profile_url, user_key, login_type, user_account_type, day, month, year);
         userInfoPOJO = new UserInfoPOJO(name, email, profile_url, user_key, day, month, year);
 
-        /*
-        mPersonalFinanceTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalFinanceActivity();
-            }
-        });
-        mPersoanlProdTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalProducitivityActivity();
-            }
-        });
-        mPersonalGratitudeTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalGratitudeActivity();
-            }
-        });
-
-        mPersonalHabitTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalHabitActivity();
-            }
-        });
-        mPersonalLsTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalLsActivity();
-            }
-        });
-
-
-        mFinance.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalFinanceActivity();
-            }
-        });
-        mTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalProducitivityActivity();
-            }
-        });
-        mLink.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalProducitivityActivity();
-            }
-        });
-        mNotes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                toPersonalProducitivityActivity();
-            }
-        });
-       initRecyclerView();
-        */
+        mAdView = findViewById(R.id.main_activity_ad_view);
 
         initBottomBar();
     }
