@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageButton mTodo, mLink, mNotes, mFinance;
     public static int OPTION_TYPE = 1;
     SharedPreferences sharedPreferences;
-    private AdView mAdView;
+    AdView mAdView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

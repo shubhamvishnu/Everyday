@@ -616,6 +616,7 @@ public class PersonalTodoFragment extends Fragment implements BottomSheetTimePic
                         todoItemAdapter.notifyDataSetChanged();
                         todoAdapter.notifyDataSetChanged();
                         Toast.makeText(getActivity(), "Item added", Toast.LENGTH_SHORT).show();
+                        mItemEditText.setText(null);
                     }
                 }
             });

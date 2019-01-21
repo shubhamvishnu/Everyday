@@ -198,12 +198,12 @@ public class UserAccountFragment extends Fragment implements View.OnClickListene
         Intent i = new Intent(android.content.Intent.ACTION_SEND);
         i.setType("text/plain");
         i.putExtra(android.content.Intent.EXTRA_SUBJECT, "Snapshot!");
-        i.putExtra(android.content.Intent.EXTRA_TEXT, "A simple app to always stay in sync. Click on the link below to download\n" + "http://play.google.com/store/apps/details?id=com.snapshot.skra.snapshot");
+        i.putExtra(android.content.Intent.EXTRA_TEXT, "Everything for everyday - stay productive using Everyday. Click on the link below to download\n" + "http://play.google.com/store/apps/details?id=com.everyday.skara.everyday");
         startActivity(Intent.createChooser(i, "Share via"));
     }
 
     void openLink() {
-        Uri uri = Uri.parse("http://play.google.com/store/apps/details?id=com.snapshot.skra.snapshot");
+        Uri uri = Uri.parse("http://play.google.com/store/apps/details?id=com.everyday.skara.everyday");
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }
