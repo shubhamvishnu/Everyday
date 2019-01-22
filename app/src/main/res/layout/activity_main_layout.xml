@@ -34,7 +34,7 @@
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-2940427582515935/4192748882"/>
+        ads:adUnitId="ca-app-pub-2940427582515935/5124397035"/>
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottom_bar_main"
         android:layout_width="match_parent"

@@ -7,7 +7,16 @@
     android:orientation="vertical"
     android:background="@color/black"
     tools:context=".LoginActivity">
-
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/boards_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="#ff0d47a1"
+        android:elevation="4dp"
+        app:title="Everyday"
+        android:theme="@style/AppTheme.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextColor="@color/white" />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -144,13 +153,21 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/sign_in_button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="8dp"
         android:background="@color/blue"
-        android:text="Login with Google"
-        android:textAllCaps="false"
-        android:textColor="@color/white" />
+        android:orientation="vertical">
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:text="Login with Google"
+            android:textAllCaps="false"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
 
 </LinearLayout>
