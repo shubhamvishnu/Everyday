@@ -7,32 +7,34 @@
     android:background="@color/white"
     android:orientation="vertical"
     tools:context=".MainActivity">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/boards_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:background="#ff0d47a1"
         android:elevation="4dp"
-        app:title="Everyday"
         android:theme="@style/AppTheme.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:title="Everyday"
         app:titleTextColor="@color/white" />
+
+
 
     <FrameLayout
         android:id="@+id/main_content_container"
         android:layout_width="match_parent"
-        android:layout_below="@id/boards_toolbar"
-        android:background="@color/white"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_above="@+id/bottom_bar_main" />
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:background="@color/white" />
+
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/main_activity_ad_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         ads:adSize="BANNER"
-        ads:adUnitId="ca-app-pub-2940427582515935/5124397035"/>
+        ads:adUnitId="ca-app-pub-2940427582515935/9012067933" />
     <com.roughike.bottombar.BottomBar
         android:id="@+id/bottom_bar_main"
         android:layout_width="match_parent"

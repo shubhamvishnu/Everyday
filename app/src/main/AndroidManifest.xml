@@ -23,7 +23,7 @@
             android:value="@string/google_maps_key" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-2940427582515935~3482302447" />
+            android:value="ca-app-pub-2940427582515935~3017108445" />
 
         <activity android:name=".MainActivity"
             android:noHistory="true">
